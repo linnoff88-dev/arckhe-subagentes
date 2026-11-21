@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Proyecto × Global | Subagentes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha blue T2) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37, 99, 235, 0.18); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+
+    /* Light mode - cores de apoio usadas nos boxes */
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - diagramas SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Pulso dos agentes nos diagramas (apenas se o usuario permitir movimento) */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes wf-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.3s} .wf-a:nth-child(3){animation-delay:.6s}
+      .wf-float { animation: wf-float 3s ease-in-out infinite; }
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha2/modulo-2-5.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha2/modulo-2-5.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha2/modulo-2-5.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha2/modulo-2-5.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha2/modulo-2-5.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-2-5.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagentes</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentos</span>
+</a>
+<!-- Trilha 2 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10" href="index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">En la práctica</span>
+</a>
+<!-- Trilha 3 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orquestación</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Avanzado</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-blue-400" href="../../index.html">Inicio</a>
+<span>/</span>
+<a class="hover:text-blue-400" href="index.html">Ruta 2</a>
+<span>/</span>
+<span class="text-blue-400">Módulo 2.5</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">
+        MÓDULO 2.5 · Ruta 2 · Creación práctica
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">📂 Proyecto × Global</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        Un agente vive en un archivo <code class="text-blue-400">.md</code>. Pero <strong class="text-blue-400">dónde</strong> tú
+        colocas este archivo y cambia todo: queda disponible solo en el proyecto actual o para ti en cualquier máquina y repositorio.
+        Entender este alcance es lo que distingue una herramienta personal de una herramienta de equipo.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">7</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">~20</div>
+<div class="text-xs text-neutral-400">Minutos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">Práctico</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">Config</div>
+<div class="text-xs text-neutral-400">Tipo</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- ABERTURA + SVG DUAS PASTAS -->
+<section class="mb-12">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Ya sabes crear un agente. Ahora la pregunta es: <strong class="text-blue-400">dónde vive</strong>? Claude Code lee agentes
+        de dos ubicaciones distintas: la carpeta de <strong class="text-blue-400">proyecto</strong> (que va al git, se comparte con el equipo) y
+        la carpeta <strong class="text-blue-400">global</strong> (solo tuyo, disponible en cualquier proyecto, nunca se sube al repositorio).
+        La misma lógica se aplica a las skills, los hooks y los servidores MCP: cada uno tiene su propio par de ámbitos.
+      </p>
+<!-- SVG: duas pastas comparativas -->
+<div class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-3 sm:p-4 mb-2 overflow-hidden">
+<svg aria-label="Diagrama comparativo: carpeta .claude/agents en el repositorio (compartida con el equipo mediante git) frente a ~/.claude/agents global (solo del usuario, disponible en todos los proyectos)" class="w-full h-auto" role="img" viewbox="0 0 1000 260">
+<defs>
+<lineargradient id="m25-grad-b" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#60a5fa"></stop><stop offset="1" stop-color="#3b82f6"></stop>
+</lineargradient>
+<lineargradient id="m25-grad-c" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#38bdf8"></stop><stop offset="1" stop-color="#0ea5e9"></stop>
+</lineargradient>
+<filter height="180%" id="m25-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="2.2"></fegaussianblur>
+<femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m25-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#3b82f6" opacity="0.10" r="1.3"></circle>
+</pattern>
+<marker id="m25-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5">
+<path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#60a5fa"></path>
+</marker>
+<marker id="m25-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5">
+<path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path>
+</marker>
+</defs>
+<!-- fundo grid -->
+<rect fill="url(#m25-grid)" height="260" width="1000" x="0" y="0"></rect>
+<!-- divisor central tracejado -->
+<line stroke="#4b5563" stroke-dasharray="8 6" stroke-width="1.5" x1="500" x2="500" y1="20" y2="240"></line>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="500" y="13">alcance</text>
+<!-- === LADO ESQUERDO: .claude/agents no repo === -->
+<!-- pasta repo -->
+<g filter="url(#m25-glow)">
+<rect fill="#0e1622" height="52" rx="12" stroke="url(#m25-grad-b)" stroke-width="2" width="190" x="50" y="40"></rect>
+</g>
+<text fill="#93c5fd" font-family="Inter,sans-serif" font-size="14" font-weight="700" text-anchor="middle" x="145" y="62">meu-projeto/</text>
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="145" y="80">.claude/agents/</text>
+<!-- arquivos .md dentro do repo -->
+<g font-family="Inter,sans-serif" font-size="12">
+<g class="wf-a">
+<rect fill="#0e1b26" height="28" rx="7" stroke="#38bdf8" stroke-width="1.5" width="160" x="60" y="112"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="140" y="131">code-reviewer.md</text>
+</g>
+<g class="wf-a">
+<rect fill="#0e1b26" height="28" rx="7" stroke="#38bdf8" stroke-width="1.5" width="160" x="60" y="148"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="140" y="167">test-runner.md</text>
+</g>
+<g class="wf-a">
+<rect fill="#0e1b26" height="28" rx="7" stroke="#38bdf8" stroke-width="1.5" width="160" x="60" y="184"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="140" y="203">doc-writer.md</text>
+</g>
+</g>
+<!-- seta repo -> git -->
+<path d="M240,92 L320,130" fill="none" marker-end="url(#m25-ah)" opacity="0.7" stroke="#60a5fa" stroke-dasharray="5 4" stroke-width="1.8"></path>
+<!-- ícone git -->
+<rect fill="#0e1622" height="36" opacity="0.8" rx="9" stroke="#60a5fa" stroke-width="1.5" width="110" x="320" y="112"></rect>
+<text fill="#93c5fd" font-family="Inter,sans-serif" font-size="13" text-anchor="middle" x="375" y="135">🔀 git push</text>
+<!-- label esquerdo -->
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="145" y="235">Proyecto</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="145" y="250">compártelo con el equipo</text>
+<!-- === LADO DIREITO: ~/.claude/agents global === -->
+<!-- pasta home -->
+<g filter="url(#m25-glow)">
+<rect fill="#0e1b26" height="52" rx="12" stroke="url(#m25-grad-c)" stroke-width="2" width="190" x="762" y="40"></rect>
+</g>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="14" font-weight="700" text-anchor="middle" x="857" y="62">~/</text>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="857" y="80">.claude/agents/</text>
+<!-- arquivos .md globais -->
+<g font-family="Inter,sans-serif" font-size="12">
+<g class="wf-a">
+<rect fill="#0e1b26" height="28" rx="7" stroke="#38bdf8" stroke-width="1.5" width="160" x="782" y="112"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="862" y="131">meu-setup.md</text>
+</g>
+<g class="wf-a">
+<rect fill="#0e1b26" height="28" rx="7" stroke="#38bdf8" stroke-width="1.5" width="160" x="782" y="148"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="862" y="167">prefixos-pessoais.md</text>
+</g>
+<g class="wf-a">
+<rect fill="#0e1b26" height="28" rx="7" stroke="#38bdf8" stroke-width="1.5" width="160" x="782" y="184"></rect>
+<text fill="#bfe6ff" text-anchor="middle" x="862" y="203">segurança-audit.md</text>
+</g>
+</g>
+<!-- seta global -> todos os projetos -->
+<path d="M762,92 L680,130" fill="none" marker-end="url(#m25-ahc)" opacity="0.7" stroke="#38bdf8" stroke-dasharray="5 4" stroke-width="1.8"></path>
+<!-- ícone todos os projetos -->
+<rect fill="#0e1b26" height="36" opacity="0.8" rx="9" stroke="#38bdf8" stroke-width="1.5" width="110" x="572" y="112"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="13" text-anchor="middle" x="627" y="135">📂 cualquier repo</text>
+<!-- label direito -->
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="857" y="235">Global</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="857" y="250">solo tuyo, todos los proyectos</text>
+</svg>
+</div>
+<p class="text-xs text-neutral-500 mb-0">↑ Proyecto: <code>.claude/agents/</code> en el repo (va a git). Global: <code>~/.claude/agents/</code> en la carpeta principal (no se carga).</p>
+</section>
+<!-- DIVISOR -->
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+<!-- TÓPICO 1 — .claude/agents no repo -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">📁 <code>.claude/agents/</code> en el repositorio</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Cuando creas un archivo <code class="text-blue-400">.claude/agents/meu-agente.md</code> dentro del repositorio del proyecto,
+        este agente <strong class="text-blue-400">pertenece a ese proyecto</strong>. Cualquier persona que clone el repo y abra
+        Claude Code verá el mismo agente disponible, sin necesidad de configurar nada.
+      </p>
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center">
+<span class="mr-2">🔀</span> El agente va junto con el código
+        </h3>
+<p class="text-neutral-300 mb-4">
+          O <code class="text-blue-400">.claude/agents/</code> vive dentro del repositorio. Esto significa que:
+        </p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>git add + git push</strong> — el agente se incorpora junto con el código.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>git clone</strong> — el próximo desarrollador ya lo encuentra en el lugar correcto.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>Pull Requests</strong> — los cambios en el agente se revisan como código normal.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>Historial</strong> — ves exactamente cuándo y por qué cambió la descripción.</span></li>
+</ul>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3 mb-6">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Carpeta <code>.claude/agents/</code> dentro del repositorio — agentes rastreados por git, visibles para todos los colaboradores del proyecto.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Es la forma correcta de distribuir agentes al equipo. Sin esto, cada desarrollador debe configurar manualmente los mismos agentes en su máquina, lo que puede generar discrepancias.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Alcance del proyecto · control de versiones de los agentes · trazabilidad · incorporación automática.</p>
+</div>
+</div>
+<!-- mini-cards -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">📁</div><div class="text-sm font-semibold text-blue-400">En el repo</div><div class="text-xs text-neutral-400">dentro del proyecto</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🔀</div><div class="text-sm font-semibold text-blue-400">Versionado</div><div class="text-xs text-neutral-400">rastreado con git</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">👥</div><div class="text-sm font-semibold text-blue-400">Compartido</div><div class="text-xs text-neutral-400">todo el equipo usa</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">📝</div><div class="text-sm font-semibold text-blue-400">Revisable</div><div class="text-xs text-neutral-400">mediante PR/code review</div></div>
+</div>
+</section>
+<!-- TÓPICO 2 — ~/.claude/agents global -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">🏠 <code>~/.claude/agents/</code> — alcance global</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        La carpeta <code class="text-blue-400">~/.claude/agents/</code> está en tu home — fuera de cualquier repositorio. Los agentes
+        que coloques ahí estarán disponibles en <strong class="text-blue-400">todos tus proyectos</strong>, en cualquier máquina en la que
+        hayas iniciado sesión, pero <strong class="text-blue-400">nunca se suben a git</strong>.
+      </p>
+<!-- Grid fazer vs evitar -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-5">
+<h4 class="font-semibold text-emerald-400 mb-3 flex items-center"><span class="mr-2">✅</span> Buenos candidatos para el ámbito global</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">→</span><span>Agente con tus preferencias de estilo de código</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">→</span><span>Herramientas que usas en todos los proyectos (p. ej., security-auditor)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">→</span><span>Agentes que contienen información sensible (tokens, endpoints internos)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">→</span><span>Flujos de trabajo personales que no tienen sentido para el equipo</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-5">
+<h4 class="font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">❌</span> Qué NO debe quedar global</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-red-400 mt-0.5">→</span><span>Agentes específicos de un solo proyecto (el equipo no los encontrará)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400 mt-0.5">→</span><span>Agentes que el equipo debe auditar/versionar</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400 mt-0.5">→</span><span>Cualquier cosa que deba existir en CI/CD (el servidor no tiene tu directorio home)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400 mt-0.5">→</span><span>Agentes con contexto del dominio del proyecto (arquitectura, reglas de negocio)</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Carpeta <code>~/.claude/agents/</code> en la carpeta principal del usuario: fuera de cualquier repo, invisible para git y disponible en todos los proyectos que abras.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Evita que herramientas personales o sensibles se incluyan accidentalmente en un commit. Crea un «cajón personal» de agentes reutilizables sin ensuciar el repositorio.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Alcance global · directorio home · invisible para git · varios proyectos · herramientas personales.</p>
+</div>
+</div>
+</section>
+<!-- TÓPICO 3 — Compartilhar via git (time) -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">🔀 Compartir con el equipo vía git</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Agentes en el <code class="text-blue-400">.claude/agents/</code> del repo son <strong class="text-blue-400">ciudadanos de primera clase</strong>
+        del proyecto. Forman parte del mismo flujo de revisión de código que el código: nadie cambia la descripción de un agente sin que el equipo lo sepa.
+      </p>
+<!-- Timeline de fluxo -->
+<div class="space-y-5 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Crea el <code>.md</code> en la carpeta del proyecto</h4>
+<p class="text-sm text-neutral-400 mb-2">Nuevo agente → nueva responsabilidad para el equipo.</p>
+<p class="text-neutral-300 text-sm">Ubica en <code class="text-blue-400">meu-repo/.claude/agents/code-reviewer.md</code>. La carpeta <code>.claude/</code> ya existe si usas CLAUDE.md o settings.json.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Haz commit y abre un PR</h4>
+<p class="text-sm text-neutral-400 mb-2">El agente entra en el control de versiones.</p>
+<p class="text-neutral-300 text-sm">El diff del <code>.md</code> aparece en el PR como cualquier cambio de código. La descripción, las herramientas permitidas y el prompt del sistema se pueden revisar línea por línea.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">El equipo clona y ya tiene todo</h4>
+<p class="text-sm text-neutral-400 mb-2">Cero configuración manual para nuevos desarrolladores.</p>
+<p class="text-neutral-300 text-sm">Cualquier colaborador que clone el repositorio encontrará los agentes listos. La configuración de las herramientas es automática —igual que con CLAUDE.md.</p>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Consejo: agrégalo a <code>.gitignore</code> los agentes privados</h3>
+<p class="text-neutral-300 text-sm">Si tienes agentes de proyecto que no deben salir (p. ej., acceso a staging interno), agrégalos al <code>.gitignore</code> con el patrón <code>.claude/agents/privado-*.md</code>. Así quedan en el repo local, pero nunca se incluyen en un commit.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">agentes como artefactos versionados — creados, modificados y revisados mediante el mismo flujo que el código del proyecto.</span></div>
+<div><span class="text-blue-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">garantiza que todos usen la misma versión del agente y que los cambios peligrosos (p. ej., darle al agente acceso a <code>Bash</code>) pasen por revisión.</span></div>
+<div><span class="text-blue-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">git como fuente de la verdad · revisión de PR por agentes · onboarding automático · <code>.gitignore</code> selectivo.</span></div>
+</div>
+</section>
+<!-- TÓPICO 4 — Só você: o escopo pessoal -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">🔒 Solo tú: el ámbito personal</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El ámbito global (<code class="text-blue-400">~/.claude/agents/</code>) é <strong class="text-blue-400">tu colección privada</strong>.
+        No está en ningún repo: nunca aparece en el <code>git status</code>, nunca se sube a GitHub, nunca lo ve tu colega.
+        Ahí están las herramientas que creaste para ti.
+      </p>
+<!-- Box conceito principal -->
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center">
+<span class="mr-2">🧰</span> Tu caja de herramientas portátil
+        </h3>
+<p class="text-neutral-300 mb-4">
+          Piensa en el ámbito global como la <strong>caja de herramientas del carpintero</strong>: lo llevas a cada obra, pero es
+          tuyo. El contratista del próximo proyecto no sabe qué herramientas traes.
+        </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="bg-dark-800/50 rounded-lg p-4 border border-blue-500/20">
+<h5 class="font-semibold text-blue-400 mb-2 text-sm">🏠 Siempre disponible</h5>
+<p class="text-neutral-300 text-xs">Abres cualquier proyecto y el agente global está ahí. No necesitas copiarlo ni reinstalarlo.</p>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 border border-blue-500/20">
+<h5 class="font-semibold text-blue-400 mb-2 text-sm">🔐 Privado por defecto</h5>
+<p class="text-neutral-300 text-xs">Nunca aparece en el <code>git status</code>. Los agentes con datos sensibles están seguros aquí.</p>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 border border-blue-500/20">
+<h5 class="font-semibold text-blue-400 mb-2 text-sm">⚙️ Tus preferencias</h5>
+<p class="text-neutral-300 text-xs">Estilo de código, idioma de las respuestas, workflows personales: nada impuesto al equipo.</p>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 border border-blue-500/20">
+<h5 class="font-semibold text-blue-400 mb-2 text-sm">🚫 No existe en CI/CD</h5>
+<p class="text-neutral-300 text-xs">Los servidores de CI no tienen tu directorio home. Los agentes críticos para los pipelines deben estar en el repo.</p>
+</div>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">la colección personal y portátil de agentes — disponible en todos los proyectos, pero invisible para git y el equipo.</span></div>
+<div><span class="text-blue-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">sin el alcance global, te verías obligado a hacer commit de herramientas personales en cada repo — contaminando el historial y exponiendo configuraciones privadas.</span></div>
+<div><span class="text-blue-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">directorio de inicio · portabilidad · privacidad · no disponible en CI · preferencias personales.</span></div>
+</div>
+</section>
+<!-- TÓPICO 5 — Mover = mover o .md -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">🚚 Mover un agente = mover el <code>.md</code></h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        ¿Necesitas promover un agente personal al proyecto del equipo? ¿O privatizar un agente del repo? El proceso es
+        <strong class="text-blue-400">exactamente lo que parece</strong>: mueve el archivo <code>.md</code> de una carpeta a otra.
+        No existe "vincular" ni "registrar": el alcance lo determina la ruta del archivo.
+      </p>
+<!-- Box de código: os dois comandos -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">⌨️</span> Los dos movimientos</h4>
+<div class="space-y-4">
+<div>
+<p class="text-xs text-neutral-500 mb-2 font-mono uppercase tracking-wide">global → proyecto (promover al equipo)</p>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto"><code>mv ~/.claude/agents/meu-agente.md \
+   meu-projeto/.claude/agents/meu-agente.md</code></pre>
+</div>
+<div>
+<p class="text-xs text-neutral-500 mb-2 font-mono uppercase tracking-wide">proyecto → global (hacer privado)</p>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto"><code>mv meu-projeto/.claude/agents/meu-agente.md \
+   ~/.claude/agents/meu-agente.md</code></pre>
+</div>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> ¿Por qué es tan simple?</h3>
+<p class="text-neutral-300 text-sm">Claude Code no tiene una base de datos de agentes: simplemente lee todos los <code>.md</code> de ambas carpetas al iniciar. El «registro» del agente es la presencia del archivo. Moverlo = cambiar el alcance de inmediato en la próxima sesión.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">alcance definido por la ruta del archivo — cambiar el alcance es mover el <code>.md</code>, sin configuración adicional.</span></div>
+<div><span class="text-blue-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">desmitifica el proceso: no hay «instalación» ni «importación»; el agente simplemente existe donde está el archivo.</span></div>
+<div><span class="text-blue-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">ruta = alcance · lectura directa de archivos · sin base de datos · cambio inmediato.</span></div>
+</div>
+</section>
+<!-- TÓPICO 6 — Ter nos dois escopos -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">⚡ Tener el mismo agente en ambos alcances</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Nada impide que exista un <code class="text-blue-400">code-reviewer.md</code> tanto en <code>~/.claude/agents/</code>
+        cuánto en <code>.claude/agents/</code> del proyecto. Claude Code los <strong class="text-blue-400">se une al iniciar</strong> —
+        ambos están disponibles. Si tienen el mismo <code>name</code>, la del proyecto tiene precedencia sobre la global.
+      </p>
+<!-- Exemplo .md: mesmo agente nos 2 escopos -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-4">
+<span class="text-sm font-semibold text-blue-400">Ejemplo: el mismo agente en ambos ámbitos</span>
+<span class="text-xs text-neutral-500 font-mono">code-reviewer.md</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<p class="text-xs text-neutral-500 mb-2 font-mono">~/.claude/agents/code-reviewer.md</p>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto leading-relaxed"><code>---
+name: code-reviewer
+description: Revisa qualquer código que eu
+  peça, com foco em legibilidade e segurança.
+  Use em qualquer projeto.
+model: claude-sonnet-4-5
+tools: Read, Glob, Grep
+---
+
+Você é um revisor de código sênior.
+Analise o código fornecido e aponte:
+1. Problemas de segurança
+2. Código difícil de manter
+3. Sugestões de simplificação
+
+Seja direto. Máximo 10 pontos por revisão.</code></pre>
+<p class="text-xs text-blue-400 mt-2">Versión personal — genérica, para varios proyectos</p>
+</div>
+<div>
+<p class="text-xs text-neutral-500 mb-2 font-mono">.claude/agents/code-reviewer.md</p>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto leading-relaxed"><code>---
+name: code-reviewer
+description: Revisa código deste projeto
+  seguindo nossas convenções internas
+  (ESLint config, naming patterns do time).
+model: claude-sonnet-4-5
+tools: Read, Glob, Grep
+---
+
+Você é um revisor sênior deste projeto.
+Siga RIGOROSAMENTE as convenções em
+CLAUDE.md antes de qualquer sugestão.
+Verifique também conformidade com:
+- Padrões do ESLint do projeto
+- Convenção de nomear hooks com useX
+- Não usar any no TypeScript</code></pre>
+<p class="text-xs text-blue-400 mt-2">Versión del proyecto — especializada, tiene precedencia</p>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h3 class="font-semibold text-primary mb-2 flex items-center"><span class="mr-2">💡</span> Cuando hay conflictos: prevalece el proyecto</h3>
+<p class="text-neutral-300 text-sm">Si ambos tienen <code>name: code-reviewer</code>, Claude usa la versión del proyecto. Esto permite que el equipo "sobrescriba" tu versión global con una adaptada al contexto, sin que tengas que borrar la personal.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">los dos alcances coexisten: Claude combina el global y el del proyecto al iniciarse, y el del proyecto tiene precedencia si hay nombres duplicados.</span></div>
+<div><span class="text-blue-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">permite tener una versión genérica global y otra especializada por proyecto, sin conflictos: el patrón más flexible para equipos que también tienen preferencias individuales.</span></div>
+<div><span class="text-blue-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">precedencia del proyecto · coexistencia de ámbitos · especialización progresiva · override sin eliminación.</span></div>
+</div>
+</section>
+<!-- TÓPICO 7 — Mesma lógica de skills/hooks/MCP -->
+<section class="mb-16" id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">7</span>
+<h2 class="text-2xl font-bold">🔗 La misma lógica: skills, hooks y MCP</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El patrón proyecto × global no es exclusivo de los agentes. Las skills (<code class="text-blue-400">.claude/skills/</code>),
+        los hooks y los servidores MCP siguen <strong class="text-blue-400">exactamente la misma división</strong>. Aprende una vez,
+        aplica en todos los recursos de Claude Code.
+      </p>
+<!-- Tabela comparativa -->
+<div class="overflow-x-auto mb-6">
+<table class="w-full text-sm border-collapse">
+<thead>
+<tr class="bg-blue-900/30 border border-blue-500/30">
+<th class="text-left p-3 text-blue-400 font-semibold">Recurso</th>
+<th class="text-left p-3 text-blue-400 font-semibold">Alcance del proyecto</th>
+<th class="text-left p-3 text-blue-400 font-semibold">Alcance global</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-dark-600">
+<tr class="bg-dark-800/40 hover:bg-dark-700/40 transition-colors">
+<td class="p-3 text-white font-medium">Agentes</td>
+<td class="p-3 text-neutral-300 font-mono text-xs">.claude/agents/</td>
+<td class="p-3 text-neutral-300 font-mono text-xs">~/.claude/agents/</td>
+</tr>
+<tr class="bg-dark-800/40 hover:bg-dark-700/40 transition-colors">
+<td class="p-3 text-white font-medium">Skills</td>
+<td class="p-3 text-neutral-300 font-mono text-xs">.claude/skills/</td>
+<td class="p-3 text-neutral-300 font-mono text-xs">~/.claude/skills/</td>
+</tr>
+<tr class="bg-dark-800/40 hover:bg-dark-700/40 transition-colors">
+<td class="p-3 text-white font-medium">Hooks</td>
+<td class="p-3 text-neutral-300 font-mono text-xs">.claude/settings.json</td>
+<td class="p-3 text-neutral-300 font-mono text-xs">~/.claude/settings.json</td>
+</tr>
+<tr class="bg-dark-800/40 hover:bg-dark-700/40 transition-colors">
+<td class="p-3 text-white font-medium">MCP servers</td>
+<td class="p-3 text-neutral-300 font-mono text-xs">.claude/settings.json</td>
+<td class="p-3 text-neutral-300 font-mono text-xs">~/.claude/settings.json</td>
+</tr>
+<tr class="bg-dark-800/40 hover:bg-dark-700/40 transition-colors">
+<td class="p-3 text-white font-medium">CLAUDE.md</td>
+<td class="p-3 text-neutral-300 font-mono text-xs">CLAUDE.md (raíz del repo)</td>
+<td class="p-3 text-neutral-300 font-mono text-xs">~/.claude/CLAUDE.md</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Un modelo mental unificado</h3>
+<p class="text-neutral-300 text-sm mb-3">La regla es siempre la misma: <strong>el proyecto comparte, global es tuyo</strong>. Una vez que interiorizas esto para los agentes, ya sabes cómo pensar las skills, los hooks y MCP. Claude Code es coherente: aprende el patrón una vez.</p>
+<p class="text-neutral-300 text-sm">En los hooks y MCP, la lógica de <strong>precedencia</strong> también se aplica: la configuración del proyecto se combina con la global, pero un hook del proyecto puede sobrescribir uno global con el mismo nombre.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">el patrón proyecto × global es universal en Claude Code: se aplica de forma consistente a agentes, skills, hooks y MCP.</span></div>
+<div><span class="text-blue-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">no necesitas aprender un modelo distinto para cada función. Un único modelo mental abarca todo el ecosistema de configuración de Claude Code.</span></div>
+<div><span class="text-blue-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">modelo unificado · coherencia del ecosistema · el proyecto se comparte, lo global es tuyo · combinación + precedencia.</span></div>
+</div>
+</section>
+<!-- BLOCO: PROMPTS PRONTOS -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">⌨️</span>
+<h2 class="text-2xl font-bold">Prompts listos (copia y pega)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Tres prompts para gestionar ámbitos de agentes en Claude Code. Úsalos directamente en la conversación con el maestro.
+      </p>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-blue-400">Prompt 1 — mover un agente del ámbito global al proyecto</span>
+<span class="text-xs text-neutral-500">lo promociona al equipo</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Mova o agente "code-reviewer" do meu escopo global
+(~/.claude/agents/) para este projeto (.claude/agents/).
+Depois me mostre o caminho final e confirme que o arquivo
+saiu do global.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-blue-400">Prompt 2 — listar agentes de ambos alcances</span>
+<span class="text-xs text-neutral-500">auditoría rápida</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Liste todos os agentes disponíveis nesta sessão,
+separando os que vêm do escopo do projeto
+(.claude/agents/) dos globais (~/.claude/agents/).
+Mostre o nome e o caminho de cada um.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-blue-400">Prompt 3 — crear una versión de proyecto de un agente global</span>
+<span class="text-xs text-neutral-500">especialización</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Leia o meu agente global "code-reviewer"
+(~/.claude/agents/code-reviewer.md) e crie uma versão
+especializada para este projeto em .claude/agents/,
+adicionando as convenções do CLAUDE.md deste repo.
+Mantenha o mesmo name para que o projeto tenha
+precedência sobre o global.</code></pre>
+</div>
+</div>
+</section>
+<!-- BLOCO: TELA SIMULADA -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">🖥️</span>
+<h2 class="text-2xl font-bold">Pantalla simulada: dos ámbitos en una sesión</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Mira cómo Claude Code muestra agentes de ambos alcances en una lista real. El <code class="text-blue-400">code-reviewer</code>
+        aparece del proyecto (tiene precedencia); los demás agentes vienen del global sin conflictos.
+      </p>
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<!-- barra de título -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700/60 border-b border-dark-600">
+<div class="flex items-center space-x-2">
+<span class="w-3 h-3 rounded-full bg-red-400/70"></span>
+<span class="w-3 h-3 rounded-full bg-amber-400/70"></span>
+<span class="w-3 h-3 rounded-full bg-blue-400/70"></span>
+</div>
+<span class="text-xs text-neutral-400 font-mono">claude code · meu-projeto · agentes disponibles</span>
+<span class="text-xs text-blue-400 font-mono">/agents list</span>
+</div>
+<!-- conteúdo terminal -->
+<div class="p-4 font-mono text-xs space-y-2">
+<p class="text-neutral-500"># Agentes cargados en la sesión:</p>
+<p class="text-neutral-500">#</p>
+<p class="text-neutral-500"># [PROYECTO] .claude/agents/</p>
+<p class="text-blue-400">  code-reviewer   <span class="text-neutral-500">→</span> <span class="text-neutral-300">.claude/agents/code-reviewer.md</span> <span class="text-emerald-400">[tiene precedencia]</span></p>
+<p class="text-blue-400">  test-runner      <span class="text-neutral-500">→</span> <span class="text-neutral-300">.claude/agents/test-runner.md</span></p>
+<p class="text-blue-400">  doc-writer       <span class="text-neutral-500">→</span> <span class="text-neutral-300">.claude/agents/doc-writer.md</span></p>
+<p class="text-neutral-500">#</p>
+<p class="text-neutral-500"># [GLOBAL] ~/.claude/agents/</p>
+<p class="text-sky-400">  code-reviewer    <span class="text-neutral-500">→</span> <span class="text-neutral-300">~/.claude/agents/code-reviewer.md</span> <span class="text-neutral-500">[sobrepuesto por el proyecto]</span></p>
+<p class="text-sky-400">  security-audit   <span class="text-neutral-500">→</span> <span class="text-neutral-300">~/.claude/agents/security-audit.md</span></p>
+<p class="text-sky-400">  meu-setup        <span class="text-neutral-500">→</span> <span class="text-neutral-300">~/.claude/agents/meu-setup.md</span></p>
+<p class="text-neutral-500">#</p>
+<p class="text-neutral-400"># Total: 5 agentes activos (1 superpuesto, 4 únicos)</p>
+<div class="text-neutral-400 pt-1 border-t border-dark-600 mt-2">
+<span class="text-blue-400">maestro · Sonnet</span>
+<span class="text-neutral-600 mx-2">|</span>
+<span class="text-neutral-500">contexto 8%</span>
+<span class="text-neutral-600 mx-2">|</span>
+<span class="text-neutral-500">meu-projeto/</span>
+</div>
+</div>
+</div>
+<p class="text-xs text-neutral-500">↑ Recreación ilustrativa. Nota el <code>code-reviewer</code> apareciendo en ambos ámbitos: el del proyecto tiene precedencia.</p>
+</section>
+<!-- BLOCO: EXERCÍCIO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">🎯</span>
+<h2 class="text-2xl font-bold">Ejercicio — decide el alcance de 4 agentes</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+          Para cada uno de los 4 agentes a continuación, decide si debe quedar dentro del alcance de <strong class="text-blue-400">proyecto</strong>
+          o en el <strong class="text-blue-400">global</strong>, y justifica con <em>una</em> razón objetiva.
+        </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-dark-800/60 rounded-lg p-5 border border-dark-600">
+<div class="text-xl mb-2">🔍</div>
+<h4 class="font-semibold text-white mb-1">A) sql-query-expert</h4>
+<p class="text-neutral-400 text-sm">Conoce el esquema de la base de datos de este proyecto. Genera consultas optimizadas para las tablas específicas del sistema.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5 border border-dark-600">
+<div class="text-xl mb-2">✍️</div>
+<h4 class="font-semibold text-white mb-1">B) pt-br-writer</h4>
+<p class="text-neutral-400 text-sm">Reescribe cualquier texto con mi estilo de escritura en portugués brasileño. Preferencias personales de tono y vocabulario.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5 border border-dark-600">
+<div class="text-xl mb-2">🧪</div>
+<h4 class="font-semibold text-white mb-1">C) e2e-test-runner</h4>
+<p class="text-neutral-400 text-sm">Ejecuta las pruebas end-to-end de este proyecto usando Playwright. Conoce los scripts de test:e2e de package.json.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5 border border-dark-600">
+<div class="text-xl mb-2">🔐</div>
+<h4 class="font-semibold text-white mb-1">D) security-scanner</h4>
+<p class="text-neutral-400 text-sm">Hace auditorías de seguridad en cualquier código. Busca vulnerabilidades conocidas (OWASP Top 10). Se usa en todos los proyectos.</p>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">✅ Criterio de verificación</h4>
+<p class="text-neutral-300 text-sm mb-3">Para cada agente, tu decisión es correcta si puedes responder <strong>sí</strong> a la pregunta correspondiente:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 font-bold">A:</span><span>Proyecto → <em>"¿El equipo necesita este agente para trabajar en este repositorio?"</em> (sí — el schema es del proyecto)</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 font-bold">B:</span><span>Global → <em>"¿Esto es una preferencia personal que no tiene relación con ningún proyecto específico?"</em> (sí — es tu estilo)</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 font-bold">C:</span><span>Proyecto → <em>"¿Este agente falla si se usa fuera de este repositorio específico?"</em> (sí — los scripts son de este proyecto)</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 font-bold">D:</span><span>Global → <em>"¿Este agente es útil en cualquier proyecto, independientemente del contexto?"</em> (sí — la seguridad es universal)</span></li>
+</ul>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5">
+<h4 class="font-semibold text-blue-400 mb-3">La pregunta que define el alcance</h4>
+<p class="text-neutral-300 text-sm"><em>"Este agente funciona <strong>fuera</strong> de este repositorio?»</em> — Si es así, propónlo para el ámbito global. Si el contexto del proyecto es esencial para que el agente tenga sentido, pertenece al proyecto. Si depende de datos sensibles que no deben incluirse en un commit, <em>debe</em> quedarse en el ámbito global.</p>
+</div>
+</div>
+</section>
+<!-- RESUMO / NAVEGAÇÃO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white"><code>.claude/agents/</code> en el repo</strong><span class="text-neutral-400"> — versionado, compartido con el equipo mediante git, pasa por revisión de código.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white"><code>~/.claude/agents/</code> global</strong><span class="text-neutral-400"> — solo tuyo, disponible en todos los proyectos, nunca se sube a git.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Compartir mediante git</strong><span class="text-neutral-400"> — los agentes del proyecto son miembros del repositorio, con historial y revisión de PR.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Solo tú</strong><span class="text-neutral-400"> — global es el cajón personal y portátil; no existe en CI/CD ni contamina el repo.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Mover = mover el <code>.md</code></strong><span class="text-neutral-400"> — no hay registro ni instalación; el alcance lo define la ruta del archivo.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Coexistencia</strong><span class="text-neutral-400"> — se cargan ambos ámbitos; el del proyecto tiene precedencia si hay nombres duplicados.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Modelo unificado</strong><span class="text-neutral-400"> — las skills, los hooks y los MCP siguen la misma lógica: proyecto × global.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-blue-400 mb-2">Próximo módulo:</h3>
+<p class="text-neutral-300">2.6 — Creando con <code>/agents</code> + cómo Claude elige. Como el atajo <code>/agents</code> funciona y el criterio que usa el maestro para decidir qué agente activar.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="modulo-2-4.html">← Módulo 2.4: Herramientas y permisos</a>
+<a class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors" href="modulo-2-6.html">Próximo módulo →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagentes — 2026 · un curso en formato
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Ruta 2 · En la práctica · Módulo 2.5</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    // Toggle de tópicos
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+  </script>
+</body>
+</html>

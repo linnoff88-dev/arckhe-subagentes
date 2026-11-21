@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Track 3 · Orchestration | Subagents</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+
+    /* ===== Light mode overrides - OBRIGATORIO ===== */
+    /* Parte 1 - Base */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-700\/50 { background-color: rgba(243,244,246,0.7); }
+    html:not(.dark) .bg-dark-700\/30 { background-color: rgba(243,244,246,0.5); }
+    html:not(.dark) .bg-dark-800\/50 { background-color: rgba(249,250,251,0.7); }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-200 { color: #1f2937; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Parte 2 - Cores de acento (trilha amber) */
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(146, 64, 14, 0.10); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(146, 64, 14, 0.07); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(146, 64, 14, 0.25); }
+    html:not(.dark) .border-amber-500\/20 { border-color: rgba(146, 64, 14, 0.18); }
+    html:not(.dark) .hover\:border-amber-500\/30:hover { border-color: rgba(146, 64, 14, 0.25); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .from-amber-900\/30 { --tw-gradient-from: rgba(120,53,15,0.10); }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-600 { background-color: #d97706; }
+    html:not(.dark) .hover\:bg-amber-500:hover { background-color: #f59e0b; }
+
+    /* Cores das outras trilhas (nav) */
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+
+    /* Parte 3 - Remove gradientes e cores especiais */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Parte 4 - Navbar */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Parte 5 - Bordas suavizadas no DARK mode (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* SVG: suavizar no tema claro */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha3/" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha3/" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha3/" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="./" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha3/" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagents</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentals</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">In practice</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10" href="index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orchestration</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Advanced</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- HEADER / HERO -->
+<header class="bg-gradient-to-b from-amber-900/30 to-dark-900 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<div class="flex items-center space-x-3 mb-3">
+<span class="px-3 py-1 text-xs font-semibold bg-amber-500/20 text-amber-400 rounded-full border border-amber-500/30">Track 3</span>
+<span class="text-neutral-500 text-sm">Subagents Course</span>
+</div>
+<h1 class="text-3xl sm:text-4xl font-bold mb-3">Model, cost, and orchestration</h1>
+<p class="text-neutral-400 text-lg mb-6 max-w-2xl">Choose the right model for each task, control multi-agent costs, and master coordination patterns that scale to dozens of subagents.</p>
+<!-- Hero SVG -->
+<div class="mb-8 rounded-xl overflow-hidden border border-amber-500/20">
+<svg aria-label="Amber orchestrator chooses a model for each task — Haiku, Sonnet, or Opus — and coordinates subagents that converge on a single result" class="w-full h-auto" role="img" viewbox="0 0 1000 240">
+<defs>
+<lineargradient id="t3h-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#fbbf24"></stop><stop offset="1" stop-color="#f59e0b"></stop>
+</lineargradient>
+<filter height="180%" id="t3h-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="t3h-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#f59e0b" opacity="0.12" r="1.3"></circle>
+</pattern>
+<marker id="t3h-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fbbf24"></path></marker>
+<marker id="t3h-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#t3h-grid)" height="240" width="1000" x="0" y="0"></rect>
+<!-- setas saindo do orquestrador -->
+<g fill="none" opacity="0.5" stroke="#fbbf24" stroke-width="1.8">
+<path d="M196,120 C300,120 320,38 452,38" marker-end="url(#t3h-ah)"></path>
+<path d="M196,120 C300,120 320,79 452,79" marker-end="url(#t3h-ah)"></path>
+<path d="M196,120 L452,120" marker-end="url(#t3h-ah)"></path>
+<path d="M196,120 C300,120 320,161 452,161" marker-end="url(#t3h-ah)"></path>
+<path d="M196,120 C300,120 320,202 452,202" marker-end="url(#t3h-ah)"></path>
+</g>
+<!-- setas convergindo ao resultado -->
+<g fill="none" opacity="0.5" stroke="#38bdf8" stroke-width="1.8">
+<path d="M588,38  C700,38  720,120 800,120" marker-end="url(#t3h-ahc)"></path>
+<path d="M588,79  C700,79  720,120 800,120" marker-end="url(#t3h-ahc)"></path>
+<path d="M588,120 L800,120" marker-end="url(#t3h-ahc)"></path>
+<path d="M588,161 C700,161 720,120 800,120" marker-end="url(#t3h-ahc)"></path>
+<path d="M588,202 C700,202 720,120 800,120" marker-end="url(#t3h-ahc)"></path>
+</g>
+<!-- caixa orquestrador -->
+<g filter="url(#t3h-glow)"><rect fill="#1f1604" height="64" rx="14" stroke="url(#t3h-grad)" stroke-width="2.5" width="156" x="40" y="88"></rect></g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="18" font-weight="700" text-anchor="middle" x="118" y="114">Orchestrator</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="12" opacity="0.7" text-anchor="middle" x="118" y="134">chooses the model</text>
+<!-- caixas de subagentes: modelo por tier -->
+<g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="22"></rect><text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="13" text-anchor="middle" x="520" y="43">Haiku · scanning</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="63"></rect><text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="13" text-anchor="middle" x="520" y="84">Haiku · reading</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#fbbf24" stroke-width="2" width="136" x="452" y="104"></rect><text fill="#fbbf24" font-family="Inter,sans-serif" font-size="13" text-anchor="middle" x="520" y="125">Sonnet · review</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#fbbf24" stroke-width="2" width="136" x="452" y="145"></rect><text fill="#fbbf24" font-family="Inter,sans-serif" font-size="13" text-anchor="middle" x="520" y="166">Sonnet · coding</text></g>
+<g class="wf-a"><rect fill="#1f1604" height="32" rx="9" stroke="#fbbf24" stroke-width="2.2" width="136" x="452" y="186"></rect><text fill="#fbbf24" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="520" y="207">Opus · decisions</text></g>
+</g>
+<!-- caixa resultado -->
+<g filter="url(#t3h-glow)"><rect fill="#1f1604" height="64" rx="14" stroke="url(#t3h-grad)" stroke-width="2.5" width="156" x="800" y="88"></rect></g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="16" font-weight="700" text-anchor="middle" x="878" y="114">Result</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="11" opacity="0.7" text-anchor="middle" x="878" y="133">controlled cost</text>
+</svg>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-4 gap-4 mt-2 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">6</div>
+<div class="text-xs text-neutral-400">Modules</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">36+</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">~3h</div>
+<div class="text-xs text-neutral-400">Duration</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Medium</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- MAPA DA TRILHA -->
+<section class="mb-12">
+<h2 class="text-2xl font-bold mb-6">Learning path map</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-1">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.1</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">🎯 Model by task</h3>
+<p class="text-xs text-neutral-400">Haiku, Sonnet, or Opus — no guessing</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-2">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.2</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">💰 The real savings</h3>
+<p class="text-xs text-neutral-400">Smart boss, low-cost fleet</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-3">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.3</span>
+<span class="text-xs text-neutral-500">~35 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">🔗 Chaining subagents</h3>
+<p class="text-xs text-neutral-400">Maestro coordinates; agents don’t call one another</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-4">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.4</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">🔍 The impartial reviewer</h3>
+<p class="text-xs text-neutral-400">Fresh context, honest verdict</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-5">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.5</span>
+<span class="text-xs text-neutral-500">~25 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">⚡ Dynamic workflows</h3>
+<p class="text-xs text-neutral-400">Dozens of agents, costs under control</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-6">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.6</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">🗺️ Orchestration patterns</h3>
+<p class="text-xs text-neutral-400">Parallel, pipeline, or fan-out?</p>
+</a>
+</div>
+</section>
+<!-- CONTEUDO DETALHADO -->
+<h2 class="text-2xl font-bold mb-6">Detailed content</h2>
+<!-- MÓDULO 3.1 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-1">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.1</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">🎯 Model by task</h3>
+<p class="text-neutral-400 text-sm">Haiku, Sonnet, and Opus have different costs and capabilities. Knowing when to use each one is the difference between an economical system and an unnecessarily expensive one.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🐦</span>
+<div><span class="font-medium">Haiku — the low-cost worker</span><span class="text-neutral-500 text-sm ml-2">- Scanning, searching, summarizing</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Haiku is the fastest and least expensive model in the Claude family. Ideal for repetitive, low-reasoning tasks: reading files, searching for patterns, summarizing short passages, and running commands.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Most subagents in a fleet don’t need deep reasoning. Using Haiku for them reduces the total cost by up to 10×. Choosing Opus for scanning is a budget mistake, not a quality mistake.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Very low cost per token; lower latency; own context (starts from scratch); does not inherit the orchestrator’s reasoning — receives explicit instructions.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">🎵</span>
+<div><span class="font-medium">Sonnet — the balanced builder</span><span class="text-neutral-500 text-sm ml-2">- Review, build, propose</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Sonnet balances reasoning ability and cost. Excellent for writing code, reviewing PRs, synthesizing results from other subagents, and making intermediate decisions.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">It’s Claude Code’s default model. In most workflows, Sonnet handles the “middle”: it receives raw data from Haiku and delivers refined material for Opus to evaluate.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Great for code generation and synthesis; medium cost; used as the conductor in mid-sized pipelines; replaces Opus in 80% of cases with no noticeable loss.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">🎻</span>
+<div><span class="font-medium">Opus — the expensive architect</span><span class="text-neutral-500 text-sm ml-2">- Final decision, security, architecture</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Opus has the deepest reasoning. Reserved for architectural decisions, security assessments, long-term synthesis, and situations where mistakes are costly.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Using Opus across the entire fleet multiplies the cost by 5–20×. Knowing how to identify the moments when only Opus will do (and those that don’t need it) is the central skill in this track.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">High cost; higher latency; better for multistep reasoning; use as the fleet lead for Haiku/Sonnet; never in the inner loop of cheap subagents.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🧩</span>
+<div><span class="font-medium">The empty-context trap</span><span class="text-neutral-500 text-sm ml-2">- The subagent starts from scratch</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Every subagent starts with clean context. It doesn’t know what you just discussed — it needs complete instructions in its description and in the conductor’s messages.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">A well-instructed Haiku outperforms a poorly instructed Opus. The chosen model only matters after the instructions are correct. The “trap” is paying more and expecting the model to guess the context.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">No history inheritance; the conductor passes the necessary context via a message; CLAUDE_CODE_SUBAGENT_MODEL overrides the fleet’s default model.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">📊</span>
+<div><span class="font-medium">Haiku × Sonnet × Opus decision table</span><span class="text-neutral-500 text-sm ml-2">- A practical rule for each task</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">A simple heuristic: Haiku for “read and report,” Sonnet for “build and review,” Opus for “decide and architect.” Apply it to tasks before coding the subagent.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Model assignment errors are invisible — the result looks the same, but the cost is 5–10× higher. Having the table committed to memory prevents automatic decisions to "use the most capable model".</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Haiku: search, reading, extraction, summarization. Sonnet: writing, code, synthesis, review. Opus: architecture, security, final evaluation, deep reasoning.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🔧</span>
+<div><span class="font-medium">Exercise: assign a model to 6 tasks</span><span class="text-neutral-500 text-sm ml-2">- Guided practice</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Given a hypothetical pipeline with 6 tasks (scan logs, write tests, review a PR, propose architecture, look up docs, assess security), assign the right model to each.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">The attribution exercise reinforces the heuristic. Getting it wrong in an exercise is cheap; getting it wrong in a real system with 100 subagents is costly.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Evaluation criterion: estimated cost × expected quality. An annotated answer key is in the full module.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-1')">View in Modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-1.html">View Full</a>
+</div>
+</div>
+<!-- MÓDULO 3.2 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-2">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.2</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">💰 The real savings</h3>
+<p class="text-neutral-400 text-sm">Multiagent costs ~15× more than a simple chat. Understanding why and how to control this is what separates prototypes from sustainable systems.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">📈</span>
+<div><span class="font-medium">Why multi-agent costs 15×</span><span class="text-neutral-500 text-sm ml-2">- The token multiplier</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Each subagent has its own context, system prompt, and round trip to the API. With 10 subagents running in parallel, the number of tokens consumed multiplies quickly.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Without this awareness, it’s easy to create workflows that cost tens of dollars per run. Knowing the multiplier lets you plan ahead—and know when multi-agent is worth the price.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Cost per run = (input + output tokens) × price × number of subagents; system prompt repeated per agent; context passed by the orchestrator counts too.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">👑</span>
+<div><span class="font-medium">Lead standard + fleet</span><span class="text-neutral-500 text-sm ml-2">- Opus coordinates, Haiku works</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">The boss (Opus or Sonnet) orchestrates the work: decides on a strategy, breaks down tasks, and evaluates results. The fleet (Haiku) executes in parallel: reads, searches, extracts, and reports.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">It’s the best value pattern: one expensive agent makes the smart decisions while many cheap agents do the mechanical work. Quality goes up; average cost per result goes down.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">1 boss, N workers; the boss evaluates and consolidates; workers report back; the decision of "what to do" stays with the boss, "how to do it" with the fleet.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">⚙️</span>
+<div><span class="font-medium">CLAUDE_CODE_SUBAGENT_MODEL</span><span class="text-neutral-500 text-sm ml-2">- Force the fleet model</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">An environment variable that forces all subagents to use a specific model, regardless of the system default. Useful for controlling costs in large batches.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Without this variable, subagents use the default model—which may be Sonnet or Opus. With it, you ensure the entire fleet uses Haiku without changing each agent’s code.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">`CLAUDE_CODE_SUBAGENT_MODEL=claude-haiku-4-5` in the environment; overrides only subagents (the main agent keeps the original model); useful in high-scale workflows.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🔄</span>
+<div><span class="font-medium">maxTurns — limit turns</span><span class="text-neutral-500 text-sm ml-2">- Avoid costly loops</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">A parameter that limits how many back-and-forth rounds a subagent can make. Each turn consumes tokens. Without a limit, an agent stuck in a loop can spend indefinitely.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Subagents occasionally get caught in trial-and-error loops. With `maxTurns` set, the maximum cost per run is predictable — and the agent fails in a controlled way instead of silently spending more.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Configured in the subagent's CLAUDE.md or via the SDK; typical value: 10–20 turns; after the limit, the agent returns what it has so far.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">📉</span>
+<div><span class="font-medium">When multi-agent use is worth the cost</span><span class="text-neutral-500 text-sm ml-2">- ROI of parallelism</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Objective criteria for deciding: parallel tasks that would each take 10+ min sequentially; jobs with an "output wall" that would cause truncation in a single context; codebase with 10+ interdependent files.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Using multi-agent for small tasks is like paying 15× for 0% real gain. A clear criterion avoids that waste and justifies the cost when the task really requires it.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Positive signal: genuine parallelism, context separation, large output. Negative signal: short sequential task, need for shared context, simple result.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🛠️</span>
+<div><span class="font-medium">Exercise: design a manager/worker split</span><span class="text-neutral-500 text-sm ml-2">- Model a real job</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Given a repository analysis job (identify code smells in 50 files), design the division: which agent is the lead, how many workers, which model for each role, and how the results are consolidated.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Designing before implementing avoids costly redesigns. The exercise makes you think about task granularity, estimated cost, and failure points.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Deliverable: a simple diagram (structured text is fine) showing roles, models, data flow, and estimated cost per run.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-2')">View in Modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-2.html">View Full</a>
+</div>
+</div>
+<!-- MÓDULO 3.3 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-3">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.3</span>
+<span class="text-xs text-neutral-500">~35 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">🔗 Chaining subagents</h3>
+<p class="text-neutral-400 text-sm">The conductor coordinates A→B→C. Skills and agents can call each other; agents, however, never call other agents. Understanding this rule prevents architectures that Claude doesn’t support.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🎼</span>
+<div><span class="font-medium">The orchestrator: central coordination point</span><span class="text-neutral-500 text-sm ml-2">- Only it sees the full picture</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">The orchestrator is the main agent that receives the user’s task, breaks it down into subtasks, and dispatches each one to a subagent. It waits for the results, consolidates them, and delivers the final answer.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Without an explicit conductor, there’s no coordination—the subagents don’t “talk” to one another. Recognizing the conductor as the single point of orchestration is central to workflow design.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Star topology: conductor at the center, subagents at the endpoints; the conductor explicitly passes context to each subagent; results return to the conductor and never circulate between subagents.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">🚫</span>
+<div><span class="font-medium">Golden rule: agents don't call agents</span><span class="text-neutral-500 text-sm ml-2">- The forbidden arrow</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">One agent (CLAUDE.md) cannot invoke another agent directly. Invocation happens through a skill (which can call agents) or through Claude Code itself when it runs a higher-level workflow.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Designing an agent that tries to call another agent results in an execution error or undefined behavior. Knowing this limit helps you avoid impossible architectures and points to the right approach (through a skill).</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Agent calls a skill; skill calls an agent; agent does not call an agent. The control loop always stays in the main Claude Code session or an orchestrating skill.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">🔀</span>
+<div><span class="font-medium">Skills as orchestrators</span><span class="text-neutral-500 text-sm ml-2">- The link that connects agents</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">A skill (an instruction `.md` file) can contain logic that triggers multiple agents in sequence or in parallel. This is the right pattern for creating complex pipelines without violating the agents-don’t-call-agents rule.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Skills are the “glue” of the ecosystem. Understanding how a skill launches agents lets you build workflows with N steps without needing a special orchestration agent.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Skill = instruction to Claude Code; Claude Code runs the invoked agent; the skill defines the logical sequence; intermediate state can be passed via files or messages.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">➡️</span>
+<div><span class="font-medium">Sequential chain A → B → C</span><span class="text-neutral-500 text-sm ml-2">- Pipeline of dependent stages</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">When the result from A is needed for B to start, and the result from B is needed for C to start, you have a sequential pipeline. The conductor waits for each step before triggering the next.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Mixing sequential and parallel work without realizing it creates race conditions or incorrect results. Identifying dependencies between tasks is the first step in designing any pipeline.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Data dependency = sequential; independence = parallel; the orchestrator decides the order based on dependencies; pass A’s output as B’s input via a message or file.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🤝</span>
+<div><span class="font-medium">One-to-one relationship: subagents don’t talk to each other</span><span class="text-neutral-500 text-sm ml-2">- Mandatory star topology</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Each subagent communicates only with the conductor that invoked it. There is no side channel between subagent A and subagent B. For A to “pass something” to B, the conductor has to relay it.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Projects that assume direct communication between subagents don’t work. Knowing this limit before designing helps you avoid architectures that look elegant on paper but are impossible in practice.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Maestro is the only integration point; “conversations” between subagents are an illusion — the maestro mediates; use shared files when two agents need the same data.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">✏️</span>
+<div><span class="font-medium">Exercise: model a 3-step sequence</span><span class="text-neutral-500 text-sm ml-2">- Practice pipeline design</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Design (in text or a diagram) a 3-step pipeline for the job: “find open issues → prioritize by impact → draft triage comments.” Identify which steps are sequential and which can run in parallel.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">The ability to break a job into steps with clear dependencies is the foundation of any orchestration. Getting this wrong is the most common mistake people make when starting with multi-agent systems.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Deliverable: a diagram with directional arrows, selected models, handoff points, and a data transfer mechanism (message or file).</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-3')">View in Modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-3.html">View Full</a>
+</div>
+</div>
+<!-- MÓDULO 3.4 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-4">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.4</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">🔍 The impartial reviewer</h3>
+<p class="text-neutral-400 text-sm">Fresh context = honest verdict. Whoever built the artifact should not be the one to validate it—separating builder and reviewer roles is the most powerful quality control practice in multi-agent work.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🧠</span>
+<div><span class="font-medium">Why clean context = honest verdict</span><span class="text-neutral-500 text-sm ml-2">- The builder's bias</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">The agent that built an artifact carries the entire history of decisions that led to that result in its context. This context induces confirmation bias — it tends to validate what it has already decided.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">A reviewer with clean context has no access to the “why” behind the decisions — they see only the result. That isolation leads to more objective criticism and identifies problems the builder overlooked.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Clean context = starts from scratch; doesn't inherit the builder's "internal logic"; receives only the artifact + evaluation criteria; produces feedback without anchoring to the original decisions.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">🏗️</span>
+<div><span class="font-medium">Separate the builder from the reviewer</span><span class="text-neutral-500 text-sm ml-2">- Two agents, distinct roles</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">The builder receives the task and produces the artifact (code, plan, research). The reviewer receives the artifact + criteria and produces a quality report. They are two distinct subagents, called in sequence by the conductor.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Separating roles improves quality without increasing the complexity of each individual agent—each one does one thing and does it well. The conductor decides whether the feedback calls for another builder iteration.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Flow: conductor → builder (produces) → conductor → reviewer (critiques) → conductor (decides whether to iterate or publish); the reviewer has no access to the builder's internal process.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">📋</span>
+<div><span class="font-medium">Apply to code, planning, and research</span><span class="text-neutral-500 text-sm ml-2">- The pattern works across all domains</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">The builder-reviewer pattern works for any type of artifact: code (the reviewer checks for bugs and style), a plan (the reviewer checks feasibility and risks), research (the reviewer checks sources and consistency).</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Recognizing that the same pattern applies across different domains lets you reuse the same orchestration architecture — only the criteria given to the reviewer change, not the pipeline.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Explicit criteria in the reviewer prompt; domain-specific (code: correctness, style; plan: feasibility, risk; research: sources, consistency); the reviewer delivers a structured report.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🌟</span>
+<div><span class="font-medium">plan-roaster and code-reviewer as real examples</span><span class="text-neutral-500 text-sm ml-2">- Ready-to-use reviewer subagents</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">`plan-roaster` and `code-reviewer` are subagents available in the Claude Code ecosystem that implement the reviewer pattern. They are concrete examples to study and adapt.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Studying an existing reviewer reveals how the criteria are passed, how the output is structured, which model to use for review, and how the orchestrator uses the result. It’s faster than designing from scratch.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Reviewer receives: artifact + criteria + scope; produces: report with findings categorized by severity; the orchestrator decides what to do based on the report.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🔁</span>
+<div><span class="font-medium">Builder-reviewer iteration loop</span><span class="text-neutral-500 text-sm ml-2">- When to iterate and when to stop</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">After the reviewer delivers the report, the conductor decides: are the findings critical (another builder iteration) or acceptable (publish)? This loop can repeat 2–3 times before reaching a stopping criterion.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Without a stopping criterion, the loop can run indefinitely. Defining “when it’s good enough” before execution is just as important as designing the agents.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Stop criterion: zero critical findings, or N iterations reached, or cost deadline; the orchestrator encodes the criterion; the reviewer reports severity to make the decision easier.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🎯</span>
+<div><span class="font-medium">Exercise: run the reviewer on M3.3</span><span class="text-neutral-500 text-sm ml-2">- Practice with a real artifact</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Use the pipeline diagram you created in M3.3 as an artifact. Give it to a reviewer (you can be the reviewer yourself with “clean context,” or use a code-reviewer subagent) with these criteria: feasibility, efficiency, failure points.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Reviewing your own work with an outside perspective (even a simulated one) is the meta-quality skill. This exercise closes the M3.3 → M3.4 loop: you built it, and now you evaluate it.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Deliverable: a report with findings (at least 1 improvement identified); reflect on what you would change in the M3.3 diagram after the review.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-4')">View in Modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-4.html">View Full</a>
+</div>
+</div>
+<!-- MÓDULO 3.5 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-5">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.5</span>
+<span class="text-xs text-neutral-500">~25 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">⚡ Dynamic workflows</h3>
+<p class="text-neutral-400 text-sm">With the `ultracode` trigger, dozens or hundreds of subagents can be launched in a single session. The power is real — and so is the cost. Knowing when to pull that lever is the point of this module.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🚀</span>
+<div><span class="font-medium">The ultracode trigger</span><span class="text-neutral-500 text-sm ml-2">- The high-scale mode</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">`ultracode` (previously called "workflow") is the trigger that instructs Claude Code to operate in high-scale mode: it breaks the job into dozens of parallel tasks and launches subagents for each one.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Activating `ultracode` for small jobs wastes budget. Knowing what the trigger does under the hood lets you use it surgically — only when the scale justifies it.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Automatic planning mode + aggressive parallelization; Claude Code estimates the number of subagents before execution; you can confirm or cancel; estimated cost is visible before the commit.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">🔢</span>
+<div><span class="font-medium">The case of the 41 subagents</span><span class="text-neutral-500 text-sm ml-2">- Real scale documented</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Documented real case where a single job launched 41 subagents in parallel to refactor a large repository. The result was delivered in a fraction of the time it would have taken sequentially.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">The concrete case grounds the concept: this isn’t theory. It shows what’s possible, what the actual cost was, and what worked and what problems came up during large-scale execution.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">41 Haiku subagents; Sonnet orchestrator; task: refactor 80+ files; estimated cost: ~$8 per run; total time: ~6 min vs. ~2h sequentially; test coverage maintained.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">💸</span>
+<div><span class="font-medium">Cost and session limit</span><span class="text-neutral-500 text-sm ml-2">- Budget before execution</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Sessions with dozens of subagents consume tokens quickly. API rate limits and Claude Code session limits can interrupt a workflow midway.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Not planning the budget before an ultracode leads to incomplete jobs and wasted costs. Understanding the limits lets you size the job correctly — or split it into smaller batches.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Rate limits per minute and per day; Claude Code session limit (tokens per window); batching strategy: split into groups of 10–20 subagents to stay within the limits.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">✅</span>
+<div><span class="font-medium">Signals that the job calls for a workflow</span><span class="text-neutral-500 text-sm ml-2">- Scale checklist</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Practical checklist: 10+ files to modify, genuinely parallel tasks (with no dependencies on one another), expected output that would cause truncation in a single context, large-scale refactoring, parallel analysis of multiple modules.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">The checklist prevents decisions based on intuition. With it, you can reach a "yes/no for workflow" in 30 seconds, before running anything.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Any strong “yes” on the checklist points to a workflow; red flags: small task, shared context needed, interdependent results; when in doubt, don't use a workflow.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🛡️</span>
+<div><span class="font-medium">Partial failure recovery</span><span class="text-neutral-500 text-sm ml-2">- When some subagents fail</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">In workflows with 40+ subagents, partial failures are expected. The orchestrator needs to detect which subtasks failed and decide whether to retry, ignore, or abort the entire job.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Jobs without a recovery strategy fail completely when any subagent fails. Designing failure handling before execution reduces rework costs and increases robustness.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Log results by subagent; identify failures by ID; use a “retry once, then skip” strategy; the orchestrator consolidates results, marking them incomplete where needed.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🧪</span>
+<div><span class="font-medium">Exercise: decide yes/no for a workflow</span><span class="text-neutral-500 text-sm ml-2">- Apply the checklist to 3 scenarios</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Given 3 scenarios (A: refactor 1 file; B: analyze 100 closed PRs; C: write tests for 15 modules), apply the checklist and answer: workflow or not? Justify each decision.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Practicing binary decisions with justification is the module’s key skill. Answers without justification don’t count—the reasoning is the deliverable, not the yes or no.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Answer key: A = no (single file); B = yes (100 independent parallel tasks); C = yes (15 separable modules); the full module includes a detailed analysis of each case.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-5')">View in Modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-5.html">View Full</a>
+</div>
+</div>
+<!-- MÓDULO 3.6 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-6">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.6</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">🗺️ Orchestration patterns</h3>
+<p class="text-neutral-400 text-sm">Independent parallelism, sequential pipeline, or fan-out? Each topology has different use cases, advantages, and costs. This module wraps up the learning path with a complete map of the options.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">⬛</span>
+<div><span class="font-medium">Independent parallelism</span><span class="text-neutral-500 text-sm ml-2">- No dependency between agents</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">N subagents running at the same time, each with its own isolated task and no dependencies between them. The orchestrator launches them all and waits for them all to finish before consolidating.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">It’s the most efficient pattern for uniform tasks at scale: analyze N files, search N documents, generate N drafts. Recognizing when tasks are genuinely independent is a prerequisite.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Full independence: no subagent needs another’s results; the orchestrator syncs at the end; cost = N × individual cost; speedup = N× (limited by the rate limit).</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">➡️</span>
+<div><span class="font-medium">Sequential pipeline</span><span class="text-neutral-500 text-sm ml-2">- Each step feeds the next</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Stages A → B → C, where each stage’s output is the next stage’s input. The orchestrator runs them one at a time, waiting for each result before proceeding.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">For tasks with data dependencies, the pipeline is the only correct pattern. Forcing parallelism where there are dependencies leads to errors or inconsistent results—recognizing dependencies is essential.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Total latency = sum of individual latencies; there’s no speedup from parallelism; each step can use a different model (e.g., Haiku collects, Sonnet synthesizes, Opus decides).</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">📡</span>
+<div><span class="font-medium">Fan-out with aggregation</span><span class="text-neutral-500 text-sm ml-2">- Fans out to many, collects from one</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">1 input → N parallel subagents → 1 aggregated result. The conductor launches N workers with different parts of the problem, waits for everyone, and passes the N results to an aggregator that synthesizes the final result.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Fan-out is the ultracode pattern. Understanding the "dispatcher → workers → aggregator" structure lets you design any high-scale workflow and understand what Claude Code does under the hood when you use ultracode.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Dispatcher: the conductor that splits the input; workers: Haiku/Sonnet in parallel; aggregator: a separate agent (Sonnet/Opus) that consolidates; final result: one, coherent, complete.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">💬</span>
+<div><span class="font-medium">Subagent × agent teams</span><span class="text-neutral-500 text-sm ml-2">- When agents talk to each other</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Agent teams are configurations where multiple agents share context and communicate directly — unlike classic subagents with a star topology. They cost more because they keep multiple contexts open.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Knowing the difference helps you avoid confusing the two architectures. Agent teams are rare in Claude Code and generally more expensive and complex. For most cases, subagents with a central orchestrator are more efficient.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Subagents: star topology, central conductor, isolated contexts, lower cost. Agent teams: communication graph, partially shared contexts, higher cost, less common.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">📏</span>
+<div><span class="font-medium">“10+ files or wall of output” rule</span><span class="text-neutral-500 text-sm ml-2">- Quick topology heuristic</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Practical rule of thumb: if the job involves 10+ separable files OR would produce output that would be truncated in a single context, use fan-out or parallel processing. Otherwise, use a sequential pipeline or a single agent.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">Having a numerical heuristic avoids detailed analysis for every job. "10 files" is the practical threshold derived from real-world experience — below that, the multiagent overhead generally isn't worth it.</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">10 files = ~threshold for overhead; "output wall" = a result that would use &gt; 50% of the context; both are indicators, not absolute rules; the operator makes the final call.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🏆</span>
+<div><span class="font-medium">Exercise: choose a topology for 3 problems</span><span class="text-neutral-500 text-sm ml-2">- Close the track with practice</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">What it is:</span><p class="text-neutral-300 text-sm">Given 3 problems (A: translate 30 Markdown files; B: generate release notes from 50 commits analyzed in order; C: review code + propose a refactor + implement it), choose the topology and justify it.</p></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span><p class="text-neutral-300 text-sm">The exercise wraps up the path: you apply topology vocabulary to real problems. Answer key: A = independent parallel; B = fan-out + pipeline (parallel collection, sequential synthesis); C = pipeline (3 dependent stages).</p></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span><p class="text-neutral-300 text-sm">Deliverable: a problem × topology × rationale × selected models table. The full module includes a reference implementation for each case.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-6')">View in Modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-6.html">View Full</a>
+</div>
+</div>
+</main>
+<!-- MODAIS (iframe) -->
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-1" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.1</span><span class="font-semibold">Model per task</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-1.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-2" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.2</span><span class="font-semibold">The real savings</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-2.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-3" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.3</span><span class="font-semibold">Chaining subagents</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-3.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-4" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.4</span><span class="font-semibold">The impartial reviewer</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-4.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-5" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.5</span><span class="font-semibold">Dynamic workflows</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-5.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-6" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.6</span><span class="font-semibold">Orchestration patterns</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-6.html"></iframe>
+</div>
+</div>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-10 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<p class="text-neutral-300 mb-2">Course <strong>Subagents</strong> · Track 3 · Orchestration · 2026</p>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
+      document.body.style.overflow = 'auto';
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

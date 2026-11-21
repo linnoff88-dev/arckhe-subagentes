@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The complete frontmatter | Subagents</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha blue T2) */
+    html:not(.dark) .text-blue-400 { color: #1d4ed8; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(29, 78, 216, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(29, 78, 216, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(29, 78, 216, 0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(29, 78, 216, 0.18); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #1d4ed8; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(29, 78, 216, 0.08); }
+
+    /* Light mode - cores de apoio usadas nos boxes (red erros / emerald ok) */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(29, 78, 216, 0.08); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - diagramas SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas e linhas divisórias mais suaves (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Animações dos agentes nos diagramas */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes wf-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.3s} .wf-a:nth-child(3){animation-delay:.6s}
+      .wf-a:nth-child(4){animation-delay:.9s} .wf-a:nth-child(5){animation-delay:1.2s}
+      .wf-float { animation: wf-float 3s ease-in-out infinite; }
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha2/modulo-2-1.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha2/modulo-2-1.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha2/modulo-2-1.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha2/modulo-2-1.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-2-1.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha2/modulo-2-1.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagents</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentals</span>
+</a>
+<!-- Trilha 2 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10" href="index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">In practice</span>
+</a>
+<!-- Trilha 3 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orchestration</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Advanced</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-blue-400" href="../../index.html">Start</a>
+<span>/</span>
+<a class="hover:text-blue-400" href="index.html">Track 2</a>
+<span>/</span>
+<span class="text-blue-400">Module 2.1</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">
+        MODULE 2.1 · Track 2 · Building in practice
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">📋 The complete frontmatter</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        O <strong class="text-blue-400">frontmatter</strong> is your subagent's control panel—the YAML fields that sit
+        between <code class="text-blue-400">---</code> e <code class="text-blue-400">---</code> at the top of the file <code>.md</code>.
+        Each field has a specific responsibility: <strong class="text-blue-400">configure what, with what, how, and where</strong>
+        the agent runs.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">7</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">~30</div>
+<div class="text-xs text-neutral-400">Minutes</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">Basic</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">Practice</div>
+<div class="text-xs text-neutral-400">Type</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- ABERTURA + SVG DIAGRAMA (frontmatter rotulado) -->
+<section class="mb-12">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Imagine the frontmatter as the <strong class="text-blue-400">spec sheet</strong> of a collaborator: name, available
+        tools, cognitive model, memory, and general behavior pattern. Claude Code reads
+        <strong class="text-blue-400">frontmatter only</strong> to decide whether to call this agent — the full body
+        is loaded only when the agent is actually invoked. Every field you omit becomes a default value; every field you
+        fill in becomes a <strong class="text-blue-400">deliberate decision</strong>.
+      </p>
+<!-- SVG: frontmatter rotulado — aninhamento (caixa grande .md com campos internos) -->
+<div class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-3 sm:p-4 mb-2 overflow-hidden">
+<svg aria-label="Diagram showing a .md file divided into two areas: the upper area is the frontmatter (YAML), with the fields name, description, tools, model, color, and memory labeled with arrows; the lower area is the agent’s body (Markdown)" class="w-full h-auto" role="img" viewbox="0 0 1000 320">
+<defs>
+<lineargradient id="m21-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#60a5fa"></stop><stop offset="1" stop-color="#3b82f6"></stop>
+</lineargradient>
+<lineargradient id="m21-cyan" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#38bdf8"></stop><stop offset="1" stop-color="#0ea5e9"></stop>
+</lineargradient>
+<filter height="160%" id="m21-glow" width="160%" x="-30%" y="-30%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="28" id="m21-grid" patternunits="userSpaceOnUse" width="28">
+<circle cx="1.2" cy="1.2" fill="#3b82f6" opacity="0.10" r="1.2"></circle>
+</pattern>
+<marker id="m21-ah" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="4"><path d="M0,0 L7,4 L0,8 L2,4 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m21-grid)" height="320" width="1000" x="0" y="0"></rect>
+<!-- Caixa externa: o arquivo .md -->
+<g filter="url(#m21-glow)">
+<rect fill="#0e1622" height="278" rx="16" stroke="url(#m21-grad)" stroke-width="2" width="510" x="80" y="24"></rect>
+</g>
+<!-- Título do arquivo -->
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="13" font-weight="600" x="100" y="54">code-reviewer.md</text>
+<!-- Separador entre frontmatter e corpo -->
+<line opacity="0.5" stroke="#3b82f6" stroke-dasharray="6 4" stroke-width="1.5" x1="80" x2="590" y1="190" y2="190"></line>
+<!-- Label zona frontmatter -->
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="11" opacity="0.6" x="96" y="76">--- frontmatter (YAML)</text>
+<!-- Campos do frontmatter -->
+<text fill="#93c5fd" font-family="Inter,sans-serif" font-size="12" font-weight="600" x="104" y="104">name:</text>
+<text fill="#e5e7eb" font-family="Inter,sans-serif" font-size="12" x="160" y="104">code-reviewer</text>
+<text fill="#93c5fd" font-family="Inter,sans-serif" font-size="12" font-weight="600" x="104" y="125">description:</text>
+<text fill="#e5e7eb" font-family="Inter,sans-serif" font-size="12" x="193" y="125">Reviews the diff for bugs and flaws</text>
+<text fill="#93c5fd" font-family="Inter,sans-serif" font-size="12" font-weight="600" x="104" y="146">tools:</text>
+<text fill="#e5e7eb" font-family="Inter,sans-serif" font-size="12" x="152" y="146">Read, Grep, Glob</text>
+<text fill="#93c5fd" font-family="Inter,sans-serif" font-size="12" font-weight="600" x="104" y="167">model:</text>
+<text fill="#e5e7eb" font-family="Inter,sans-serif" font-size="12" x="156" y="167">claude-sonnet-4-5</text>
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="11" opacity="0.6" x="104" y="184">---</text>
+<!-- Zona corpo -->
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="11" opacity="0.6" x="96" y="208">body (Markdown — agent instructions)</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="12" x="104" y="230">You are a senior code reviewer…</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="12" x="104" y="250">1. Run git diff to see changes</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="12" x="104" y="270">2. Flag bugs, security holes…</text>
+<text fill="#4b5563" font-family="Inter,sans-serif" font-size="11" x="104" y="290">…</text>
+<!-- Labels externos com setas -->
+<!-- name -->
+<line marker-end="url(#m21-ah)" opacity="0.7" stroke="#38bdf8" stroke-width="1.5" x1="635" x2="591" y1="104" y2="104"></line>
+<g class="wf-a"><rect fill="#0e1b26" height="28" rx="7" stroke="#38bdf8" stroke-width="1.5" width="120" x="636" y="90"></rect>
+<text fill="#7dd3fc" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="696" y="108">🏷️ name</text></g>
+<!-- description -->
+<line marker-end="url(#m21-ah)" opacity="0.7" stroke="#38bdf8" stroke-width="1.5" x1="635" x2="591" y1="125" y2="125"></line>
+<g class="wf-a"><rect fill="#0e1b26" height="28" rx="7" stroke="#38bdf8" stroke-width="1.5" width="160" x="636" y="111"></rect>
+<text fill="#7dd3fc" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="716" y="129">🎯 description (trigger)</text></g>
+<!-- tools -->
+<line marker-end="url(#m21-ah)" opacity="0.7" stroke="#38bdf8" stroke-width="1.5" x1="635" x2="591" y1="146" y2="146"></line>
+<g class="wf-a"><rect fill="#0e1b26" height="28" rx="7" stroke="#38bdf8" stroke-width="1.5" width="130" x="636" y="132"></rect>
+<text fill="#7dd3fc" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="701" y="150">🔧 tools (permissions)</text></g>
+<!-- model -->
+<line marker-end="url(#m21-ah)" opacity="0.7" stroke="#38bdf8" stroke-width="1.5" x1="635" x2="591" y1="167" y2="167"></line>
+<g class="wf-a"><rect fill="#0e1b26" height="28" rx="7" stroke="#38bdf8" stroke-width="1.5" width="130" x="636" y="153"></rect>
+<text fill="#7dd3fc" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="701" y="171">🧠 model (which Claude)</text></g>
+<!-- corpo -->
+<line marker-end="url(#m21-ah)" opacity="0.5" stroke="#60a5fa" stroke-width="1.5" x1="635" x2="591" y1="240" y2="240"></line>
+<g filter="url(#m21-glow)"><rect fill="#0e1622" height="28" rx="7" stroke="url(#m21-grad)" stroke-width="1.5" width="120" x="636" y="226"></rect>
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="696" y="244">📝 body (brain)</text></g>
+</svg>
+</div>
+<p class="text-xs text-neutral-500 mb-0">↑ Anatomy of a file <code>.md</code>: frontmatter (YAML) + body (Markdown). Claude Code reads the frontmatter to decide; the body defines the behavior.</p>
+</section>
+<!-- DIVISOR -->
+<h2 class="text-2xl font-bold mb-6">Detailed content</h2>
+<!-- TÓPICO 1 — name -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">🏷️ <code>name</code> — the agent’s identity</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The field <code class="text-blue-400">name</code> defines the <strong class="text-blue-400">unique identifier</strong> of your
+        subagent. This is the name the conductor uses to call it — and the name that appears in the status line while the agent is running.
+        Think of it as the <strong class="text-blue-400">professional nickname</strong> from the collaborator.
+      </p>
+<!-- Tip box -->
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center">
+<span class="mr-2">📐</span> Format rules
+        </h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span><strong>Lowercase letters</strong> e <strong>hyphens</strong> — never spaces, underscores, or uppercase letters.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span>Must be unique within the project or global folder <code>~/.claude/agents/</code>.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span>Must be <strong>role description</strong>, not the technology — prefer <code>code-reviewer</code> a <code>typescript-checker</code>.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-1">•</span><span>Practical maximum: 30–40 characters — appears in the UI and needs to be readable.</span></li>
+</ul>
+</div>
+<!-- CODE BOX: bons e maus nomes -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">name examples</span>
+<span class="text-xs text-blue-400">YAML frontmatter</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-emerald-400"># BOM — papel claro, minúsculas, hífens</span>
+<span class="text-blue-400">name</span>: code-reviewer
+<span class="text-blue-400">name</span>: doc-writer
+<span class="text-blue-400">name</span>: sql-optimizer
+<span class="text-blue-400">name</span>: security-auditor
+
+<span class="text-red-400"># RUIM — espaço, maiúscula, underscore</span>
+<span class="text-neutral-500">name: Code Reviewer     # espaço + maiúscula</span>
+<span class="text-neutral-500">name: code_reviewer     # underscore</span>
+<span class="text-neutral-500">name: TypescriptChecker # camelCase</span></code></pre>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div>
+<span class="text-blue-400 font-semibold">What it is:</span>
+<p class="text-neutral-300 text-sm">unique agent identifier — lowercase and hyphens, no spaces.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">a wrong name makes Claude Code ignore the file or fail silently when loading the agent.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">kebab-case · uniqueness by scope · readability in the UI · role &gt; technology.</p>
+</div>
+</div>
+</section>
+<!-- TÓPICO 2 — description -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">🎯 <code>description</code> — the invocation trigger</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        A <code class="text-blue-400">description</code> is the field <strong class="text-blue-400">more strategic</strong> from
+        the frontmatter. It's the text the conductor reads to decide whether to call this agent. Think of it as the
+        <strong class="text-blue-400">consulting room entrance sign</strong>: "cardiologist — chest pain, cardiac checkup".
+        Without the right sign, the orchestrator walks through the door and doesn't know what's inside.
+      </p>
+<!-- Timeline: como o maestro usa a description -->
+<div class="space-y-4 mb-6">
+<h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-wide">How the conductor uses the description</h3>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold text-sm">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">You make a request</h4>
+<p class="text-sm text-neutral-400">"Review the code I just wrote and point out bugs."</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold text-sm">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">The conductor reads the <code>name</code> + <code>description</code> of all agents</h4>
+<p class="text-sm text-neutral-400">Doesn't read the body — only the header. It's fast and cheap in tokens.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold text-sm">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">Does the semantic matching</h4>
+<p class="text-sm text-neutral-400">If the description of the <code>code-reviewer</code> says "review the diff for bugs," the request matches. The agent is called.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center"><span class="text-blue-400 font-bold text-sm">4</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">Only then load the entire body</h4>
+<p class="text-sm text-neutral-400">The body’s token cost only exists when the agent is invoked — not during the “selection process.”</p>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Tip: explicitly include “when to use”</h3>
+<p class="text-neutral-300 text-sm">The most effective description <strong>names the trigger</strong>: "Use after any code change" or "Use when the user asks to optimize an SQL query". This direct instruction removes ambiguity from the orchestrator's match.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div>
+<span class="text-blue-400 font-semibold">What it is:</span>
+<p class="text-neutral-300 text-sm">the text the conductor reads to decide whether to call this agent — the invocation trigger.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">a vague description means the agent is never called; a specific description ensures it's invoked at the right moment.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">semantic matching · explicit “when to use” · zero selection cost · progressive disclosure.</p>
+</div>
+</div>
+</section>
+<!-- TÓPICO 3 — tools -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">🔧 <code>tools</code> — declared permissions</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The field <code class="text-blue-400">tools</code> é a <strong class="text-blue-400">tool allowlist</strong>
+        that the subagent can use. If you don't declare anything, it inherits all the orchestrator's tools — which may be
+        too many. Restricting tools is a <strong class="text-blue-400">security and focus</strong>: a reviewer
+        who only reads cannot accidentally write files.
+      </p>
+<!-- Grid ✓/✗ #1: tools certas para cada tipo de agente -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Principle of least privilege</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><code>code-reviewer</code>: only <code>Read, Grep, Glob</code></span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><code>doc-writer</code>: <code>Read, Write</code> (without Bash access)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><code>sql-runner</code>: only <code>Bash</code> (for psql)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Declare only what the task actually requires</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Common pitfalls</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Leave without <code>tools</code> (inherits everything from the orchestrator)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Give <code>Bash</code> to an agent that only reads files</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Give <code>Write</code> to a reviewer (can overwrite code)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>List tools the agent never uses (noise)</span></li>
+</ul>
+</div>
+</div>
+<!-- Tip box: ferramentas disponíveis -->
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Most-used built-in tools</h3>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600"><code class="text-blue-400">Read</code><p class="text-neutral-400 text-xs mt-1">reads project files</p></div>
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600"><code class="text-blue-400">Write</code><p class="text-neutral-400 text-xs mt-1">creates / edits files</p></div>
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600"><code class="text-blue-400">Edit</code><p class="text-neutral-400 text-xs mt-1">edits specific sections</p></div>
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600"><code class="text-blue-400">Bash</code><p class="text-neutral-400 text-xs mt-1">runs shell commands</p></div>
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600"><code class="text-blue-400">Grep</code><p class="text-neutral-400 text-xs mt-1">search files</p></div>
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600"><code class="text-blue-400">Glob</code><p class="text-neutral-400 text-xs mt-1">lists files by default</p></div>
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600"><code class="text-blue-400">WebFetch</code><p class="text-neutral-400 text-xs mt-1">web search</p></div>
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600"><code class="text-blue-400">Agent</code><p class="text-neutral-400 text-xs mt-1">launches nested subagents</p></div>
+<div class="bg-dark-800/60 rounded-lg p-3 border border-dark-600"><code class="text-blue-400">Task</code><p class="text-neutral-400 text-xs mt-1">creates long-running tasks</p></div>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <p class="text-neutral-300 text-sm inline">list of tools the subagent can use during execution.</p></div>
+<div><span class="text-blue-400 font-semibold">Why learn:</span> <p class="text-neutral-300 text-sm inline">limits what can go wrong; a reviewer without Write permission can't accidentally delete code.</p></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <p class="text-neutral-300 text-sm inline">least privilege · allowlist · native tools · conductor inheritance (when omitted).</p></div>
+</div>
+</section>
+<!-- TÓPICO 4 — model -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">🧠 <code>model</code> — which Claude runs the task</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The field <code class="text-blue-400">model</code> defines which language model will run the agent.
+        This is the <strong class="text-blue-400">cost and quality decision</strong>: simple, repetitive tasks go
+to fast, inexpensive models; deep analysis goes to Opus. The topic of models by task
+is the <strong class="text-blue-400">Track 3</strong> entire — here we learn the field syntax.
+      </p>
+<!-- CODE BOX: valores aceitos -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">accepted values for model</span>
+<span class="text-xs text-blue-400">June 2026</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-blue-400">model</span>: haiku          <span class="text-neutral-500"># rápido, barato — triagem, classificação</span>
+<span class="text-blue-400">model</span>: sonnet          <span class="text-neutral-500"># equilibrado — maioria dos casos</span>
+<span class="text-blue-400">model</span>: opus            <span class="text-neutral-500"># profundo e caro — análises complexas</span>
+
+<span class="text-neutral-500"># IDs completos (mais estáveis em produção)</span>
+<span class="text-blue-400">model</span>: claude-haiku-4-5
+<span class="text-blue-400">model</span>: claude-sonnet-4-5
+<span class="text-blue-400">model</span>: claude-opus-4-5
+
+<span class="text-neutral-500"># omitido: herda o modelo do maestro (padrão seguro)</span></code></pre>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical rule for getting started</h3>
+<p class="text-neutral-300 text-sm">Always start with <code>model: sonnet</code>. If the agent handles simple triage, switch to <code>haiku</code>. If it does complex reasoning (architecture, auditing), switch to <code>opus</code>. T3 will give you the exact criteria for each case.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <p class="text-neutral-300 text-sm inline">field that determines which Claude model runs this agent — controls cost and depth.</p></div>
+<div><span class="text-blue-400 font-semibold">Why learn:</span> <p class="text-neutral-300 text-sm inline">without this field, all agents run on the most expensive model by default—unnecessary spending.</p></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <p class="text-neutral-300 text-sm inline">haiku/sonnet/opus · full IDs vs. aliases · inheritance from the orchestrator · cost × quality.</p></div>
+</div>
+</section>
+<!-- TÓPICO 5 — color + memory -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">🎨 <code>color</code> e 🧠 <code>memory</code> — identity and persistence</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Two fields that complete the basic configuration: <code class="text-blue-400">color</code> defines the
+        <strong class="text-blue-400">visual highlight color</strong> from the agent in the UI, and
+        <code class="text-blue-400">memory</code> defines which memory files it accesses—controlling what
+        it "knows" before the task even begins.
+      </p>
+<!-- Grid 2 colunas: color + memory -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-blue-400 mb-3">🎨 <code>color</code></h4>
+<p class="text-neutral-300 text-sm mb-4">Hex color or color name displayed in the terminal’s status line next to the agent’s name.</p>
+<pre class="font-mono text-xs text-neutral-300 bg-dark-700/50 rounded-lg p-3 overflow-x-auto"><code><span class="text-blue-400">color</span>: <span class="text-emerald-400">"#34d399"</span>   <span class="text-neutral-500"># verde</span>
+<span class="text-blue-400">color</span>: <span class="text-blue-400">"#60a5fa"</span>   <span class="text-neutral-500"># azul</span>
+<span class="text-blue-400">color</span>: <span class="text-neutral-500">"red"</span>       <span class="text-neutral-500"># nome CSS</span></code></pre>
+<p class="text-neutral-400 text-xs mt-3">Optional — visual only. If omitted, Claude Code uses a default color.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-blue-400 mb-3">🧠 <code>memory</code></h4>
+<p class="text-neutral-300 text-sm mb-4">Controls which CLAUDE.md files the agent loads into context when it starts. Four possible values:</p>
+<ul class="space-y-2 text-sm font-mono">
+<li><code class="text-blue-400">project</code> <span class="text-neutral-400 font-sans">— Project CLAUDE.md</span></li>
+<li><code class="text-blue-400">user</code> <span class="text-neutral-400 font-sans">— global ~/.claude/CLAUDE.md</span></li>
+<li><code class="text-blue-400">local</code> <span class="text-neutral-400 font-sans">— CLAUDE.local.md (private)</span></li>
+<li><code class="text-blue-400">none</code> <span class="text-neutral-400 font-sans">— with no preloaded memory</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> When to use <code>memory: none</code></h3>
+<p class="text-neutral-300 text-sm">Triage or impartial analysis agents benefit from <code>memory: none</code> — they shouldn't be influenced by project preferences. A documentation agent, on the other hand, needs <code>memory: project</code> to learn the repository conventions.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <p class="text-neutral-300 text-sm inline"><code>color</code> = visual identity; <code>memory</code> = CLAUDE.md files that the agent loads at startup.</p></div>
+<div><span class="text-blue-400 font-semibold">Why learn:</span> <p class="text-neutral-300 text-sm inline">incorrect memory causes the agent to ignore project conventions or load irrelevant and costly context.</p></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <p class="text-neutral-300 text-sm inline">color (visual) · memory: project/user/local/none · preloaded context · unbiased vs. context-aware agent.</p></div>
+</div>
+</section>
+<!-- TÓPICO 6 — disallowed-tools -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">🚫 <code>disallowed-tools</code> — the explicit blocking</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        While <code class="text-blue-400">tools</code> is an allowlist (only what's on it can be used),
+        <code class="text-blue-400">disallowed-tools</code> is a <strong class="text-blue-400">explicit blocklist</strong>:
+        "the agent can use everything except these". Use when you want to inherit most of the orchestrator's tools but
+        specifically block one or two dangerous ones.
+      </p>
+<!-- CODE BOX: disallowed-tools -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">disallowed-tools in use</span>
+<span class="text-xs text-blue-400">YAML frontmatter</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">---</span>
+<span class="text-blue-400">name</span>: code-analyzer
+<span class="text-blue-400">description</span>: Analisa a base de código. Nunca modifica arquivos.
+<span class="text-blue-400">model</span>: sonnet
+<span class="text-blue-400">disallowed-tools</span>:
+  - Write    <span class="text-neutral-500"># não pode criar / sobrescrever</span>
+  - Edit     <span class="text-neutral-500"># não pode editar trechos</span>
+  - Bash     <span class="text-neutral-500"># não pode rodar comandos</span>
+<span class="text-neutral-500">---</span></code></pre>
+</div>
+<!-- Tip: tools vs disallowed-tools -->
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center">
+<span class="mr-2">⚖️</span> <code>tools</code> vs. <code>disallowed-tools</code> — when to use each one
+        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+<div>
+<p class="text-blue-400 font-semibold mb-2">Use <code>tools</code> when…</p>
+<ul class="space-y-1 text-neutral-300">
+<li>• The agent needs a set <strong>small and well-defined</strong> of tools</li>
+<li>• You want to explicitly state what the agent can do</li>
+<li>• The agent is new and you want full control</li>
+</ul>
+</div>
+<div>
+<p class="text-blue-400 font-semibold mb-2">Use <code>disallowed-tools</code> when…</p>
+<ul class="space-y-1 text-neutral-300">
+<li>• The agent needs <strong>many tools</strong> but wants to block only a few</li>
+<li>• You want to automatically inherit future tool expansions</li>
+<li>• You only need to remove destructive tools from a generic agent</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <p class="text-neutral-300 text-sm inline">tool blocklist — the agent can use everything except what's listed here.</p></div>
+<div><span class="text-blue-400 font-semibold">Why learn:</span> <p class="text-neutral-300 text-sm inline">alternative to <code>tools</code> when the allowlist would be huge — blocking is more concise than listing everything.</p></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <p class="text-neutral-300 text-sm inline">blocklist · inheritance with exception · blocklist vs. allowlist · selective security.</p></div>
+</div>
+</section>
+<!-- TÓPICO 7 — MCP servers -->
+<section class="mb-16" id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">7</span>
+<h2 class="text-2xl font-bold">🔌 Advanced fields — MCP and others</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Beyond the basic fields, the frontmatter supports advanced settings for integrating
+        <strong class="text-blue-400">MCP servers</strong> (Model Context Protocol) — which expand the available tools
+        with external APIs, databases, services, and much more. These fields are optional and generally
+        appear in production agents.
+      </p>
+<!-- Code box: MCP -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">advanced MCP fields</span>
+<span class="text-xs text-blue-400">YAML frontmatter</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">---</span>
+<span class="text-blue-400">name</span>: db-analyst
+<span class="text-blue-400">description</span>: Analisa dados no PostgreSQL. Use quando pedir
+  insights de banco ou queries de análise.
+<span class="text-blue-400">model</span>: sonnet
+<span class="text-blue-400">tools</span>: mcp__postgres  <span class="text-neutral-500"># ferramenta via MCP</span>
+<span class="text-blue-400">mcp_servers</span>:         <span class="text-neutral-500"># servidores MCP disponíveis</span>
+  - postgres         <span class="text-neutral-500"># nome definido em .claude/mcp.json</span>
+<span class="text-neutral-500">---</span></code></pre>
+</div>
+<!-- Grid ✓/✗ #2: o que MCP permite -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ What MCP expands</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Direct database queries</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Integration with third-party APIs (Slack, GitHub, Jira)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Your company's custom tools</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Remote file systems and S3</span></li>
+</ul>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">📌 Prerequisite</h4>
+<p class="text-neutral-300 text-sm mb-3">The MCP server needs to be configured in <code>.claude/mcp.json</code> before referencing in the frontmatter.</p>
+<pre class="font-mono text-xs text-neutral-300 bg-dark-800/60 rounded-lg p-3 overflow-x-auto"><code><span class="text-neutral-500">// .claude/mcp.json</span>
+{
+  <span class="text-blue-400">"postgres"</span>: {
+    <span class="text-blue-400">"command"</span>: <span class="text-emerald-400">"mcp-postgres"</span>,
+    <span class="text-blue-400">"args"</span>: [<span class="text-emerald-400">"postgresql://…"</span>]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <p class="text-neutral-300 text-sm inline">advanced fields that connect the agent to MCP servers — expanding beyond native tools.</p></div>
+<div><span class="text-blue-400 font-semibold">Why learn:</span> <p class="text-neutral-300 text-sm inline">MCP is the bridge for integrating subagents with real production systems (databases, APIs, services).</p></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <p class="text-neutral-300 text-sm inline">MCP · mcp_servers · external tools · .claude/mcp.json · production integration.</p></div>
+</div>
+</section>
+<!-- BLOCO: EXEMPLO REAL (.md completo comentado) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">📄</span>
+<h2 class="text-2xl font-bold">Real example: fully commented frontmatter</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        One <code class="text-blue-400">security-auditor.md</code> of production using all the fields we've covered —
+        with comments explaining each design decision. This is the reference point you can copy and adapt.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/security-auditor.md</span>
+<span class="text-xs text-blue-400">Complete frontmatter</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">---</span>
+<span class="text-blue-400">name</span>: security-auditor        <span class="text-neutral-500"># kebab-case, papel claro</span>
+
+<span class="text-blue-400">description</span>: |               <span class="text-neutral-500"># bloco multiline para descrições longas</span>
+  Audita o código em busca de vulnerabilidades de segurança:
+  SQL injection, XSS, dependências desatualizadas, segredos
+  expostos e falhas de autenticação.
+  Use quando o usuário pedir revisão de segurança, antes
+  de qualquer PR para produção, ou após mudanças em auth.
+                               <span class="text-neutral-500"># ↑ "quando usar" explícito = gatilho preciso</span>
+
+<span class="text-blue-400">tools</span>: Read, Grep, Glob      <span class="text-neutral-500"># só leitura — auditor nunca modifica</span>
+
+<span class="text-blue-400">model</span>: claude-opus-4-5       <span class="text-neutral-500"># análise crítica → modelo mais capaz</span>
+
+<span class="text-blue-400">color</span>: <span class="text-red-400">"#f87171"</span>              <span class="text-neutral-500"># vermelho = segurança (visual na UI)</span>
+
+<span class="text-blue-400">memory</span>: project             <span class="text-neutral-500"># carrega CLAUDE.md do projeto</span>
+                               <span class="text-neutral-500"># → conhece as convenções de segurança do repo</span>
+
+<span class="text-blue-400">disallowed-tools</span>:           <span class="text-neutral-500"># bloqueio explícito de ferramentas destrutivas</span>
+  - Write                      <span class="text-neutral-500"># não pode alterar arquivos</span>
+  - Edit                       <span class="text-neutral-500"># não pode editar trechos</span>
+  - Bash                       <span class="text-neutral-500"># não pode executar scripts</span>
+<span class="text-neutral-500">---</span>
+
+<span class="text-neutral-500"># Corpo do agente (cérebro) — carregado só quando invocado</span>
+
+You are a senior application security engineer.
+Your role is to audit code for vulnerabilities — never to fix them.
+
+<span class="text-blue-400">When invoked:</span>
+1. Run Grep to find patterns: SQL queries, eval(), innerHTML, passwords, tokens.
+2. Read each flagged file in full context.
+3. Classify each finding by severity: CRITICAL / HIGH / MEDIUM / LOW.
+
+<span class="text-blue-400">Output format:</span>
+- One table: Severity | File | Line | Issue | Recommendation
+- Summary paragraph with the 3 most critical risks
+- Do NOT rewrite code — only report.</code></pre>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-4">
+<h4 class="font-semibold text-blue-400 mb-2 text-sm">🔒 tools + disallowed</h4>
+<p class="text-neutral-300 text-xs">Uses <code>tools</code> for allowlist and <code>disallowed-tools</code> redundantly for clarity — a defense-in-depth approach.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-4">
+<h4 class="font-semibold text-blue-400 mb-2 text-sm">🧠 model: opus</h4>
+<p class="text-neutral-300 text-xs">Security auditing is critical — this is where the most expensive model is worth it. Simple triage agents can use haiku.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-4">
+<h4 class="font-semibold text-blue-400 mb-2 text-sm">📝 multiline description</h4>
+<p class="text-neutral-300 text-xs">The pipe <code>|</code> in YAML, you can use multiple lines. Use it for long descriptions with explicit triggers.</p>
+</div>
+</div>
+</section>
+<!-- BLOCO: PROMPTS PRONTOS -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">⌨️</span>
+<h2 class="text-2xl font-bold">Ready-made prompts (copy and paste)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Three prompts to use in Claude Code now: create an agent via <code class="text-blue-400">/agents</code>,
+        inspect an existing agent and generate a custom frontmatter for a specific role.
+      </p>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-blue-400">Prompt 1 — generate frontmatter via /agents</span>
+<span class="text-xs text-neutral-500">creates the entire .md</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Crie um subagente chamado "doc-writer" que escreve
+documentação técnica em Markdown. Ele deve usar apenas
+Read e Write, rodar em sonnet, e ter memória do projeto.
+Escreva o frontmatter completo e um corpo de 5 linhas.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-blue-400">Prompt 2 — inspect an existing agent</span>
+<span class="text-xs text-neutral-500">understand what is configured</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Leia o frontmatter de todos os arquivos .md em
+.claude/agents/ e me diga: quais modelos estão sendo
+usados, quais ferramentas cada agente tem, e se algum
+agente tem description vaga que pode atrapalhar o match.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-blue-400">Prompt 3 — front matter for a specific role</span>
+<span class="text-xs text-neutral-500">custom generation</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Quero um agente que otimize queries SQL pesadas.
+Escreva o frontmatter completo incluindo: name kebab-case,
+description com o gatilho "quando usar", tools mínimas,
+model adequado ao tipo de análise, e color de destaque.
+Depois explique cada campo escolhido e por quê.</code></pre>
+</div>
+</div>
+</section>
+<!-- BLOCO: TELA SIMULADA (monitor-mock) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">🖥️</span>
+<h2 class="text-2xl font-bold">Simulated screen: <code>/agents</code> and the loaded frontmatter</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        This is how Claude Code displays your agents after loading the files <code>.md</code>. The UI shows the
+        <strong class="text-blue-400">name</strong>, a <strong class="text-blue-400">brief description</strong>,
+        the <strong class="text-blue-400">tools</strong> e o <strong class="text-blue-400">model</strong> of each agent.
+        The field <code>color</code> appears as the colored dot next to the name.
+      </p>
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<!-- barra de título -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700/60 border-b border-dark-600">
+<div class="flex items-center space-x-2">
+<span class="w-3 h-3 rounded-full bg-red-400/70"></span>
+<span class="w-3 h-3 rounded-full bg-amber-400/70"></span>
+<span class="w-3 h-3 rounded-full bg-emerald-400/70"></span>
+</div>
+<span class="text-xs text-neutral-400 font-mono">claude code · /agents · 4 agents found</span>
+<span class="text-xs text-blue-400 font-mono">📋 list</span>
+</div>
+<!-- listagem de agentes -->
+<div class="p-4 font-mono text-xs space-y-3">
+<div class="flex items-start gap-3 pb-3 border-b border-dark-700">
+<span class="w-3 h-3 rounded-full bg-red-400/80 mt-0.5 shrink-0"></span>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-white font-semibold">security-auditor</span>
+<span class="text-neutral-500 text-[11px]">claude-opus-4-5</span>
+<span class="text-blue-400 text-[11px]">Read Grep Glob</span>
+</div>
+<span class="text-neutral-400 text-[11px]">Audit code for vulnerabilities. Use before production PRs…</span>
+</div>
+</div>
+<div class="flex items-start gap-3 pb-3 border-b border-dark-700">
+<span class="w-3 h-3 rounded-full bg-blue-400/80 mt-0.5 shrink-0"></span>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-white font-semibold">code-reviewer</span>
+<span class="text-neutral-500 text-[11px]">claude-sonnet-4-5</span>
+<span class="text-blue-400 text-[11px]">Read Grep Glob</span>
+</div>
+<span class="text-neutral-400 text-[11px]">Reviews the current diff for bugs and security flaws. Use after a code change…</span>
+</div>
+</div>
+<div class="flex items-start gap-3 pb-3 border-b border-dark-700">
+<span class="w-3 h-3 rounded-full bg-emerald-400/80 mt-0.5 shrink-0"></span>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-white font-semibold">doc-writer</span>
+<span class="text-neutral-500 text-[11px]">claude-sonnet-4-5</span>
+<span class="text-blue-400 text-[11px]">Read Write</span>
+</div>
+<span class="text-neutral-400 text-[11px]">Writes technical documentation in Markdown. Use when asked for a README, docstrings, or guides…</span>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="w-3 h-3 rounded-full bg-amber-400/80 mt-0.5 shrink-0"></span>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-white font-semibold">sql-optimizer</span>
+<span class="text-neutral-500 text-[11px]">claude-haiku-4-5</span>
+<span class="text-blue-400 text-[11px]">Read Bash</span>
+</div>
+<span class="text-neutral-400 text-[11px]">Analyzes and optimizes slow SQL queries. Use when you identify queries taking &gt; 500ms…</span>
+</div>
+</div>
+</div>
+<!-- rodapé do terminal -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-800 border-t border-dark-600 font-mono text-xs">
+<span class="text-neutral-400">↑↓ navigate · enter select · esc close</span>
+<span class="text-blue-400">4 agents · 2 project · 2 global</span>
+</div>
+</div>
+<p class="text-xs text-neutral-500">↑ Illustrative recreation of the panel <code>/agents</code>. O <code>color</code> appears as a dot; the description is truncated but sufficient for the semantic match.</p>
+</section>
+<!-- BLOCO: EXERCÍCIO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">🎯</span>
+<h2 class="text-2xl font-bold">Exercise</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+          Write the <strong class="text-blue-400">complete frontmatter</strong> for a subagent named
+          <code class="text-blue-400">test-writer</code> — an agent that reads source code and writes unit tests
+          in vitest/jest. Use all required fields and at least one advanced field.
+        </p>
+<div class="bg-dark-800/60 rounded-lg p-5 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">How to do it</h4>
+<ol class="space-y-2 text-neutral-300 text-sm list-decimal list-inside">
+<li>Decide the <code>name</code>: must be kebab-case, and describe the role.</li>
+<li>Write the <code>description</code>: include “when to use” and trigger situations.</li>
+<li>List the <code>tools</code> minimums: what does a test writer actually need?</li>
+<li>Choose the <code>model</code>: Is writing tests simple or complex? Explain.</li>
+<li>Add <code>color</code> e <code>memory</code> with a justification for each.</li>
+</ol>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">✅ Verification criteria — how to know you got it right</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><code>name</code> is in kebab-case, with no spaces or uppercase letters.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><code>description</code> contains at least one sentence of the type "Use when…" or "Use after…".</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><code>tools</code> includes <code>Read</code> e <code>Write</code>, and you justified why those two.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><code>model</code> chosen with a cost × quality justification.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>The frontmatter opens and closes with <code>---</code> and is valid YAML (with no mixing of tabs and spaces).</span></li>
+</ul>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5">
+<h4 class="font-semibold text-blue-400 mb-3">Solved example</h4>
+<pre class="font-mono text-xs text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">---</span>
+<span class="text-blue-400">name</span>: test-writer
+<span class="text-blue-400">description</span>: |
+  Lê código-fonte e escreve testes unitários em vitest/jest.
+  Use quando pedir "escreva testes para este arquivo" ou
+  após implementar uma nova função ou classe.
+<span class="text-blue-400">tools</span>: Read, Write, Glob   <span class="text-neutral-500"># lê fonte, escreve teste, lista arquivos</span>
+<span class="text-blue-400">model</span>: sonnet              <span class="text-neutral-500"># escrever testes exige raciocínio médio</span>
+<span class="text-blue-400">color</span>: <span class="text-emerald-400">"#4ade80"</span>          <span class="text-neutral-500"># verde = "passou nos testes"</span>
+<span class="text-blue-400">memory</span>: project           <span class="text-neutral-500"># precisa conhecer o framework do projeto</span>
+<span class="text-neutral-500">---</span></code></pre>
+</div>
+</div>
+</section>
+<!-- RESUMO / NAVEGAÇÃO INFERIOR -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white"><code>name</code></strong><span class="text-neutral-400"> — kebab-case, unique, descriptive of the role. It's the identifier in the UI and in the orchestrator's matching.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white"><code>description</code></strong><span class="text-neutral-400"> — the trigger: the orchestrator reads only this to decide whether to call the agent. Include "Use when…".</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white"><code>tools</code></strong><span class="text-neutral-400"> — permission allowlist. Minimum necessary; a read-only agent doesn't need Write.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white"><code>model</code></strong><span class="text-neutral-400"> — haiku/sonnet/opus according to the task's complexity. Omitting it inherits the orchestrator's model.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white"><code>color</code> + <code>memory</code></strong><span class="text-neutral-400"> — visual identity and preloaded context (project/user/local/none).</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white"><code>disallowed-tools</code></strong><span class="text-neutral-400"> — denylist when you want to inherit everything but block a few specific tools.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">MCP</strong><span class="text-neutral-400"> — <code>mcp_servers</code> connects the agent to databases, APIs, and services via the Model Context Protocol.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-blue-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">2.2 — The description is the trigger. How to write descriptions the orchestrator recognizes and invokes accurately.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Back to the track index</a>
+<a class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors" href="modulo-2-2.html">Next module →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagents — 2026 · a course in the format
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Track 2 · In Practice · Module 2.1</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

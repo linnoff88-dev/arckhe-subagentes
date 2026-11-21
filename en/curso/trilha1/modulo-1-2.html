@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The real reason: clean context | Subagents</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha emerald T1) */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+
+    /* Light mode - cores de apoio usadas nos boxes (blue dados / red erros) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - diagramas SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Pulso dos agentes nos diagramas (apenas se o usuario permitir movimento) */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes wf-bar { from { transform: translateX(-6%); } to { transform: translateX(0); } }
+    @keyframes ctx-fill { from { width: 0; } to { width: var(--w); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.2s} .wf-a:nth-child(3){animation-delay:.4s}
+      .wf-a:nth-child(4){animation-delay:.6s} .wf-a:nth-child(5){animation-delay:.8s}
+      .barfill { animation: wf-bar 3s ease-in-out infinite alternate; }
+      .barfill.b2{animation-delay:.5s} .barfill.b3{animation-delay:1s} .barfill.b4{animation-delay:1.4s} .barfill.b5{animation-delay:1.8s}
+      .ctx-anim { animation: wf-pulse 3s ease-in-out infinite; }
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha1/modulo-1-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha1/modulo-1-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha1/modulo-1-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha1/modulo-1-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-1-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha1/modulo-1-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagents</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" href="index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentals</span>
+</a>
+<!-- Trilha 2 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">In practice</span>
+</a>
+<!-- Trilha 3 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orchestration</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Advanced</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-emerald-400" href="../../index.html">Start</a>
+<span>/</span>
+<a class="hover:text-emerald-400" href="index.html">Track 1</a>
+<span>/</span>
+<span class="text-emerald-400">Module 1.2</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">
+        MODULE 1.2 · Track 1 · Fundamentals
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">🧹 The real reason: clean context</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        Most people think subagents exist to <strong class="text-emerald-400">speed up</strong>.
+        Wrong. They exist to <strong class="text-emerald-400">protect</strong> — protect the only resource you
+        can’t buy more of in the middle of a session: the <strong class="text-emerald-400">context window</strong>.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">6</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">~25</div>
+<div class="text-xs text-neutral-400">Minutes</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">Basic</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">Theory</div>
+<div class="text-xs text-neutral-400">Type</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- ABERTURA + SVG DUAL-JANELA -->
+<section class="mb-12">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Every Claude Code session has a <strong class="text-emerald-400">token limit</strong> — the context window.
+        Everything you type, everything the model responds, every file read, every search made: it all takes up part of that
+        window. When it fills up, the model starts to forget the beginning of the conversation. Using a subagent isn’t about doing
+        two things at once—it’s about <strong class="text-emerald-400">avoid letting raw reading poison your
+        context</strong> ahead of time.
+      </p>
+<!-- SVG FUTURISTA: duas janelas (acúmulo × limpo) -->
+<div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-2 overflow-hidden">
+<svg aria-label="Left: a context window accumulating raw readings until it nearly overflows. Right: the lead’s window with only the subagent’s clean summary, context almost empty" class="w-full h-auto" role="img" viewbox="0 0 1000 280">
+<defs>
+<lineargradient id="m12-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#34d399"></stop><stop offset="1" stop-color="#10b981"></stop>
+</lineargradient>
+<lineargradient id="m12-red" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#f87171"></stop><stop offset="1" stop-color="#dc2626"></stop>
+</lineargradient>
+<lineargradient id="m12-bar-full" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#ef4444"></stop><stop offset="1" stop-color="#f87171"></stop>
+</lineargradient>
+<lineargradient id="m12-bar-clean" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#34d399"></stop><stop offset="1" stop-color="#10b981"></stop>
+</lineargradient>
+<filter height="180%" id="m12-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="2"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<filter height="180%" id="m12-glow-red" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="2.5"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m12-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#10b981" opacity="0.10" r="1.3"></circle>
+</pattern>
+<marker id="m12-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m12-grid)" height="280" width="1000" x="0" y="0"></rect>
+<!-- PAINEL ESQUERDO: Sem subagente — contexto cheio -->
+<!-- caixa janela -->
+<g filter="url(#m12-glow-red)">
+<rect fill="#1a0a0a" height="240" rx="14" stroke="#f87171" stroke-width="2" width="400" x="30" y="20"></rect>
+</g>
+<!-- titulo painel -->
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="14" font-weight="700" text-anchor="middle" x="230" y="50">No subagent—you read it yourself</text>
+<!-- barra contexto: quase cheia -->
+<rect fill="#2a0f0f" height="18" rx="5" width="340" x="60" y="66"></rect>
+<rect class="ctx-anim" fill="url(#m12-bar-full)" height="18" rx="5" width="306" x="60" y="66"></rect>
+<text fill="#fca5a5" font-family="Inter,monospace" font-size="11" text-anchor="end" x="376" y="79">90%</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="11" x="60" y="97">context window</text>
+<!-- items empilhados: leituras brutas -->
+<g fill="#6b7280" font-family="Inter,sans-serif" font-size="11">
+<rect fill="#260e0e" height="22" rx="5" width="340" x="60" y="108"></rect>
+<text fill="#fca5a5" x="72" y="123">📄 relatorio-jan.pdf — 18 pages read…</text>
+<rect fill="#260e0e" height="22" rx="5" width="340" x="60" y="134"></rect>
+<text fill="#fca5a5" x="72" y="149">📄 relatorio-fev.pdf — 22 pages read…</text>
+<rect fill="#260e0e" height="22" rx="5" width="340" x="60" y="160"></rect>
+<text fill="#fca5a5" x="72" y="175">📄 relatorio-mar.pdf — 31 pages read…</text>
+<rect fill="#1f0808" height="22" rx="5" stroke="#f87171" stroke-dasharray="4 3" stroke-width="1" width="340" x="60" y="186"></rect>
+<text fill="#f87171" x="72" y="201">⚠️ context nearly exhausted — model forgets the beginning</text>
+<rect fill="#260e0e" height="22" rx="5" width="340" x="60" y="212"></rect>
+<text fill="#6b7280" x="72" y="227">… 297 more pages in the queue</text>
+</g>
+<!-- label -->
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="230" y="254">raw reading takes up the entire window</text>
+<!-- SETA divisória no meio -->
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="28" font-weight="700" text-anchor="middle" x="500" y="148">→</text>
+<text fill="#6b7280" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="500" y="170">with a subagent</text>
+<!-- PAINEL DIREITO: Com subagente — contexto limpo -->
+<g filter="url(#m12-glow)">
+<rect fill="#0e1a12" height="240" rx="14" stroke="url(#m12-grad)" stroke-width="2" width="400" x="570" y="20"></rect>
+</g>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="14" font-weight="700" text-anchor="middle" x="770" y="50">With a subagent — you receive a summary</text>
+<!-- barra contexto: quase vazia -->
+<rect fill="#0a1f10" height="18" rx="5" width="340" x="600" y="66"></rect>
+<rect fill="url(#m12-bar-clean)" height="18" rx="5" width="44" x="600" y="66"></rect>
+<text fill="#6ee7b7" font-family="Inter,monospace" font-size="11" text-anchor="end" x="916" y="79">13%</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="11" x="600" y="97">context window</text>
+<!-- subagente trabalhando (ciano, em paralelo) -->
+<g font-family="Inter,sans-serif" font-size="11">
+<rect fill="#0e1b26" height="40" rx="8" stroke="#38bdf8" stroke-width="1.5" width="340" x="600" y="108"></rect>
+<text fill="#38bdf8" font-weight="600" x="614" y="124">🔍 subagent (researcher)</text>
+<text fill="#9ad6ff" x="614" y="140">reading 300 pages in its window…</text>
+<!-- seta de retorno -->
+<path d="M770,152 L770,168" marker-end="url(#m12-ahc)" opacity="0.7" stroke="#38bdf8" stroke-width="1.5"></path>
+<!-- resumo que volta -->
+<rect fill="#0e2018" height="52" rx="8" stroke="#34d399" stroke-width="1.5" width="340" x="600" y="170"></rect>
+<text fill="#34d399" font-weight="600" x="614" y="187">✅ Clean summary (3 facts)</text>
+<text fill="#9fe7c6" x="614" y="203">• Revenue grew 18% in Q1</text>
+<text fill="#9fe7c6" x="614" y="216">• CAC cost fell 7% this quarter</text>
+</g>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="770" y="254">only the conclusion enters your window</text>
+</svg>
+</div>
+<p class="text-xs text-neutral-500 mb-0">↑ Without a subagent: the raw reading consumes 90% of the window. With a subagent: only the summary goes in — context stays free for what matters.</p>
+</section>
+<!-- DIVISOR -->
+<h2 class="text-2xl font-bold mb-6">Detailed content</h2>
+<!-- TÓPICO 1 — Janela de contexto -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">📏 The context window: tokens, status line, and %</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Each Claude Code session has a <strong class="text-emerald-400">token budget</strong>. A
+        <strong class="text-emerald-400">status line</strong> — that bar at the bottom of the terminal shows in real time
+        how much of this budget you’ve used. As you approach the limit, the model starts to “forget” the oldest parts
+        of the conversation. You can’t buy extra tokens midway through.
+      </p>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center">
+<span class="mr-2">📊</span> What takes up tokens
+        </h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="bg-dark-800/70 rounded-lg p-4 border border-dark-600">
+<div class="text-2xl mb-2">💬</div>
+<div class="text-sm font-semibold text-emerald-400 mb-1">Messages</div>
+<div class="text-xs text-neutral-400">Everything you’ve typed and everything the model has replied since the session began.</div>
+</div>
+<div class="bg-dark-800/70 rounded-lg p-4 border border-dark-600">
+<div class="text-2xl mb-2">📁</div>
+<div class="text-sm font-semibold text-emerald-400 mb-1">Files read</div>
+<div class="text-xs text-neutral-400">Each <code class="text-emerald-400">Read</code> or <code class="text-emerald-400">Grep</code> injects the raw content into the window — and it stays there.</div>
+</div>
+<div class="bg-dark-800/70 rounded-lg p-4 border border-dark-600">
+<div class="text-2xl mb-2">🔧</div>
+<div class="text-sm font-semibold text-emerald-400 mb-1">Tool output</div>
+<div class="text-xs text-neutral-400">Bash output, web searches, logs — everything enters the context window as raw text.</div>
+</div>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3 mb-6">
+<div><span class="text-emerald-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the context window is the fixed limit of a session’s active memory — measured in tokens and shown in the terminal’s status line.</span></div>
+<div><span class="text-emerald-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">understanding that the window has a physical limit is a prerequisite for understanding why protecting it is the main reason to use subagents.</span></div>
+<div><span class="text-emerald-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">tokens · status line · fixed limit · no reloading during the session.</span></div>
+</div>
+<!-- CODE BOX: status line -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">terminal status line</span>
+<span class="text-xs text-emerald-400">Claude Code footer</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-emerald-400">maestro · Opus</span>  <span class="text-neutral-500">────────────────────────────────────</span>  <span class="text-emerald-400">ctx 18%</span>  <span class="text-neutral-500">↑cost $0.04</span>
+<span class="text-neutral-500"># leu 3 arquivos? ctx sobe para 34%</span>
+<span class="text-neutral-500"># leu 40 arquivos? ctx vai para 87% — quase no limite</span>
+<span class="text-neutral-500"># enviou subagente ler 40 arquivos? ctx fica em 18%</span></code></pre>
+</div>
+</section>
+<!-- TÓPICO 2 — Poluição de contexto -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">🚰 Pollution: everything you read stays for the entire session</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        This is the point most people miss: in Claude Code, when you ask it to read a file, the raw content enters your context window <strong class="text-emerald-400">and stays there</strong>. It doesn't leave when reading is done. It doesn't
+        disappear when you change the subject. It only disappears when the session ends. That means reading 50 files in the middle of
+        a long task can consume the entire context window before you get to the part that matters.
+      </p>
+<!-- TIMELINE -->
+<div class="space-y-6 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-900/30 flex items-center justify-center"><span class="text-red-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">You ask, “read these 10 reports”</h4>
+<p class="text-sm text-neutral-400 mb-3">The model uses the tool <code>Read</code> ten times.</p>
+<p class="text-neutral-300 text-sm">Each call injects the raw text into the window. 10 five-page reports = ~50k tokens consumed in the blink of an eye.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-900/30 flex items-center justify-center"><span class="text-red-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">The raw content stays in the window</h4>
+<p class="text-sm text-neutral-400 mb-3">Even after the model has “read it.”</p>
+<p class="text-neutral-300 text-sm">Claude has already processed the information — but the text of pages 1–50 still takes up space in the context window. It’s like keeping 50 tabs open that you won’t use again.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-900/30 flex items-center justify-center"><span class="text-red-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">The window fills up before the important part</h4>
+<p class="text-sm text-neutral-400 mb-3">The model starts to forget.</p>
+<p class="text-neutral-300 text-sm">When 90% of the context window is occupied by raw reading, there's no room left for the instructions at the end — and the model may "forget" the session's original goal.</p>
+</div>
+</div>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> The invisible trap</h3>
+<p class="text-neutral-300">You don’t notice that you’re adding clutter because the model still responds well for a while. The problem only shows up at the end: when you need a complex analysis and the context window is nearly full of disposable reading. At that point, there’s no way to recover—the session is compromised.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-emerald-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">context pollution = accumulation of raw content in the window that won't be reread but continues to take up space.</span></div>
+<div><span class="text-emerald-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">is the exact mechanism subagents address—understanding it makes the advantage of delegating heavy reading obvious.</span></div>
+<div><span class="text-emerald-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">raw content · stays in the window · silent exhaustion · compromised window.</span></div>
+</div>
+</section>
+<!-- TÓPICO 3 — Fazer você mesmo × enviar subagente (grid ✓/✗) -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">⚖️ Do it yourself × send a subagent</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Sometimes you should read the file yourself — when reading it is quick and you’ll need to reason about it right
+        afterward. But when reading it is <strong class="text-emerald-400">heavy, broad, or disposable</strong>
+        (you only want the conclusion), sending a subagent protects your window. The distinction is simple: will anything
+        useful remain in my window after I read this?
+      </p>
+<!-- GRID ✓/✗ -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Use a subagent when</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Heavy reading: many files, long logs, large PDFs</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>You only need the conclusion (not the raw text)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Web search with full-page results</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Repeatable task that doesn’t depend on the current context</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Do it yourself when</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>It’s a single short file that you’ll reference right afterward</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>The task requires the entire conversation history</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>The decision depends on context only the conductor has</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Reading is the task itself—there’s no "summary to extract"</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> The golden question</h3>
+<p class="text-neutral-300">Before asking Claude to read anything heavy, ask: <strong>"Will I need to reread it in context, or is the conclusion enough?"</strong> If the answer is <em>only the conclusion</em>, send a subagent. It’s that simple. This filter alone prevents 80% of compromised sessions.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-emerald-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the decision to delegate vs. do it directly — based on the cost-benefit of using the main context window.</span></div>
+<div><span class="text-emerald-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">Knowing when not to use a subagent is just as important as knowing when to use one—unnecessary delegation adds latency without any benefit.</span></div>
+<div><span class="text-emerald-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">context cost · conclusion vs. raw output · intentional delegation · subagent overhead.</span></div>
+</div>
+</section>
+<!-- TÓPICO 4 — O resumo limpo de volta -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">📬 The clean summary that goes back to the maestro</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The subagent does the heavy reading in the <strong class="text-emerald-400">its window</strong> — that it is separate, disposable,
+        and disappears when it finishes. What returns to the conductor is only the <strong class="text-emerald-400">structured output</strong>
+        that you asked for: 3 facts, 1 paragraph, a list of paths, a number. None of the raw text the subagent read
+        reaches your context window.
+      </p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center"><span class="mr-2">📊</span> What “comes back” vs. what “stays there”</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<h5 class="text-sm font-semibold text-red-400 mb-2">Stayed in the subagent window (discarded)</h5>
+<ul class="space-y-1 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>The raw text from the 300 PDFs</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Intermediate search results</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Errors and read attempts</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Internal reasoning tokens</span></li>
+</ul>
+</div>
+<div>
+<h5 class="text-sm font-semibold text-emerald-400 mb-2">It reached your window (what matters)</h5>
+<ul class="space-y-1 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>The conclusion: "X happened in 18% of contracts"</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>The relevant paths: ["doc/contrato-12.pdf", …]</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Explicit flags: "termination clause missing in 4"</span></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Formatting the output is part of the brief</h3>
+<p class="text-neutral-300">The subagent will return exactly what you ask for. If you write "return at most 3 bullets with what you found," it returns 3 bullets. If you write "return the JSON with fields X, Y, Z," it returns JSON. Summary compression is <strong>controlled by you</strong> in the briefing — it's not magic, it's an instruction.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-emerald-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the subagent’s output contract — only the structured conclusion reaches the maestro’s window; the raw output is discarded.</span></div>
+<div><span class="text-emerald-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">understanding that you control compaction in the briefing lets you calibrate exactly how much context you’ll consume.</span></div>
+<div><span class="text-emerald-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">structured output · disposable window · exit briefing · nothing raw in the orchestrator.</span></div>
+</div>
+</section>
+<!-- TÓPICO 5 — Por que é o motivo #1 (não velocidade) -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">🏆 Why clean context beats speed</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Saying that subagents are "faster" is technically true for parallel reads — but it's the wrong reason to use them. A serial subagent (one at a time) still protects the context window. The
+        <strong class="text-emerald-400">reason #1 is qualitative</strong>: a session with clean context
+        <strong class="text-emerald-400">reason more carefully</strong>, makes fewer “forgetting” mistakes and can continue
+        to the end without degradation.
+      </p>
+<!-- GRID ✓/✗ #2 — Velocidade vs. Contexto -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-neutral-300 mb-4 flex items-center"><span class="mr-2">⚡</span> Speed (secondary reason)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-neutral-500">→</span><span>Parallelism reduces total time when there are multiple subagents</span></li>
+<li class="flex items-start space-x-2"><span class="text-neutral-500">→</span><span>But a single serial subagent isn’t faster than the orchestrator doing it itself</span></li>
+<li class="flex items-start space-x-2"><span class="text-neutral-500">→</span><span>The latency of starting a subagent can even increase the total time for small tasks</span></li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">🧠</span> Clean context (reason #1)</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>The orchestrator reasons about the problem, not the raw data</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Long sessions don't degrade — the window never fills up with disposable junk</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>The orchestrator’s responses remain consistent from start to finish of the task</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Data that helps with internalization</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>A typical code file takes ~2–5k tokens. Reading 40 files = 80–200k more tokens in the context window.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>With a reader subagent, those 200k stay in its context window — your window gets only the ~500-token summary.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>Potential savings: 99.75% of the context cost for this specific read.</span></li>
+</ul>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-emerald-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the hierarchy of reasons — clean context (quality) &gt; speed (bonus) when assessing whether a subagent is worthwhile.</span></div>
+<div><span class="text-emerald-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">avoids the mistake of "I don't need a subagent; it's fast" — context degradation isn't immediate, which is why it's deceptive.</span></div>
+<div><span class="text-emerald-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">quality vs. speed · gradual degradation · reason #1 · long-session coherence.</span></div>
+</div>
+</section>
+<!-- TÓPICO 6 — Caso 300 páginas → 3 fatos -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">📚 Real-world case: 300 pages → 3 facts</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The course’s most compelling use case: you have 300 pages of financial reports and need to
+        <strong class="text-emerald-400">3 facts</strong> for your presentation tomorrow. If the orchestrator reads all 300
+        documents, the context window will blow up. If an <code class="text-emerald-400">researcher</code> (Haiku) read everything in its window
+        and return only the 3 facts, your window stays at 15%.
+      </p>
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-emerald-400 mb-4">🔢 The case numbers</h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="bg-dark-800/70 rounded-lg p-4 border border-dark-600 text-center">
+<div class="text-3xl font-bold text-red-400 mb-1">~900k</div>
+<div class="text-sm text-neutral-400">tokens if the maestro read everything</div>
+<div class="text-xs text-red-400 mt-1">the window blows up</div>
+</div>
+<div class="bg-dark-800/70 rounded-lg p-4 border border-dark-600 text-center">
+<div class="text-3xl font-bold text-emerald-400 mb-1">~800</div>
+<div class="text-sm text-neutral-400">tokens that arrive in the window</div>
+<div class="text-xs text-emerald-400 mt-1">the 3 structured facts</div>
+</div>
+<div class="bg-dark-800/70 rounded-lg p-4 border border-dark-600 text-center">
+<div class="text-3xl font-bold text-emerald-400 mb-1">99,9%</div>
+<div class="text-sm text-neutral-400">of avoided context cost</div>
+<div class="text-xs text-emerald-400 mt-1">window almost intact</div>
+</div>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-emerald-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the clearest demonstration of the mechanism: huge input → subagent does the work → minimal output reaches the orchestrator.</span></div>
+<div><span class="text-emerald-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">the number (99.9% context savings) is concrete and memorable — it anchors the abstract concept in something tangible.</span></div>
+<div><span class="text-emerald-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">huge input · minimal output · researcher · Haiku read-only · token context savings.</span></div>
+</div>
+</section>
+<!-- BLOCO: EXEMPLO REAL (.md comentado — researcher) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">📄</span>
+<h2 class="text-2xl font-bold">Real example: the subagent <code class="text-emerald-400 text-xl">researcher</code></h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        O <code class="text-emerald-400">researcher</code> is the archetypal context-protection subagent: it uses
+        <strong class="text-emerald-400">Haiku</strong> (cheap and fast), only reads (without writing or executing), and is
+        explicitly instructed to <strong class="text-emerald-400">return only the summary</strong>. It's the model you'll
+        replicate for any "heavy reading → concise conclusion" task.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/researcher.md</span>
+<span class="text-xs text-blue-400">Haiku · read-only · web</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">--- # frontmatter: configuração do subagente</span>
+<span class="text-blue-400">name</span>: researcher
+<span class="text-blue-400">description</span>: Pesquisador de contexto limpo. Use quando precisar
+  ler muitos arquivos ou buscar na web e só quiser a
+  conclusão — não o conteúdo bruto. Mantém a janela
+  do maestro quase intacta.
+<span class="text-blue-400">tools</span>: Read, Grep, Glob, WebSearch, WebFetch
+<span class="text-blue-400">model</span>: haiku     <span class="text-neutral-500"># barato e rápido para leitura volumosa</span>
+<span class="text-neutral-500">---</span>
+
+<span class="text-neutral-500"># corpo: o comportamento do researcher</span>
+You are a research assistant focused on context efficiency.
+
+<span class="text-emerald-400">Primary rule:</span> Never return raw file content or raw web pages.
+Always distill. Your output must be ≤ 10% of what you read.
+
+<span class="text-emerald-400">When invoked:</span>
+1. Understand what facts the orchestrator needs.
+2. Read or search as much as needed (your context, not theirs).
+3. Identify only the facts that answer the question.
+4. Return a structured summary: bullets, JSON, or a short paragraph.
+
+<span class="text-emerald-400">Output contract:</span>
+- Max 5 bullets OR 1 short paragraph OR 1 JSON object.
+- Include file paths or URLs as references, not content.
+- If nothing found, say so in ≤ 2 sentences.
+
+<span class="text-emerald-400">Do not:</span> paste raw file content · return full web pages ·
+exceed the output contract · ask clarifying questions.</code></pre>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-emerald-400 mb-3">⚙️ Why each choice matters</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-emerald-400">Haiku</strong> — the cheapest option: heavy reading doesn't require deep reasoning.</li>
+<li><strong class="text-emerald-400">Read+Grep+Web</strong> — read-only: no risk of accidentally writing or executing.</li>
+<li><strong class="text-emerald-400">"≤10% of what it read"</strong> — the numerical rule that anchors the output contract.</li>
+<li><strong class="text-emerald-400">No questions</strong> — the researcher doesn't interrupt the orchestrator mid-task.</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-emerald-400 mb-3">🧩 When to invoke this agent</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">→</span><span>"Search the error logs from the last 2 weeks"</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">→</span><span>"Read the 8 PRDs and tell me which ones mention 'authentication'"</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">→</span><span>"Research the state of the art in RAG on the web and give me 5 bullets"</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">→</span><span>"Scan the codebase for all TODOs and categorize them"</span></li>
+</ul>
+</div>
+</div>
+</section>
+<!-- BLOCO: PROMPTS PRONTOS -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">⌨️</span>
+<h2 class="text-2xl font-bold">Ready-made prompts (copy and paste)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Use these prompts to delegate heavy research to <code class="text-emerald-400">researcher</code> and keep
+        your window clean. Notice the pattern: explicitly asking for
+        <strong class="text-emerald-400">only the conclusion</strong> and specify the <strong class="text-emerald-400">output format</strong>.
+      </p>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-emerald-400">Prompt 1 — document research</span>
+<span class="text-xs text-neutral-500">large read → summary</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Use o researcher pra varrer os PDFs em docs/contratos/
+e me trazer só os 3 contratos que mencionam "rescisão
+unilateral". Devolva: nome do arquivo + trecho exato (1 linha).
+Não cole o conteúdo completo aqui.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-emerald-400">Prompt 2 — web research</span>
+<span class="text-xs text-neutral-500">heavy search → bullets</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Abra o researcher e peça para ele pesquisar na web
+"Claude Code subagent best practices 2025" e me trazer
+5 bullets com as principais recomendações. Sem colar
+páginas inteiras — só a síntese.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-emerald-400">Prompt 3 — codebase scan</span>
+<span class="text-xs text-neutral-500">heavy grep → structured list</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Use o researcher pra varrer toda a codebase buscando
+chamadas a `fetch()` sem tratamento de erro. Devolva
+em JSON: { "arquivo": "...", "linha": N, "trecho": "..." }
+para cada ocorrência. Não cole o código dos arquivos.</code></pre>
+</div>
+</div>
+</section>
+<!-- BLOCO: TELA SIMULADA (monitor-mock — researcher em ação) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">🖥️</span>
+<h2 class="text-2xl font-bold">Simulated screen: researcher reading 300 pages</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        See how the status line of <em>orchestrator</em> barely moves while the
+        <code class="text-emerald-400">researcher</code> handles the heavy reading. The orchestrator is free to reason.
+      </p>
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<!-- barra de título -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700/60 border-b border-dark-600">
+<div class="flex items-center space-x-2">
+<span class="w-3 h-3 rounded-full bg-red-400/70"></span>
+<span class="w-3 h-3 rounded-full bg-amber-400/70"></span>
+<span class="w-3 h-3 rounded-full bg-emerald-400/70"></span>
+</div>
+<span class="text-xs text-neutral-400 font-mono">claude code · analisar-relatorios · researcher active</span>
+<span class="text-xs text-emerald-400 font-mono">⏱ 01:14</span>
+</div>
+<!-- chat do maestro (curto, limpo) -->
+<div class="p-4 space-y-2 font-mono text-xs border-b border-dark-600">
+<div class="text-neutral-500"># maestro received the task and delegated it to the researcher</div>
+<div><span class="text-yellow-400">you &gt;</span> <span class="text-neutral-300">Analyze the 300 reports in docs/financeiro/ and give me 3 facts for the presentation.</span></div>
+<div><span class="text-emerald-400">orchestrator &gt;</span> <span class="text-neutral-300">Delegating to the researcher (Haiku) — waiting for the summary…</span></div>
+</div>
+<!-- subagente rodando -->
+<div class="p-4 space-y-3 font-mono text-xs">
+<div class="flex items-center gap-3">
+<span class="text-sky-400 w-52 shrink-0">● researcher (Haiku)</span>
+<span class="text-neutral-500 w-14 shrink-0">Haiku</span>
+<div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden">
+<div class="barfill h-full bg-sky-500/70" style="width:67%"></div>
+</div>
+<span class="text-neutral-400 w-24 text-right shrink-0">204k tok (theirs)</span>
+</div>
+<div class="text-neutral-500">reading docs/financeiro/relatorio-q1-*.pdf … (197 / 300)</div>
+<div class="text-neutral-500 pl-2">→ Read: relatorio-q1-2023.pdf (4.2k tok) ✓</div>
+<div class="text-neutral-500 pl-2">→ Read: relatorio-q1-2024.pdf (5.1k tok) ✓</div>
+<div class="text-neutral-500 pl-2">→ Grep: "revenue" across 300 files… ✓</div>
+</div>
+<!-- status line do maestro -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-800 border-t border-dark-600 font-mono text-xs">
+<span class="text-neutral-400">orchestrator · Opus</span>
+<div class="flex items-center gap-2">
+<span class="text-neutral-500">your context</span>
+<div class="w-28 h-2 rounded bg-dark-700 overflow-hidden">
+<div class="h-full bg-emerald-500/70" style="width:14%"></div>
+</div>
+<span class="text-emerald-400">14%</span>
+<span class="text-neutral-600">|</span>
+<span class="text-sky-400">researcher: 204k (his window)</span>
+</div>
+</div>
+</div>
+<p class="text-xs text-neutral-500">↑ Illustrative recreation of the terminal (not a real screenshot). Researcher consumes 204k tokens in its own window; your context stays at 14%.</p>
+</section>
+<!-- BLOCO: EXERCÍCIO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-emerald-900/30 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">🎯</span>
+<h2 class="text-2xl font-bold">Exercise: estimate the tokens saved</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+          Take a real task from your day—something you’ve already asked Claude to do that involved reading several files.
+          Calculate (as an estimate) <strong class="text-emerald-400">how many extra tokens would have entered your context window</strong>
+          if you had done it without a subagent.
+        </p>
+<div class="bg-dark-800/60 rounded-lg p-5 mb-6">
+<h4 class="font-semibold text-emerald-400 mb-3">How to do it (3 steps)</h4>
+<ol class="space-y-3 text-neutral-300 text-sm list-decimal list-inside">
+<li>Write the task: e.g., "read this week's deploy logs (8 files, ~600 lines each)".</li>
+<li>Estimate the raw size: number of files × average lines × ~4 (tokens per line) = tokens if the maestro read them.</li>
+<li>Estimate the subagent's output: how many bullets or lines would you actually need in the answer? Multiply by 4. That's the output that would enter your context window with the researcher.</li>
+</ol>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">✅ Verification criteria</h4>
+<p class="text-neutral-300 text-sm mb-3">You got it right if:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>Calculated the raw token count (input) and the summary token count (output) separately.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>The cost difference between the two is greater than 10× (reminder: the researcher's rule is "≤10% of what it read").</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>Can say what percentage of the window the orchestrator would use—and whether that concerns you.</span></li>
+</ul>
+<p class="text-neutral-300 text-sm mt-3">Bonus: if the task didn't involve enough reading to justify a subagent, the correct answer is <strong>"wouldn't it be worth delegating"</strong> — and that also counts as a success.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5">
+<h4 class="font-semibold text-emerald-400 mb-3">Solved example</h4>
+<p class="text-neutral-300 text-sm">
+<strong>Task:</strong> "read the deploy logs from the week" — 8 files × 600 lines × 4 tok ≈ <strong class="text-red-400">19,200 raw tokens</strong> if the orchestrator were to read it.
+            Useful summary: 5 lines of errors + 2 lines of conclusions ≈ <strong class="text-emerald-400">28 tokens</strong> with the researcher.
+            Savings: 99.85%. The orchestrator would be at ~20% of the window with the raw read—already concerning for a long session.
+            <strong class="text-emerald-400">Worth delegating.</strong>
+</p>
+</div>
+</div>
+</section>
+<!-- RESUMO / NAVEGAÇÃO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">The window has a fixed limit</strong><span class="text-neutral-400"> — tokens, status line, and %. You can’t buy more mid-session.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">Pollution is silent</strong><span class="text-neutral-400"> — everything you read stays in the window; the problem appears only at the end, when it’s already too late.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">The golden question</strong><span class="text-neutral-400"> — "will I need the raw output or just the conclusion?" If it's just the conclusion, delegate.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">The clean summary</strong><span class="text-neutral-400"> — the subagent discards the raw material; only the structured conclusion enters your window.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">Clean context &gt; speed</strong><span class="text-neutral-400"> — the #1 reason is qualitative: a long session reasons better with a free context window.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">Case: 300 pages → 3 facts</strong><span class="text-neutral-400"> — the Haiku researcher uses 99.9% of the context cost in its own window, not yours.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-emerald-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">1.3 — Agent × Subagent × Skill. The three primitives, how they differ, and when to choose each.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="modulo-1-1.html">← Previous module</a>
+<a class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors" href="modulo-1-3.html">Next module →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagents — 2026 · a course in the format
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Track 1 · Fundamentals · Module 1.2</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    // Toggle de tópicos
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

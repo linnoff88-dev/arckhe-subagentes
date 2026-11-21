@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>La pregunta decisiva | Subagentes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha emerald T1) */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-500\/20 { background-color: rgba(5, 150, 105, 0.12); }
+    html:not(.dark) .bg-emerald-500\/10 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .hover\:bg-emerald-500\/30:hover { background-color: rgba(5, 150, 105, 0.18); }
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+
+    /* Light mode - cores de apoio */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .text-sky-400 { color: #0284c7; }
+    html:not(.dark) .bg-sky-900\/20 { background-color: rgba(2, 132, 199, 0.08); }
+    html:not(.dark) .border-sky-500\/30 { border-color: rgba(2, 132, 199, 0.25); }
+
+    /* Light mode - remove gradientes */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas suavizadas (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Animações SVG */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes wf-flow { 0% { stroke-dashoffset: 40; } 100% { stroke-dashoffset: 0; } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.3s} .wf-a:nth-child(3){animation-delay:.6s}
+      .flow-dash { animation: wf-flow 1.2s linear infinite; }
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha1/modulo-1-5.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha1/modulo-1-5.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha1/modulo-1-5.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha1/modulo-1-5.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha1/modulo-1-5.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-1-5.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagentes</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-emerald-400 bg-emerald-500/10" href="index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentos</span>
+</a>
+<!-- Trilha 2 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">En la práctica</span>
+</a>
+<!-- Trilha 3 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orquestación</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Avanzado</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-emerald-400" href="../../index.html">Inicio</a>
+<span>/</span>
+<a class="hover:text-emerald-400" href="index.html">Ruta 1</a>
+<span>/</span>
+<span class="text-emerald-400">Módulo 1.5</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-emerald-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-full mb-4">
+        MÓDULO 1.5 · Ruta 1 · Fundamentos
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">🔀 La pregunta que decide</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        Antes de iniciar un subagente, hay una sola pregunta que separa la decisión correcta de la equivocada:
+        <strong class="text-emerald-400">"¿esto va a soltar un montón de cosas que nunca voy a releer?"</strong>
+        Si la respuesta es sí, usa un subagente. Si no, sigue en el chat.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">6</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">~20</div>
+<div class="text-xs text-neutral-400">Minutos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">Básico</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-emerald-400">Decisión</div>
+<div class="text-xs text-neutral-400">Tipo</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- BLOCO 1 — Abertura + SVG Fluxo de Decisão -->
+<section class="mb-14">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Los subagentes son poderosos, pero usar uno cuando no hace falta es peor que no usarlo: fragmentas el razonamiento continuo y desperdicias contexto. La heurística de este módulo cabe en una línea, pero necesita señales concretas para funcionar.
+      </p>
+<!-- SVG: Fluxo de Decisão sim/não -->
+<div class="rounded-2xl border border-emerald-500/30 bg-dark-900/40 p-3 sm:p-4 mb-2 overflow-hidden">
+<svg aria-label="Flujo de decisión: ¿Vas a generar una salida que nunca volverás a leer? SÍ → subagente. NO → subpreguntas: ¿10 o más archivos? ¿Trabajo paralelo/independiente? ¿Revisor imparcial? Cualquier SÍ → subagente. Todas las respuestas son NO → quédate en el chat." class="w-full h-auto" role="img" viewbox="0 0 900 380">
+<defs>
+<lineargradient id="m15-g1" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#34d399"></stop><stop offset="1" stop-color="#10b981"></stop></lineargradient>
+<lineargradient id="m15-g2" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#38bdf8"></stop><stop offset="1" stop-color="#0ea5e9"></stop></lineargradient>
+<filter height="160%" id="m15-glow" width="160%" x="-30%" y="-30%"><fegaussianblur result="b" stddeviation="2"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<pattern height="28" id="m15-grid" patternunits="userSpaceOnUse" width="28"><circle cx="1.2" cy="1.2" fill="#10b981" opacity="0.10" r="1.2"></circle></pattern>
+<marker id="m15-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#34d399"></path></marker>
+<marker id="m15-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+<marker id="m15-ahr" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#f87171"></path></marker>
+</defs>
+<rect fill="url(#m15-grid)" height="380" width="900" x="0" y="0"></rect>
+<g filter="url(#m15-glow)"><polygon fill="#0e2018" points="450,30 610,110 450,190 290,110" stroke="url(#m15-g1)" stroke-width="2.2"></polygon></g>
+<text fill="#d1fae5" font-family="Inter,sans-serif" font-size="12.5" font-weight="600" text-anchor="middle" x="450" y="100">Va a soltar una gran cantidad de resultados</text>
+<text fill="#d1fae5" font-family="Inter,sans-serif" font-size="12.5" font-weight="600" text-anchor="middle" x="450" y="117">que nunca voy a releer?</text>
+<line class="flow-dash" marker-end="url(#m15-ah)" opacity="0.7" stroke="#34d399" stroke-dasharray="6 3" stroke-width="1.8" x1="291" x2="120" y1="110" y2="110"></line>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="11" font-weight="700" text-anchor="middle" x="205" y="103">SÍ</text>
+<g filter="url(#m15-glow)"><rect fill="#0e2018" height="54" rx="12" stroke="url(#m15-g1)" stroke-width="2" width="100" x="20" y="82"></rect></g>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="70" y="107">✓ Sub</text>
+<text fill="#a7f3d0" font-family="Inter,sans-serif" font-size="10.5" text-anchor="middle" x="70" y="124">agente</text>
+<line marker-end="url(#m15-ahc)" opacity="0.7" stroke="#38bdf8" stroke-width="1.8" x1="450" x2="450" y1="190" y2="230"></line>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="11" font-weight="700" x="460" y="216">NO</text>
+<g filter="url(#m15-glow)"><polygon fill="#0d1f2d" points="185,260 290,310 185,360 80,310" stroke="url(#m15-g2)" stroke-width="2"></polygon></g>
+<text fill="#bae6fd" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="185" y="303">10+ archivos</text>
+<text fill="#bae6fd" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="185" y="318">¿o áreas?</text>
+<g filter="url(#m15-glow)"><polygon fill="#0d1f2d" points="450,260 555,310 450,360 345,310" stroke="url(#m15-g2)" stroke-width="2"></polygon></g>
+<text fill="#bae6fd" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="450" y="303">En paralelo o</text>
+<text fill="#bae6fd" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="450" y="318">¿independiente?</text>
+<g filter="url(#m15-glow)"><polygon fill="#0d1f2d" points="715,260 820,310 715,360 610,310" stroke="url(#m15-g2)" stroke-width="2"></polygon></g>
+<text fill="#bae6fd" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="715" y="303">Necesita</text>
+<text fill="#bae6fd" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="715" y="318">¿revisor imparcial?</text>
+<line opacity="0.5" stroke="#38bdf8" stroke-dasharray="4 3" stroke-width="1.4" x1="450" x2="185" y1="230" y2="260"></line>
+<line opacity="0.5" stroke="#38bdf8" stroke-dasharray="4 3" stroke-width="1.4" x1="450" x2="450" y1="230" y2="260"></line>
+<line opacity="0.5" stroke="#38bdf8" stroke-dasharray="4 3" stroke-width="1.4" x1="450" x2="715" y1="230" y2="260"></line>
+<line marker-end="url(#m15-ah)" opacity="0.6" stroke="#34d399" stroke-width="1.5" x1="185" x2="120" y1="260" y2="190"></line>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="10" font-weight="700" x="138" y="221">SÍ</text>
+<line marker-end="url(#m15-ah)" opacity="0.6" stroke="#34d399" stroke-width="1.5" x1="450" x2="450" y1="260" y2="200"></line>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="10" font-weight="700" x="457" y="232">SÍ</text>
+<line marker-end="url(#m15-ah)" opacity="0.6" stroke="#34d399" stroke-width="1.5" x1="715" x2="780" y1="260" y2="190"></line>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="10" font-weight="700" x="763" y="221">SÍ</text>
+<g filter="url(#m15-glow)"><rect fill="#0e2018" height="54" rx="12" stroke="url(#m15-g1)" stroke-width="2" width="120" x="760" y="82"></rect></g>
+<text fill="#34d399" font-family="Inter,sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="820" y="107">✓ Sub</text>
+<text fill="#a7f3d0" font-family="Inter,sans-serif" font-size="10.5" text-anchor="middle" x="820" y="124">agente</text>
+<line marker-end="url(#m15-ah)" opacity="0.6" stroke="#34d399" stroke-width="1.5" x1="780" x2="820" y1="180" y2="136"></line>
+<line marker-end="url(#m15-ahr)" opacity="0.55" stroke="#f87171" stroke-dasharray="4 3" stroke-width="1.4" x1="185" x2="400" y1="360" y2="376"></line>
+<line marker-end="url(#m15-ahr)" opacity="0.55" stroke="#f87171" stroke-dasharray="4 3" stroke-width="1.4" x1="450" x2="450" y1="360" y2="376"></line>
+<line marker-end="url(#m15-ahr)" opacity="0.55" stroke="#f87171" stroke-dasharray="4 3" stroke-width="1.4" x1="715" x2="500" y1="360" y2="376"></line>
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="10" font-weight="700" x="393" y="375">NO</text>
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="10" font-weight="700" x="458" y="375">NO</text>
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="10" font-weight="700" x="506" y="375">NO</text>
+</svg>
+<p class="text-xs text-neutral-500 text-center mt-2">Flujo de decisión: usa primero la pregunta principal; si la respuesta es "no", recorre las subpreguntas.</p>
+</div>
+</section>
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+<!-- TÓPICOS -->
+<div class="space-y-4">
+<!-- TÓPICO 1 -->
+<div class="topic-item bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 text-left hover:bg-dark-700 transition-colors" onclick="toggleTopic(this)">
+<span class="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-lg shrink-0">1</span>
+<div>
+<div class="font-semibold text-neutral-100 text-base">"¿Esto va a volcar cosas que nunca voy a volver a leer?"</div>
+<div class="text-sm text-neutral-400 mt-0.5">La pregunta de filtro que debe hacerse antes que cualquier otra</div>
+</div>
+<span class="ml-auto text-neutral-400 text-xl">+</span>
+</button>
+<div class="topic-explanation px-5 pb-6">
+<!-- O que é -->
+<div class="mb-5">
+<h3 class="text-emerald-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed">
+              La heurística no es técnica: se trata de <strong class="text-white">qué hace el resultado</strong> con tu contexto.
+              Si la tarea produce una montaña de datos que vas a recibir como resumen y nunca volverás a leer línea por línea, el trabajo le corresponde a un subagente. El chat principal es tu <strong class="text-emerald-400">memoria de trabajo</strong> — no lo llenes de basura.
+            </p>
+</div>
+<!-- Conceitos-chave -->
+<div class="bg-dark-700 rounded-lg p-4 space-y-1 text-sm text-neutral-300">
+<div><strong class="text-emerald-400">Una pregunta filtra el 80% de los casos</strong> — sin regla compleja.</div>
+<div><strong class="text-emerald-400">Output que no se vuelve a leer:</strong> logs, listas, resultados brutos de búsqueda.</div>
+<div><strong class="text-emerald-400">Resumen de vuelta:</strong> indica "trae solo el resumen" — forma parte del prompt.</div>
+</div>
+</div>
+</div>
+<!-- TÓPICO 2 -->
+<div class="topic-item bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 text-left hover:bg-dark-700 transition-colors" onclick="toggleTopic(this)">
+<span class="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-lg shrink-0">2</span>
+<div>
+<div class="font-semibold text-neutral-100 text-base">Señales para USAR un subagente</div>
+<div class="text-sm text-neutral-400 mt-0.5">Cinco situaciones en las que el subagente siempre gana</div>
+</div>
+<span class="ml-auto text-neutral-400 text-xl">+</span>
+</button>
+<div class="topic-explanation px-5 pb-6">
+<!-- O que é -->
+<div class="mb-5">
+<h3 class="text-emerald-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed">
+              Cinco patrones recurrentes que casi siempre requieren un subagente; reconocerlos evita el ciclo de «empezar en el chat y darse cuenta demasiado tarde de que se debería haber delegado».
+            </p>
+</div>
+<!-- Por que aprender -->
+<div class="mb-5">
+<h3 class="text-emerald-400 font-semibold mb-3">Las cinco señales</h3>
+<div class="space-y-3">
+<div class="flex items-start gap-3 bg-emerald-900/20 border border-emerald-500/30 rounded-lg p-3">
+<span class="text-emerald-400 font-bold text-sm shrink-0">📁</span>
+<div>
+<div class="text-white font-semibold text-sm">Muchos archivos</div>
+<div class="text-neutral-300 text-sm">Recorrer un repositorio entero, auditar 40 componentes, refactorizar una carpeta: cualquier tarea que requiera leer N archivos antes de actuar.</div>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-emerald-900/20 border border-emerald-500/30 rounded-lg p-3">
+<span class="text-emerald-400 font-bold text-sm shrink-0">📊</span>
+<div>
+<div class="text-white font-semibold text-sm">Pared de salida</div>
+<div class="text-neutral-300 text-sm">Logs de CI, resultados de grep, listas largas de errores: quieres el diagnóstico, no la salida sin procesar.</div>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-emerald-900/20 border border-emerald-500/30 rounded-lg p-3">
+<span class="text-emerald-400 font-bold text-sm shrink-0">🔁</span>
+<div>
+<div class="text-white font-semibold text-sm">Tarea repetible</div>
+<div class="text-neutral-300 text-sm">Algo que volverás a pedir mañana, con datos diferentes. Es más fácil reutilizar un subagente que un prompt improvisado.</div>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-emerald-900/20 border border-emerald-500/30 rounded-lg p-3">
+<span class="text-emerald-400 font-bold text-sm shrink-0">⚡</span>
+<div>
+<div class="text-white font-semibold text-sm">Jobs paralelos/independientes</div>
+<div class="text-neutral-300 text-sm">Tres análisis que no dependen uno del otro pueden ejecutarse al mismo tiempo: el maestro espera a que todos terminen y los agrega.</div>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-emerald-900/20 border border-emerald-500/30 rounded-lg p-3">
+<span class="text-emerald-400 font-bold text-sm shrink-0">🔍</span>
+<div>
+<div class="text-white font-semibold text-sm">Revisor imparcial</div>
+<div class="text-neutral-300 text-sm">El mismo chat que escribió el código tiene sesgo a defenderlo. Un subagente sin memoria de lo que se escribió lo revisa sin filtros.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="bg-dark-700 rounded-lg p-4 space-y-1 text-sm text-neutral-300">
+<div><strong class="text-emerald-400">Alcance cerrado:</strong> un comienzo y un final claros: el subagente sabe cuándo terminó.</div>
+<div><strong class="text-emerald-400">Output acotado:</strong> "trae solo N viñetas" define el tamaño de la respuesta antes de ejecutarla.</div>
+<div><strong class="text-emerald-400">Independencia:</strong> el subagente no hace preguntas durante la ejecución.</div>
+</div>
+</div>
+</div>
+<!-- TÓPICO 3 -->
+<div class="topic-item bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 text-left hover:bg-dark-700 transition-colors" onclick="toggleTopic(this)">
+<span class="w-12 h-12 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400 font-bold text-lg shrink-0">3</span>
+<div>
+<div class="font-semibold text-neutral-100 text-base">Señales para EVITAR un subagente</div>
+<div class="text-sm text-neutral-400 mt-0.5">Cinco situaciones en las que crear un agente lo empeora todo</div>
+</div>
+<span class="ml-auto text-neutral-400 text-xl">+</span>
+</button>
+<div class="topic-explanation px-5 pb-6">
+<!-- Grid comparativo USAR × EVITAR -->
+<div class="mb-5">
+<h3 class="text-red-400 font-semibold mb-3">Las cinco señales para evitar</h3>
+<div class="space-y-3">
+<div class="flex items-start gap-3 bg-red-900/20 border border-red-500/30 rounded-lg p-3">
+<span class="text-red-400 font-bold text-sm shrink-0">✗</span>
+<div>
+<div class="text-white font-semibold text-sm">Edición rápida</div>
+<div class="text-neutral-300 text-sm">Ajustar una línea, cambiar el nombre de una variable, corregir un error tipográfico: el costo de crear el agente es mayor que el de la tarea.</div>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-red-900/20 border border-red-500/30 rounded-lg p-3">
+<span class="text-red-400 font-bold text-sm shrink-0">✗</span>
+<div>
+<div class="text-white font-semibold text-sm">Pasos dependientes en secuencia</div>
+<div class="text-neutral-300 text-sm">Si el paso B solo puede empezar después de que veas el resultado del paso A y decidas, es razonamiento: sigue en el chat.</div>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-red-900/20 border border-red-500/30 rounded-lg p-3">
+<span class="text-red-400 font-bold text-sm shrink-0">✗</span>
+<div>
+<div class="text-white font-semibold text-sm">Agentes que tendrían que conversar entre sí</div>
+<div class="text-neutral-300 text-sm">Los subagentes no se hablan entre sí: si la tarea requiere coordinación lateral, no se puede paralelizar.</div>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-red-900/20 border border-red-500/30 rounded-lg p-3">
+<span class="text-red-400 font-bold text-sm shrink-0">✗</span>
+<div>
+<div class="text-white font-semibold text-sm">Necesita el contexto de la conversación</div>
+<div class="text-neutral-300 text-sm">El subagente empieza con el contexto limpio; si necesita saber qué se dijo antes, está en el lugar equivocado.</div>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-red-900/20 border border-red-500/30 rounded-lg p-3">
+<span class="text-red-400 font-bold text-sm shrink-0">✗</span>
+<div>
+<div class="text-white font-semibold text-sm">Necesita hacerte preguntas</div>
+<div class="text-neutral-300 text-sm">Si el agente va a pausar para pedir una aclaración, no existe la independencia que justifica el subagente.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="bg-red-900/10 border border-red-500/20 rounded-lg p-4 space-y-1 text-sm text-neutral-300">
+<div><strong class="text-red-400">Razonamiento continuo:</strong> las decisiones A→B→C pertenecen al chat, no a agentes separados.</div>
+<div><strong class="text-red-400">Costo de configuración:</strong> crear un agente implica fricción; para una tarea de 10 segundos, no vale la pena.</div>
+<div><strong class="text-red-400">Contexto limpio = sin conocimiento del pasado:</strong> si el agente necesita el historial, pásalo todo en el prompt.</div>
+</div>
+</div>
+</div>
+<!-- TÓPICO 4 -->
+<div class="topic-item bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 text-left hover:bg-dark-700 transition-colors" onclick="toggleTopic(this)">
+<span class="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-lg shrink-0">4</span>
+<div>
+<div class="font-semibold text-neutral-100 text-base">La regla de los 10+ archivos</div>
+<div class="text-sm text-neutral-400 mt-0.5">Cuando el tamaño resuelve la duda</div>
+</div>
+<span class="ml-auto text-neutral-400 text-xl">+</span>
+</button>
+<div class="topic-explanation px-5 pb-6">
+<!-- O que é -->
+<div class="mb-5">
+<h3 class="text-emerald-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed mb-3">
+              Cuando todavía tienes dudas después de la pregunta filtro, hay un criterio numérico que resuelve la mayoría de los casos restantes:
+              <strong class="text-emerald-400">10 o más archivos</strong>, o cualquier resultado que, si se volcara en el chat, nunca leerías línea por línea.
+            </p>
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-4">
+<div class="flex items-start gap-3">
+<span class="text-primary text-lg shrink-0">💡</span>
+<div>
+<div class="font-semibold text-primary mb-1">Regla práctica</div>
+<div class="text-neutral-300 text-sm leading-relaxed">
+<strong class="text-white">10+ archivos</strong> para revisar, o cualquier resultado que nunca vas a volver a leer = <strong class="text-emerald-400">subagente</strong>.
+                    Menos de 10 archivos y output legible = quédate en el chat.
+                  </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="bg-dark-700 rounded-lg p-4 space-y-1 text-sm text-neutral-300">
+<div><strong class="text-emerald-400">Criterio numérico:</strong> 10 es concreto y rápido de evaluar — sin la ambigüedad de «muchos».</div>
+<div><strong class="text-emerald-400">Output que no se vuelve a leer:</strong> 3 archivos de registro gigantes también lo activan — no es solo cuestión de cantidad.</div>
+<div><strong class="text-emerald-400">Escala:</strong> 5 archivos hoy se convierten en 50 mañana: diseña el subagente con anticipación.</div>
+</div>
+</div>
+</div>
+<!-- TÓPICO 5 -->
+<div class="topic-item bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 text-left hover:bg-dark-700 transition-colors" onclick="toggleTopic(this)">
+<span class="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-lg shrink-0">5</span>
+<div>
+<div class="font-semibold text-neutral-100 text-base">Escala → workflow dinámico</div>
+<div class="text-sm text-neutral-400 mt-0.5">Cuando la respuesta empieza como «no» y evoluciona a «sí»</div>
+</div>
+<span class="ml-auto text-neutral-400 text-xl">+</span>
+</button>
+<div class="topic-explanation px-5 pb-6">
+<!-- O que é -->
+<div class="mb-5">
+<h3 class="text-emerald-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed">
+              La decisión no siempre es binaria: el maestro empieza a trabajar, se da cuenta de que el scope creció y <strong class="text-emerald-400">decide sobre la marcha</strong> activar subagentes. Esto es un <strong class="text-white">workflow dinámico</strong>: delegación en tiempo de ejecución, no en el prompt original.
+            </p>
+</div>
+<!-- Conceitos-chave -->
+<div class="bg-dark-700 rounded-lg p-4 space-y-1 text-sm text-neutral-300">
+<div><strong class="text-emerald-400">Decisión en runtime:</strong> el maestro delega cuando ve el tamaño real; no es necesario definirlo en el prompt original.</div>
+<div><strong class="text-emerald-400">Fan-out dinámico:</strong> 1 tarea → N agentes generados en el momento, cada uno con un alcance claro.</div>
+<div><strong class="text-emerald-400">Maestro como enrutador:</strong> decide, delega y agrega; nunca ejecuta el trabajo bruto.</div>
+</div>
+</div>
+</div>
+<!-- TÓPICO 6 -->
+<div class="topic-item bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 text-left hover:bg-dark-700 transition-colors" onclick="toggleTopic(this)">
+<span class="w-12 h-12 rounded-full bg-dark-700 border border-dark-600 flex items-center justify-center text-neutral-400 font-bold text-lg shrink-0">6</span>
+<div>
+<div class="font-semibold text-neutral-100 text-base">No fuerces un subagente</div>
+<div class="text-sm text-neutral-400 mt-0.5">La trampa de «usar porque puedo»</div>
+</div>
+<span class="ml-auto text-neutral-400 text-xl">+</span>
+</button>
+<div class="topic-explanation px-5 pb-6">
+<!-- O que é -->
+<div class="mb-5">
+<h3 class="text-emerald-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed">
+              Después de aprender sobre subagentes, existe una tendencia natural a querer usarlos para todo: la <strong class="text-white">trampa de la nueva herramienta</strong>. Forzar el uso de un subagente cuando no hace falta fragmenta el contexto, aumenta la latencia y complica la depuración.
+            </p>
+</div>
+<!-- Por que aprender -->
+<div class="mb-5">
+<h3 class="text-emerald-400 font-semibold mb-3">Consecuencias de forzar</h3>
+<div class="bg-red-900/20 border border-red-500/30 rounded-xl p-4 space-y-2">
+<div class="flex items-start gap-3">
+<span class="text-red-400 mt-0.5">✗</span>
+<span class="text-neutral-300"><strong class="text-white">Contexto fragmentado:</strong> el subagente empieza desde cero; el razonamiento que debería fluir queda partido en pedazos.</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="text-red-400 mt-0.5">✗</span>
+<span class="text-neutral-300"><strong class="text-white">Latencia sin ganancia:</strong> crear un agente lleva tiempo — para tareas rápidas, terminas más lento.</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="text-red-400 mt-0.5">✗</span>
+<span class="text-neutral-300"><strong class="text-white">Depuración difícil:</strong> ¿qué salió mal? ¿Fue el maestro? ¿Fue el subagente? ¿Fue el prompt de delegación?</span>
+</div>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="bg-dark-700 rounded-lg p-4 space-y-1 text-sm text-neutral-300">
+<div><strong class="text-neutral-200">Principio de simplicidad:</strong> el subagente es una escalera: úsalo solo cuando necesites subir.</div>
+<div><strong class="text-neutral-200">Costo real:</strong> configuración + latencia + posible depuración — la ganancia debe compensarlo.</div>
+<div><strong class="text-neutral-200">Vuelve al chat:</strong> cuando tengas dudas, empieza en el chat; delega si el alcance crece.</div>
+</div>
+</div>
+</div>
+</div><!-- /space-y-4 -->
+<!-- BLOCO: EXEMPLO — Dois prompts -->
+<section class="mt-14 mb-12">
+<h2 class="text-xl font-bold mb-6 text-emerald-400">Ejemplo: el mismo tipo de solicitud en dos escenarios</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<!-- Prompt que vira subagente -->
+<div class="bg-dark-800 rounded-xl border border-emerald-500/30 p-5">
+<div class="flex items-center gap-2 mb-3">
+<span class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs font-bold">✓</span>
+<span class="text-emerald-400 font-semibold text-sm">Se convierte en subagente</span>
+</div>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 mb-3 border border-dark-600 leading-relaxed">
+            "Revisa todos los archivos en <span class="text-sky-400">src/components/</span> (hay ~60 componentes), verifica cuáles están importando la biblioteca heredada <span class="text-sky-400">lodash</span> directamente y tráeme solo la lista con la ruta y la línea. Sin mostrarme el contenido de los archivos.»
+          </div>
+<ul class="space-y-1 text-sm text-neutral-400">
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">→</span> 60 archivos para revisar (10+)</li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">→</span> El output nunca se volverá a leer línea por línea</li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">→</span> Alcance cerrado e independiente</li>
+</ul>
+</div>
+<!-- Prompt que fica no chat -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center gap-2 mb-3">
+<span class="w-6 h-6 rounded-full bg-dark-700 flex items-center justify-center text-neutral-400 text-xs font-bold">✗</span>
+<span class="text-neutral-400 font-semibold text-sm">Se queda en el chat</span>
+</div>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 mb-3 border border-dark-600 leading-relaxed">
+            "Mira este archivo <span class="text-sky-400">utils/format.ts</span> — tiene sentido mover esta función al módulo de <span class="text-sky-400">helpers</span>? ¿Qué opinas?"
+          </div>
+<ul class="space-y-1 text-sm text-neutral-400">
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">→</span> 1 archivo, se puede decidir en el chat</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">→</span> Necesita la conversación anterior (contexto)</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">→</span> Razonamiento continuo, no una tarea aislada</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- BLOCO: TELA SIMULADA -->
+<section class="mb-12">
+<h2 class="text-xl font-bold mb-4 text-emerald-400">Cómo se ve en la práctica: el maestro tomando la decisión</h2>
+<!-- Monitor mock -->
+<div class="rounded-2xl border border-dark-600 bg-dark-900 overflow-hidden shadow-2xl max-w-2xl">
+<!-- Barra do terminal -->
+<div class="flex items-center gap-2 px-4 py-2.5 bg-dark-800 border-b border-dark-600">
+<span class="w-3 h-3 rounded-full bg-red-500/70"></span>
+<span class="w-3 h-3 rounded-full bg-yellow-500/70"></span>
+<span class="w-3 h-3 rounded-full bg-emerald-500/70"></span>
+<span class="text-xs text-neutral-500 ml-2 font-mono">claude-code — maestro</span>
+</div>
+<!-- Conteúdo do terminal -->
+<div class="p-5 font-mono text-sm space-y-3">
+<div class="flex items-start gap-2">
+<span class="text-neutral-500 shrink-0">You:</span>
+<span class="text-neutral-300">audita todos los módulos en <span class="text-sky-400">src/</span> y dime cuáles tienen una cobertura inferior al 60%</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-emerald-400 shrink-0">Claude:</span>
+<span class="text-neutral-300">Son 48 módulos. Voy a iniciar un subagente para revisarlos; traerá solo la lista con la cobertura. Un momento...</span>
+</div>
+<div class="flex items-start gap-2 opacity-60">
+<span class="text-neutral-500 shrink-0">⚙</span>
+<span class="text-neutral-500 italic">Subagente iniciado: escaneando 48 archivos de cobertura...</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-emerald-400 shrink-0">Claude:</span>
+<span class="text-neutral-300">Completado. <span class="text-emerald-400 font-semibold">7 módulos</span> por debajo del 60%: <span class="text-sky-400">auth/session.ts (42%)</span>, <span class="text-sky-400">api/retry.ts (38%)</span>, y 5 más. ¿Quieres que priorice por riesgo o por facilidad de corrección?</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-neutral-500 shrink-0">You:</span>
+<span class="text-neutral-300">por riesgo</span>
+</div>
+<div class="border-t border-dark-600 pt-2 mt-2 text-xs text-neutral-500 flex items-center gap-2">
+<span class="text-emerald-400">✓</span> El output bruto quedó en el subagente. El chat quedó limpio.
+          </div>
+</div>
+</div>
+</section>
+<!-- BLOCO: PROMPTS PRONTOS -->
+<section class="mb-12">
+<h2 class="text-xl font-bold mb-4 text-emerald-400">Prompts listos para usar</h2>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-xs font-semibold text-emerald-400 uppercase tracking-wide">Prompt 1 — inspección del repo</span>
+</div>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 border border-dark-600 leading-relaxed">
+            "Revisa todos los archivos en <span class="text-sky-400">[carpeta]</span>, encuentra [patrón/problema] y tráeme solo la lista de archivos afectados con la línea relevante. No pegues el contenido de los archivos."
+          </div>
+<p class="text-xs text-neutral-500 mt-2">Aplica el criterio: muchos archivos + resultado que no se vuelve a leer = subagente.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-xs font-semibold text-emerald-400 uppercase tracking-wide">Prompt 2 — análisis en paralelo</span>
+</div>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 border border-dark-600 leading-relaxed">
+            "Analiza <span class="text-sky-400">[módulo-A]</span>, <span class="text-sky-400">[módulo-B]</span> e <span class="text-sky-400">[módulo-C]</span> en paralelo — cada uno independiente. Para cada uno, incluye: el mayor riesgo técnico y una sugerencia de refactor en 3 viñetas. Nada más."
+          </div>
+<p class="text-xs text-neutral-500 mt-2">Jobs independientes + output acotado = subagente en paralelo.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center gap-2 mb-2">
+<span class="text-xs font-semibold text-emerald-400 uppercase tracking-wide">Prompt 3 — revisor imparcial</span>
+</div>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-sm text-neutral-300 border border-dark-600 leading-relaxed">
+            "Revisa el código en <span class="text-sky-400">[archivo]</span> sin consultar el historial de nuestra conversación. Busca solo: errores lógicos, casos límite no contemplados y código muerto. Máximo 5 hallazgos, ordenados por gravedad."
+          </div>
+<p class="text-xs text-neutral-500 mt-2">Revisor imparcial + contexto limpio = el subagente es una ventaja, no una limitación.</p>
+</div>
+</div>
+</section>
+<!-- BLOCO: EXERCÍCIO -->
+<section class="mb-12">
+<div class="bg-dark-800 rounded-2xl border border-emerald-500/30 p-6">
+<div class="flex items-start gap-4 mb-5">
+<span class="text-3xl">🏋️</span>
+<div>
+<h2 class="text-xl font-bold mb-1">Ejercicio: aplica la pregunta a 5 tareas tuyas</h2>
+<p class="text-neutral-400 text-sm">Usa la heurística de este módulo para clasificar tareas reales de tu día a día.</p>
+</div>
+</div>
+<div class="space-y-3 mb-5">
+<div class="bg-dark-700 rounded-lg p-4">
+<div class="font-semibold text-white mb-2">Qué hacer</div>
+<ol class="space-y-2 text-neutral-300 text-sm list-decimal list-inside">
+<li>Lista 5 tareas que sueles pedirle a Claude Code; cuanto más variadas, mejor.</li>
+<li>Para cada una, responde: "¿Esto va a generar una salida que nunca volveré a leer?"</li>
+<li>Si la respuesta es "no", recorre las subpreguntas: ¿10+ archivos? ¿Paralelo? ¿Revisor imparcial?</li>
+<li>Clasifica cada tarea: <strong class="text-emerald-400">subagente</strong>, <strong class="text-red-400">chat directo</strong> o <strong class="text-neutral-400">depende del alcance</strong>.</li>
+<li>Anota el motivo en una frase.</li>
+</ol>
+</div>
+</div>
+<div class="border-t border-dark-600 pt-4">
+<div class="font-semibold text-emerald-400 mb-3">Criterio de éxito</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="flex items-start gap-2">
+<span class="text-emerald-400 mt-0.5 text-sm">✓</span>
+<span class="text-neutral-300 text-sm">Puedes clasificar sin dudar al menos 4 de las 5 tareas.</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-emerald-400 mt-0.5 text-sm">✓</span>
+<span class="text-neutral-300 text-sm">Para cada "subagente", puedes formular el prompt con el resultado contenido en una frase.</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-emerald-400 mt-0.5 text-sm">✓</span>
+<span class="text-neutral-300 text-sm">Para cada "chat directo", puedes explicar qué señal de EVITAR se aplica.</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-emerald-400 mt-0.5 text-sm">✓</span>
+<span class="text-neutral-300 text-sm">Identifica al menos 1 tarea en la que la decisión dependa del scope real que se revele en el momento.</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- RESUMO + NAVEGAÇÃO INFERIOR -->
+<section>
+<div class="bg-dark-800 rounded-2xl border border-dark-600 p-6">
+<h2 class="text-lg font-bold text-emerald-400 mb-4">Resumen del módulo</h2>
+<div class="space-y-2 mb-6">
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">La pregunta central</strong><span class="text-neutral-400"> — «¿Esto va a generar una salida que nunca volveré a leer?» decide el 80% de los casos.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">5 señales de USAR</strong><span class="text-neutral-400"> — muchos archivos, mucho output, repetible, paralelo, revisor imparcial.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-red-400 mt-1">✗</span><div><strong class="text-white">5 señales de EVITAR</strong><span class="text-neutral-400"> — edición rápida, pasos dependientes, conversación paralela, necesitas el contexto, necesitas preguntarte algo.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">Regla de los 10+</strong><span class="text-neutral-400"> — 10 o más archivos o una salida que no volverás a leer = subagente, sin discusión.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-emerald-400 mt-1">✓</span><div><strong class="text-white">Flujo de trabajo dinámico</strong><span class="text-neutral-400"> — la decisión puede tomarse en runtime cuando el scope crezca.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-neutral-400 mt-1">→</span><div><strong class="text-white">No fuerces</strong><span class="text-neutral-400"> — lo simple es mejor; usa un subagente solo cuando la heurística lo indique, no por costumbre.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-6">
+<h3 class="font-semibold text-emerald-400 mb-2">Próximo módulo:</h3>
+<p class="text-neutral-300">1.6 — Anatomía de un subagente. El archivo <code class="text-sky-400 bg-dark-700 px-1 rounded">.md</code>: frontmatter (configuración) + cuerpo (cerebro).</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="modulo-1-4.html">← Módulo anterior</a>
+<a class="flex-1 text-center px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-500 transition-colors" href="modulo-1-6.html">Próximo módulo →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagentes — 2026 · un curso en formato
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Ruta 1 · Fundamentos · Módulo 1.5</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

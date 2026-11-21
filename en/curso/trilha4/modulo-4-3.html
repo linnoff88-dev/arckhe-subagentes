@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Comparing models by role | Subagents</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha purple T4) */
+    html:not(.dark) .text-purple-400 { color: #9333ea; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(147, 51, 234, 0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(147, 51, 234, 0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(147, 51, 234, 0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(147, 51, 234, 0.18); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #9333ea; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(147, 51, 234, 0.08); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(147, 51, 234, 0.08); }
+    html:not(.dark) .bg-purple-600 { background-color: #9333ea; }
+    html:not(.dark) .hover\:bg-purple-500:hover { background-color: #a855f7; }
+
+    /* Light mode - cores de apoio usadas nos boxes (blue dados / red erros / cyan secundaria) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-cyan-400 { color: #0891b2; }
+    html:not(.dark) .bg-cyan-900\/20 { background-color: rgba(8, 145, 178, 0.08); }
+    html:not(.dark) .border-cyan-500\/30 { border-color: rgba(8, 145, 178, 0.25); }
+    html:not(.dark) .text-amber-400 { color: #b45309; }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(180, 83, 9, 0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(180, 83, 9, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - tabela matriz */
+    html:not(.dark) .matrix-th { background-color: #f3f4f6; }
+    html:not(.dark) .matrix-row-head { background-color: #faf5ff; }
+
+    /* Light mode - diagramas SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Pulso dos agentes nos diagramas (apenas se o usuario permitir movimento) */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes wf-bar { from { transform: translateX(-6%); } to { transform: translateX(0); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.2s} .wf-a:nth-child(3){animation-delay:.4s}
+      .wf-a:nth-child(4){animation-delay:.6s} .wf-a:nth-child(5){animation-delay:.8s}
+      .barfill { animation: wf-bar 3s ease-in-out infinite alternate; }
+      .barfill.b2{animation-delay:.5s} .barfill.b3{animation-delay:1s} .barfill.b4{animation-delay:1.4s} .barfill.b5{animation-delay:1.8s}
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha4/modulo-4-3.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha4/modulo-4-3.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha4/modulo-4-3.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha4/modulo-4-3.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-4-3.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha4/modulo-4-3.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagents</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentals</span>
+</a>
+<!-- Trilha 2 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">In practice</span>
+</a>
+<!-- Trilha 3 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orchestration</span>
+</a>
+<!-- Trilha 4 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Advanced</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-purple-400" href="../../index.html">Start</a>
+<span>/</span>
+<a class="hover:text-purple-400" href="index.html">Track 4</a>
+<span>/</span>
+<span class="text-purple-400">Module 4.3</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">
+        MODULE 4.3 · Track 4 · Advanced &amp; cross-environment
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">🎛️ Comparing models by role</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        Each role in the fleet needs a different brain. Whoever only <strong class="text-purple-400">scans</strong> files don't need
+the same engine as whoever <strong class="text-purple-400">decides the architecture</strong>. You'll learn how to assemble a
+        <strong class="text-purple-400">role × model matrix</strong> and balance the iron triangle:
+        <strong class="text-purple-400">cost · latency · quality</strong>.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">6</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">~30</div>
+<div class="text-xs text-neutral-400">Minutes</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">Advanced</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">Strategy</div>
+<div class="text-xs text-neutral-400">Type</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- ABERTURA + SVG MATRIZ (DESTAQUE) -->
+<section class="mb-12">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Imagine a <strong class="text-purple-400">auto repair shop</strong>. You don't use a pneumatic impact wrench to tighten
+        an eyeglass screw, or a screwdriver to remove a truck wheel. Every job has the right tool — and using one that's
+        too expensive is wasteful, while using one that's too weak means rework. With a <strong class="text-purple-400">subagent fleet</strong>
+        is the same: the agent’s role determines the model. Whoever <strong class="text-purple-400">scans</strong> 200 files call for speed and
+        low cost; whoever <strong class="text-purple-400">reason</strong> on an irreversible decision, you want the strongest engine. The map below is the heart of this module: a <strong class="text-purple-400">role × model matrix</strong>.
+      </p>
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-2 overflow-hidden">
+<svg aria-label="Role-by-model matrix: six roles in the rows (scan, search, build, review, reasoning, security) and four models in the columns (Haiku, Sonnet, Opus, GPT/Codex). Each marked cell shows the recommended combination; reasoning and security map to Opus, while scan and search map to Haiku." class="w-full h-auto" role="img" viewbox="0 0 1000 420">
+<defs>
+<lineargradient id="m43-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#c084fc"></stop><stop offset="1" stop-color="#a855f7"></stop>
+</lineargradient>
+<filter height="180%" id="m43-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m43-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#a855f7" opacity="0.12" r="1.3"></circle>
+</pattern>
+</defs>
+<rect fill="url(#m43-grid)" height="420" width="1000" x="0" y="0"></rect>
+<!-- cabeçalhos de coluna (modelos) -->
+<g font-family="Inter,sans-serif" font-size="14" font-weight="600" text-anchor="middle">
+<text fill="#38bdf8" x="430" y="40">Haiku</text>
+<text fill="#7fc8ef" font-size="10.5" font-weight="400" x="430" y="56">cheap · fast</text>
+<text fill="#c084fc" x="590" y="40">Sonnet</text>
+<text fill="#d8b4fe" font-size="10.5" font-weight="400" x="590" y="56">balance</text>
+<text fill="#c084fc" x="750" y="40">Opus</text>
+<text fill="#d8b4fe" font-size="10.5" font-weight="400" x="750" y="56">reasoning</text>
+<text fill="#9ca3af" x="910" y="40">GPT/Codex</text>
+<text fill="#c8cdd6" font-size="10.5" font-weight="400" x="910" y="56">Second look</text>
+</g>
+<!-- linhas-guia da grade -->
+<g opacity="0.35" stroke="#4b5563" stroke-width="1">
+<line x1="350" x2="990" y1="70" y2="70"></line>
+<line x1="350" x2="990" y1="124" y2="124"></line>
+<line x1="350" x2="990" y1="178" y2="178"></line>
+<line x1="350" x2="990" y1="232" y2="232"></line>
+<line x1="350" x2="990" y1="286" y2="286"></line>
+<line x1="350" x2="990" y1="340" y2="340"></line>
+<line x1="350" x2="990" y1="394" y2="394"></line>
+<line x1="350" x2="350" y1="70" y2="394"></line>
+<line x1="510" x2="510" y1="70" y2="394"></line>
+<line x1="670" x2="670" y1="70" y2="394"></line>
+<line x1="830" x2="830" y1="70" y2="394"></line>
+<line x1="990" x2="990" y1="70" y2="394"></line>
+</g>
+<!-- rótulos de linha (papéis) -->
+<g fill="#e9d5ff" font-family="Inter,sans-serif" font-size="13.5" font-weight="600" text-anchor="end">
+<text x="332" y="102">🔍 scan</text>
+<text x="332" y="156">🧭 search</text>
+<text x="332" y="210">🔨 build</text>
+<text x="332" y="264">🔎 review</text>
+<text x="332" y="318">🧠 reasoning</text>
+<text x="332" y="372">🛡️ security</text>
+</g>
+<!-- células recomendadas (pílulas) -->
+<g font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle">
+<!-- escanear -> Haiku -->
+<rect fill="#0e1b26" height="30" rx="8" stroke="#38bdf8" stroke-width="2" width="88" x="386" y="83"></rect><text fill="#bfe6ff" x="430" y="102">ideal</text>
+<!-- buscar -> Haiku -->
+<rect fill="#0e1b26" height="30" rx="8" stroke="#38bdf8" stroke-width="2" width="88" x="386" y="137"></rect><text fill="#bfe6ff" x="430" y="156">ideal</text>
+<!-- construir -> Sonnet (foco) -->
+<g filter="url(#m43-glow)"><rect fill="#1a1230" height="30" rx="8" stroke="url(#m43-grad)" stroke-width="2.4" width="88" x="546" y="191"></rect></g><text fill="#e9d5ff" x="590" y="210">ideal</text>
+<!-- revisar -> Sonnet -->
+<rect fill="#1a1230" height="30" rx="8" stroke="#c084fc" stroke-width="2" width="88" x="546" y="245"></rect><text fill="#e9d5ff" x="590" y="264">ideal</text>
+<!-- revisar -> GPT/Codex (2o olhar) -->
+<rect fill="#1a1512" height="30" rx="8" stroke="#9ca3af" stroke-dasharray="4 3" stroke-width="1.6" width="88" x="866" y="245"></rect><text fill="#d6dae0" x="910" y="264">Second look</text>
+<!-- raciocínio -> Opus (foco) -->
+<g filter="url(#m43-glow)"><rect fill="#1a1230" height="30" rx="8" stroke="url(#m43-grad)" stroke-width="2.4" width="88" x="706" y="299"></rect></g><text fill="#e9d5ff" x="750" y="318">ideal</text>
+<!-- segurança -> Opus -->
+<rect fill="#1a1230" height="30" rx="8" stroke="#c084fc" stroke-width="2" width="88" x="706" y="353"></rect><text fill="#e9d5ff" x="750" y="372">ideal</text>
+<!-- segurança -> GPT/Codex (cross-check) -->
+<rect fill="#1a1512" height="30" rx="8" stroke="#9ca3af" stroke-dasharray="4 3" stroke-width="1.6" width="88" x="866" y="353"></rect><text fill="#d6dae0" x="910" y="372">cross</text>
+</g>
+<!-- seta da diagonal "barato->caro" -->
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="11" font-style="italic" x="170" y="406">simple roles ↑ · critical roles ↓ → stronger engine →</text>
+</svg>
+</div>
+<p class="text-xs text-neutral-500 mb-0">↑ The role × model matrix: each role lands in the column for the right engine. Highlighted pill = recommended default; dashed = second opinion from another provider.</p>
+</section>
+<!-- DIVISOR -->
+<h2 class="text-2xl font-bold mb-6">Detailed content</h2>
+<!-- TÓPICO 1 — Opus / Sonnet / Haiku por papel -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">🪜 Opus, Sonnet, and Haiku — a ladder of roles</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The Claude family comes in three sizes, and each has a sweet spot. <strong class="text-purple-400">Haiku</strong> is the fast
+        worker: scans, searches, summarizes, reads documentation. <strong class="text-purple-400">Sonnet</strong> is the everyday professional:
+        builds and reviews code. <strong class="text-purple-400">Opus</strong> is the architect: reasons through difficult decisions,
+        analyzes security, thinks deeply. It’s not “Opus is better, so I’ll use Opus for everything”—it’s “the role calls for this engine.”
+      </p>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center">
+<span class="mr-2">🔧</span> The workshop rule
+        </h3>
+<p class="text-neutral-300 mb-4">
+          The right engine is <strong>cheapest model that can still handle the role</strong>. Moving up to a more powerful model without need wastes
+          money and time; moving too far down means poor work. Think in three tiers:
+        </p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Haiku</strong> — mechanical, high-volume roles: scanning, grep, listing, summarizing long docs.</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Sonnet</strong> — craft roles: writing code, refactoring, reviewing a diff, generating tests.</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Opus</strong> — judgment roles: architecture, security, irreversible decisions, complex plans.</span></li>
+</ul>
+</div>
+<!-- 3 SECOES OBRIGATORIAS -->
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3 mb-6">
+<div>
+<span class="text-purple-400 font-semibold">What it is:</span>
+<p class="text-neutral-300 text-sm">The three levels of the Claude family organized by <em>role</em>, not by asking "which one is best." Each level trades cost and latency for reasoning depth.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">An all-Opus fleet blows the budget and runs slowly; an all-Haiku fleet delivers shallow analysis where judgment is needed. The ladder avoids both extremes.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Role × engine · “the cheapest that gets the job done” · Haiku → Sonnet → Opus ladder.</p>
+</div>
+</div>
+<!-- Conceitos-chave: 3 mini-cards -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">⚡</div><div class="text-sm font-semibold text-purple-400">Haiku</div><div class="text-xs text-neutral-400">scan · search · summarize</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🔨</div><div class="text-sm font-semibold text-purple-400">Sonnet</div><div class="text-xs text-neutral-400">build · review</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🧠</div><div class="text-sm font-semibold text-purple-400">Opus</div><div class="text-xs text-neutral-400">reasoning · security</div></div>
+</div>
+</section>
+<!-- TÓPICO 2 — GPT / Codex -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">🔀 GPT and Codex — the second provider</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The fleet doesn’t need to consist of just one family. The models <strong class="text-purple-400">GPT</strong> and the environment
+        <strong class="text-purple-400">Codex</strong> (OpenAI CLI, covered in module 4.2) come in as a
+        <strong class="text-purple-400">second look</strong>: a reviewer who thinks differently from the builder. Different families
+        make different kinds of mistakes — so a finding that <em>two</em> providers confirm it’s much more reliable.
+      </p>
+<!-- CODE BOX: invocar com outro provedor -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">in your chat</span>
+<span class="text-xs text-purple-400">Cross-provider second look</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-purple-400">você &gt;</span> O Sonnet acabou de escrever este módulo de auth.
+        Peça a um revisor em <span class="text-cyan-400">GPT/Codex</span> pra refutar:
+        onde isso quebra? Só os furos, sem reescrever.
+
+<span class="text-neutral-500"># construtor (Sonnet) e revisor (outra família) erram</span>
+<span class="text-neutral-500"># de formas diferentes — a divergência é o valor.</span>
+<span class="text-neutral-500"># o que os DOIS apontam é o que merece atenção.</span></code></pre>
+</div>
+<div class="bg-cyan-900/20 rounded-xl border border-cyan-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-cyan-400 mb-3 flex items-center"><span class="mr-2">🛰️</span> Why mix providers</h3>
+<p class="text-neutral-300">One <strong>shared bias</strong> is the enemy: if the builder and reviewer are the same model, they tend to "agree with their own mistake." Switching model families for the reviewer role is the cheap way to buy independence—the topic of <strong>adversarial verification</strong> from module 4.1.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-purple-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">use models from another family (GPT/Codex) in specific roles—typically review and counterpoint.</span></div>
+<div><span class="text-purple-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">independence between the builder and reviewer reduces shared blind spots and increases confidence in the finding.</span></div>
+<div><span class="text-purple-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">second provider · shared bias · cross-family reviewer · confirmation through disagreement.</span></div>
+</div>
+</section>
+<!-- TÓPICO 3 — Outros provedores / mercado -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">🌐 Other providers — think in terms of capabilities, not brands</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Beyond Anthropic and OpenAI, there’s an entire market — Google (Gemini), open models running locally, specialized providers.
+        The mistake is memorizing names; the right approach is to think in terms of <strong class="text-purple-400">capability</strong>. For your
+        matrix, every model falls into one of three <strong class="text-purple-400">classes</strong>, and you fit the role into the class—not
+        the brand of the week.
+      </p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">🏎️</div>
+<h4 class="font-semibold text-purple-400 mb-1">"fast &amp; cheap" class</h4>
+<p class="text-xs text-neutral-400 mb-2">Haiku · small/local models</p>
+<p class="text-neutral-300 text-sm">High volume, low judgment required: scan, classify, extract, summarize.</p>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">⚖️</div>
+<h4 class="font-semibold text-purple-400 mb-1">"balanced" class</h4>
+<p class="text-xs text-neutral-400 mb-2">Sonnet · general-purpose GPT · Gemini Pro</p>
+<p class="text-neutral-300 text-sm">The workhorse: building, reviewing, and handling most day-to-day tasks.</p>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">🏛️</div>
+<h4 class="font-semibold text-purple-400 mb-1">"deep reasoning" class</h4>
+<p class="text-xs text-neutral-400 mb-2">Opus · reasoning GPT · cutting-edge Gemini</p>
+<p class="text-neutral-300 text-sm">Costly, irreversible decisions: architecture, security, long-term plans.</p>
+</div>
+</div>
+<div class="bg-amber-900/20 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">📌</span> Think in terms of slots, not names</h3>
+<p class="text-neutral-300">New models come out all the time. If your matrix is by <strong>class</strong> (fast / balanced / reasoning), changing a cell’s model is just swapping the occupant of the slot — the fleet architecture doesn’t change. That’s what keeps the system running for months, not days.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-purple-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the universe of models beyond the two main families, organized into three capability classes.</span></div>
+<div><span class="text-purple-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">reasoning by class (not by brand) keeps the fleet durable: changing models becomes changing the occupant of a slot.</span></div>
+<div><span class="text-purple-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">capability × brand · three classes · replaceable slot · architectural durability.</span></div>
+</div>
+</section>
+<!-- TÓPICO 4 — Raciocínio profundo × barato/rápido (o tradeoff) -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">⚖️ Deep reasoning × cheap and fast</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Here's the central tension. A strong model <strong class="text-purple-400">thinks even more deeply</strong>, but it costs more and takes
+        longer. A lightweight model is <strong class="text-purple-400">cheap and instant</strong>, but shallow. There’s no free lunch: you
+        choose where to spend your reasoning depth. The operational question is simple — <em>Is the cost of getting this role wrong high?</em> If so, move up.
+        If not, move down.
+      </p>
+<!-- GRID ✓/✗ #1 — quando subir / quando descer -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6">
+<h4 class="font-bold text-purple-400 mb-4">↑ Move up a model when…</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-purple-400">↑</span><span>The mistake is costly or irreversible (security, money, architecture)</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">↑</span><span>The task requires judgment and synthesis, not just execution</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">↑</span><span>The context is ambiguous and needs careful interpretation</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400">↑</span><span>It’s a single, decisive step, not 200 repetitions</span></li>
+</ul>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6">
+<h4 class="font-bold text-blue-400 mb-4">↓ Move down a model when…</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-blue-400">↓</span><span>The task is mechanical and well-defined (grep, list, extract)</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400">↓</span><span>The volume is high, and each step is cheap to check</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400">↓</span><span>Latency matters (you’re waiting for the result now)</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400">↓</span><span>Errors are easy to detect and fix later</span></li>
+</ul>
+</div>
+</div>
+<!-- SVG: balança raciocínio x custo/latência -->
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="A scale: on one side, deep reasoning (a stronger model, more expensive and slower); on the other, cheap and fast (a lighter model, more superficial). The balance point depends on the cost of getting the role wrong." class="w-full h-auto" role="img" viewbox="0 0 1000 220">
+<defs>
+<filter height="180%" id="m43b-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+</defs>
+<!-- haste -->
+<line stroke="#a855f7" stroke-width="3" x1="500" x2="500" y1="40" y2="120"></line>
+<line stroke="#a855f7" stroke-width="3" x1="180" x2="820" y1="80" y2="80"></line>
+<g filter="url(#m43b-glow)"><circle cx="500" cy="34" fill="#1a1230" r="10" stroke="url(#m43-grad)" stroke-width="2.4"></circle></g>
+<!-- prato esquerdo: raciocínio -->
+<line stroke="#c084fc" stroke-width="2" x1="180" x2="180" y1="80" y2="120"></line>
+<rect fill="#1a1230" height="64" rx="12" stroke="#c084fc" stroke-width="2" width="220" x="70" y="120"></rect>
+<text fill="#e9d5ff" font-family="Inter,sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="180" y="148">deep reasoning</text>
+<text fill="#c8a8e8" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="180" y="170">strong · expensive · slow</text>
+<!-- prato direito: barato/rápido -->
+<line stroke="#38bdf8" stroke-width="2" x1="820" x2="820" y1="80" y2="120"></line>
+<rect fill="#0e1b26" height="64" rx="12" stroke="#38bdf8" stroke-width="2" width="220" x="710" y="120"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="820" y="148">cheap &amp; fast</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="820" y="170">lightweight · shallow · instant</text>
+<!-- legenda do fiel -->
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="12" font-style="italic" text-anchor="middle" x="500" y="206">the deciding factor = the cost of getting this role wrong</text>
+</svg>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-purple-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the fundamental trade-off — reasoning depth purchased with cost and latency.</span></div>
+<div><span class="text-purple-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">every model choice ultimately means deciding where deeper reasoning is worth the cost — and the measure is the cost of being wrong.</span></div>
+<div><span class="text-purple-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">no free lunch · cost of being wrong · moving the model up × down · depth as a scarce resource.</span></div>
+</div>
+</section>
+<!-- TÓPICO 5 — Quando trocar de modelo/provedor por papel -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">🔁 When to switch models or providers by role</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Switching models has a hidden cost: each subagent <strong class="text-purple-400">starts from scratch</strong> and needs to gather the context again. That’s why the switch pays off in <strong class="text-purple-400">large tasks</strong>, not in 30-second messages. And there are two trade-off axes: switching between <strong class="text-purple-400">level</strong> (Haiku↔Sonnet↔Opus) by
+        depth, and switch <strong class="text-purple-400">provider</strong> (Claude↔GPT) for independence.
+      </p>
+<!-- TIMELINE: gatilhos de troca -->
+<div class="space-y-6 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">The role changed in nature</h4>
+<p class="text-sm text-neutral-400 mb-3">Switch from executing to deciding (or vice versa).</p>
+<p class="text-neutral-300 text-sm">The agent that <em>scanned</em> now needs <em>complete</em> which path to take. It moved from "execution" to "judgment" → move up a model.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">You want an independent perspective</h4>
+<p class="text-sm text-neutral-400 mb-3">Review what another model built.</p>
+<p class="text-neutral-300 text-sm">Claude is the builder; GPT/Codex becomes the reviewer. A change of <strong>provider</strong> in the reviewer role to avoid shared bias.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Cost or latency became a constraint</h4>
+<p class="text-sm text-neutral-400 mb-3">The bill went up or the wait is frustrating.</p>
+<p class="text-neutral-300 text-sm">Could that bulky role running on Sonnet use Haiku? If an error is cheap to check, step down and save — no hesitation.</p>
+</div>
+</div>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> The "subagent starts with a blank slate" trap</h3>
+<p class="text-neutral-300">Each subagent assembles the context from scratch. Switching to an expensive model for a role <strong>small</strong> makes the cost of "gathering context" swallow the gain. Switching models pays off when the task is <strong>large enough</strong> to amortize that cold start — otherwise, it's waste disguised as caution.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-purple-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the concrete triggers for changing levels (depth) or providers (independence) in a role.</span></div>
+<div><span class="text-purple-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">blind swaps are costly; knowing <em>when</em> switching is what turns the matrix into an economical system, not decoration.</span></div>
+<div><span class="text-purple-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">level switch × provider switch · cold start · amortize the context · large tasks pay off.</span></div>
+</div>
+</section>
+<!-- TÓPICO 6 — Frota heterogênea + tradeoff custo/latência/qualidade -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">🚁 Heterogeneous fleet — the cost · latency · quality triangle</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The destination is a <strong class="text-purple-400">heterogeneous fleet</strong>: several subagents pointing to
+        <strong class="text-purple-400">different models</strong>, each in its own role. It’s not a homogeneous “all Opus” or
+        “all Haiku” system—it’s a designed mix. And every mix lives under three forces pulling in opposite directions:
+        <strong class="text-purple-400">cost</strong>, <strong class="text-purple-400">latency</strong> e
+        <strong class="text-purple-400">quality</strong>. You don't maximize all three; you <em>balances</em> by role.
+      </p>
+<!-- TABELA-MATRIZ VIVA: papel x modelo x tradeoff -->
+<div class="overflow-x-auto rounded-xl border border-dark-600 mb-6">
+<table class="w-full text-sm">
+<thead>
+<tr class="matrix-th bg-dark-700/60 text-left">
+<th class="px-4 py-3 font-semibold text-purple-400">Role</th>
+<th class="px-4 py-3 font-semibold text-purple-400">Typical model</th>
+<th class="px-4 py-3 font-semibold text-neutral-300">Cost</th>
+<th class="px-4 py-3 font-semibold text-neutral-300">Latency</th>
+<th class="px-4 py-3 font-semibold text-neutral-300">Required quality</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-dark-600">
+<tr>
+<td class="matrix-row-head px-4 py-3 font-semibold text-neutral-100">🔍 scan</td>
+<td class="px-4 py-3 text-cyan-400 font-mono text-xs">haiku</td>
+<td class="px-4 py-3 text-emerald-400">low</td>
+<td class="px-4 py-3 text-emerald-400">very low</td>
+<td class="px-4 py-3 text-neutral-400">shallow is enough</td>
+</tr>
+<tr>
+<td class="matrix-row-head px-4 py-3 font-semibold text-neutral-100">🧭 search</td>
+<td class="px-4 py-3 text-cyan-400 font-mono text-xs">haiku</td>
+<td class="px-4 py-3 text-emerald-400">low</td>
+<td class="px-4 py-3 text-emerald-400">low</td>
+<td class="px-4 py-3 text-neutral-400">shallow is enough</td>
+</tr>
+<tr>
+<td class="matrix-row-head px-4 py-3 font-semibold text-neutral-100">🔨 build</td>
+<td class="px-4 py-3 text-purple-400 font-mono text-xs">sonnet</td>
+<td class="px-4 py-3 text-amber-400">medium</td>
+<td class="px-4 py-3 text-amber-400">medium</td>
+<td class="px-4 py-3 text-neutral-300">by trade</td>
+</tr>
+<tr>
+<td class="matrix-row-head px-4 py-3 font-semibold text-neutral-100">🔎 review</td>
+<td class="px-4 py-3 text-purple-400 font-mono text-xs">sonnet <span class="text-neutral-500">/ GPT</span></td>
+<td class="px-4 py-3 text-amber-400">medium</td>
+<td class="px-4 py-3 text-amber-400">medium</td>
+<td class="px-4 py-3 text-neutral-300">criticism</td>
+</tr>
+<tr>
+<td class="matrix-row-head px-4 py-3 font-semibold text-neutral-100">🧠 reasoning</td>
+<td class="px-4 py-3 text-purple-400 font-mono text-xs">opus</td>
+<td class="px-4 py-3 text-red-400">high</td>
+<td class="px-4 py-3 text-red-400">high</td>
+<td class="px-4 py-3 text-neutral-100 font-semibold">maximum</td>
+</tr>
+<tr>
+<td class="matrix-row-head px-4 py-3 font-semibold text-neutral-100">🛡️ security</td>
+<td class="px-4 py-3 text-purple-400 font-mono text-xs">opus <span class="text-neutral-500">+ GPT</span></td>
+<td class="px-4 py-3 text-red-400">high</td>
+<td class="px-4 py-3 text-red-400">high</td>
+<td class="px-4 py-3 text-neutral-100 font-semibold">maximum</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="text-xs text-neutral-500 mb-6">↑ The same matrix, now with the tradeoff explicit in each row. Notice: as the required quality rises, cost and latency rise too — and that's acceptable only for critical roles.</p>
+<div class="bg-purple-900/20 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center"><span class="mr-2">💡</span> "Choose 2 of 3"—by role</h3>
+<p class="text-neutral-300">Low cost, low latency, and maximum quality all at once do not exist. A scanning role accepts "cheap + fast" and gives up depth; a security role accepts "expensive + slow" to buy quality. A heterogeneous fleet is precisely about making this choice <strong>role by role</strong>, instead of a single choice for everything.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-purple-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">a fleet of mixed models, balancing cost, latency, and quality in each role.</span></div>
+<div><span class="text-purple-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">is the end state of mastery: the entire fleet is cheap and fast where it can be, and powerful only where it needs to be.</span></div>
+<div><span class="text-purple-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">heterogeneous fleet · cost/latency/quality triangle · "choose 2 of 3" · designed mix.</span></div>
+</div>
+</section>
+<!-- BLOCO: EXEMPLO REAL (.md comentado) — FROTA HETEROGÊNEA -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">📄</span>
+<h2 class="text-2xl font-bold">Real example: a heterogeneous fleet in files</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        A heterogeneous fleet isn’t a single file — it’s a set of subagents, each with its own field
+        <code class="text-purple-400">model</code> pointing to the engine behind your role. Below, four
+        <code class="text-purple-400">.md</code> cropped side by side: notice how the <strong class="text-purple-400">role</strong>
+        (in the <code class="text-purple-400">description</code>) e o <strong class="text-purple-400">model</strong> go together.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/ — four fleet files</span>
+<span class="text-xs text-blue-400">Markdown + YAML</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500"># ── file-scanner.md ─ papel: ESCANEAR (volumoso, raso) ──</span>
+<span class="text-blue-400">name</span>: file-scanner
+<span class="text-blue-400">description</span>: Varre o repo e lista arquivos/símbolos
+  relevantes. Use para mapear antes de qualquer leitura.
+<span class="text-blue-400">tools</span>: Grep, Glob                <span class="text-neutral-500"># só localizar</span>
+<span class="text-blue-400">model</span>: <span class="text-cyan-400">haiku</span>                      <span class="text-neutral-500"># barato + rápido</span>
+
+<span class="text-neutral-500"># ── builder.md ─ papel: CONSTRUIR (de ofício) ──────────</span>
+<span class="text-blue-400">name</span>: builder
+<span class="text-blue-400">description</span>: Implementa a mudança descrita no plano.
+<span class="text-blue-400">tools</span>: Read, Edit, Write, Bash
+<span class="text-blue-400">model</span>: <span class="text-purple-400">sonnet</span>                     <span class="text-neutral-500"># equilíbrio</span>
+
+<span class="text-neutral-500"># ── arch-thinker.md ─ papel: RACIOCÍNIO (juízo) ────────</span>
+<span class="text-blue-400">name</span>: arch-thinker
+<span class="text-blue-400">description</span>: Decide a arquitetura e os trade-offs de
+  uma mudança grande. Use ANTES de construir.
+<span class="text-blue-400">tools</span>: Read, Grep
+<span class="text-blue-400">model</span>: <span class="text-purple-400">opus</span>                       <span class="text-neutral-500"># raciocínio profundo</span>
+
+<span class="text-neutral-500"># ── cross-reviewer.md ─ papel: REVISAR (2º olhar) ──────</span>
+<span class="text-blue-400">name</span>: cross-reviewer
+<span class="text-blue-400">description</span>: Refuta o trabalho do builder buscando
+  furos. Use após qualquer mudança sensível.
+<span class="text-blue-400">tools</span>: Read, Grep
+<span class="text-blue-400">model</span>: <span class="text-neutral-300">gpt-codex</span>     <span class="text-neutral-500"># OUTRA família = independência</span></code></pre>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-purple-400 mb-3">🧩 What changes from file to file</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-purple-400">description</strong> — declares the role (scan / build / reason / review).</li>
+<li><strong class="text-purple-400">model</strong> — follow the role: shallow role → haiku, judgment → opus.</li>
+<li><strong class="text-purple-400">tools</strong> — judgment/review roles stay read-only (Read, Grep).</li>
+<li><strong class="text-purple-400">provider</strong> — the reviewer deliberately switches families.</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-purple-400 mb-3">🎯 Why this is "heterogeneous"</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li>Four agents, <strong>three different engines</strong> + an external provider.</li>
+<li>The total cost goes down: the high-volume work runs on haiku.</li>
+<li>Quality improves where it matters: Opus for reasoning.</li>
+<li>The review is independent: a different family makes different mistakes.</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- BLOCO: PROMPTS PRONTOS -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">⌨️</span>
+<h2 class="text-2xl font-bold">Ready-made prompts (copy and paste)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Three prompts for the orchestrator <strong class="text-purple-400">distribute models by role</strong>. The default is always to name the role and justify the engine — cheap where possible, powerful where needed, independent during review.
+      </p>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-purple-400">Prompt 1 — assign a model to each role</span>
+<span class="text-xs text-neutral-500">builds the fleet</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Para este job, monte uma frota por papel: use Haiku pra
+escanear e buscar, Sonnet pra construir e revisar, e Opus
+só pro raciocínio de arquitetura. Justifique cada escolha
+em uma linha (custo/latência/qualidade).</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-purple-400">Prompt 2 — cross-provider second opinion</span>
+<span class="text-xs text-neutral-500">purchase independence</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>O builder (Sonnet) terminou. Agora rode um revisor em
+outro provedor (GPT/Codex) só pra refutar: liste os furos
+que um modelo da MESMA família talvez não veja. Não
+reescreva — só aponte.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-purple-400">Prompt 3 — cut costs without sacrificing quality</span>
+<span class="text-xs text-neutral-500">optimizes the triangle</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Revise minha frota: que papéis hoje em Sonnet poderiam
+cair pra Haiku sem risco (erro barato de checar)? E que
+papéis merecem subir pra Opus porque o erro seria caro?
+Devolva só a matriz papel → modelo ajustada.</code></pre>
+</div>
+</div>
+</section>
+<!-- BLOCO: TELA SIMULADA (monitor-mock, frota heterogênea + status line) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">🖥️</span>
+<h2 class="text-2xl font-bold">Simulated screen: the heterogeneous fleet running</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        This is how the heterogeneous fleet appears in the terminal: each subagent runs on <strong class="text-purple-400">model for your role</strong>, and the middle column shows which engine each one is using. Notice the <strong class="text-purple-400">relative
+        cost</strong> on the right—the high-volume roles on Haiku cost almost nothing; only the reasoning on Opus adds up.
+      </p>
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<!-- barra de título -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700/60 border-b border-dark-600">
+<div class="flex items-center space-x-2"><span class="w-3 h-3 rounded-full bg-red-400/70"></span><span class="w-3 h-3 rounded-full bg-amber-400/70"></span><span class="w-3 h-3 rounded-full bg-emerald-400/70"></span></div>
+<span class="text-xs text-neutral-400 font-mono">claude code · refatorar-auth · heterogeneous fleet</span>
+<span class="text-xs text-purple-400 font-mono">⏱ 01:12</span>
+</div>
+<!-- subagentes -->
+<div class="p-4 space-y-3 font-mono text-xs">
+<div class="flex items-center gap-3"><span class="text-purple-400 w-44 shrink-0">● file-scanner</span><span class="text-cyan-400 w-20 shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill h-full bg-purple-500/70" style="width:94%"></div></div><span class="text-emerald-400 w-16 text-right shrink-0">$ ·</span></div>
+<div class="flex items-center gap-3"><span class="text-purple-400 w-44 shrink-0">● grep-symbols</span><span class="text-cyan-400 w-20 shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b2 h-full bg-purple-500/70" style="width:81%"></div></div><span class="text-emerald-400 w-16 text-right shrink-0">$ ·</span></div>
+<div class="flex items-center gap-3"><span class="text-purple-400 w-44 shrink-0">● builder</span><span class="text-purple-300 w-20 shrink-0">Sonnet</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b3 h-full bg-purple-500/70" style="width:47%"></div></div><span class="text-amber-400 w-16 text-right shrink-0">$$ ··</span></div>
+<div class="flex items-center gap-3"><span class="text-purple-400 w-44 shrink-0">● arch-thinker</span><span class="text-purple-300 w-20 shrink-0">Opus</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b4 h-full bg-purple-500/70" style="width:33%"></div></div><span class="text-red-400 w-16 text-right shrink-0">$$$ ···</span></div>
+<div class="flex items-center gap-3"><span class="text-purple-400 w-44 shrink-0">● cross-reviewer</span><span class="text-neutral-300 w-20 shrink-0">GPT/Codex</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b5 h-full bg-purple-500/70" style="width:18%"></div></div><span class="text-amber-400 w-16 text-right shrink-0">$$ ··</span></div>
+<div class="text-neutral-500 pt-1">5 subagents · 3 engines + 1 external provider · synthesis after the reports</div>
+</div>
+<!-- status line -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-800 border-t border-dark-600 font-mono text-xs">
+<span class="text-neutral-400">orchestrator · Opus</span>
+<div class="flex items-center gap-2">
+<span class="text-neutral-500">fleet cost</span>
+<div class="w-28 h-2 rounded bg-dark-700 overflow-hidden"><div class="h-full bg-purple-500/70" style="width:38%"></div></div>
+<span class="text-purple-400">38% of the limit</span>
+</div>
+</div>
+</div>
+<p class="text-xs text-neutral-500">↑ Illustrative recreation of the terminal (not a real screenshot). Each subagent uses the engine suited to its role; the cost is concentrated only in the reasoning Opus.</p>
+</section>
+<!-- BLOCO: EXERCÍCIO — MONTAR A MATRIZ -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">🎯</span>
+<h2 class="text-2xl font-bold">Exercise — build your role × model matrix</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+          Take a <strong class="text-purple-400">your actual job</strong> (a project, an investigation, a migration) and design the
+          fleet: for each of the <strong class="text-purple-400">six roles</strong> — scan, search, build, review,
+          reasoning, security — choose one <strong class="text-purple-400">model</strong> and justify it using the triangle
+          cost · latency · quality.
+        </p>
+<div class="bg-dark-800/60 rounded-lg p-5 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3">How to do it</h4>
+<ol class="space-y-2 text-neutral-300 text-sm list-decimal list-inside">
+<li>List the six roles (use the matrix at the top as a starting guide).</li>
+<li>For each role, choose the model: <code class="text-purple-400">haiku</code>, <code class="text-purple-400">sonnet</code>, <code class="text-purple-400">opus</code> or another provider.</li>
+<li>Write <strong>a line</strong> by role, explaining: is a mistake costly here? Is the volume high? Does latency matter?</li>
+<li>Mark at least <strong>a role</strong> that gets a second look from another provider (and say why).</li>
+</ol>
+</div>
+<!-- Esqueleto da matriz para preencher -->
+<div class="overflow-x-auto rounded-lg border border-dark-600 mb-6">
+<table class="w-full text-sm">
+<thead>
+<tr class="matrix-th bg-dark-700/60 text-left">
+<th class="px-4 py-2 font-semibold text-purple-400">Role</th>
+<th class="px-4 py-2 font-semibold text-purple-400">Your model</th>
+<th class="px-4 py-2 font-semibold text-neutral-300">Justification (1 line)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-dark-600 text-neutral-400">
+<tr><td class="matrix-row-head px-4 py-2 text-neutral-100">🔍 scan</td><td class="px-4 py-2 font-mono text-xs">______</td><td class="px-4 py-2">_______________________________</td></tr>
+<tr><td class="matrix-row-head px-4 py-2 text-neutral-100">🧭 search</td><td class="px-4 py-2 font-mono text-xs">______</td><td class="px-4 py-2">_______________________________</td></tr>
+<tr><td class="matrix-row-head px-4 py-2 text-neutral-100">🔨 build</td><td class="px-4 py-2 font-mono text-xs">______</td><td class="px-4 py-2">_______________________________</td></tr>
+<tr><td class="matrix-row-head px-4 py-2 text-neutral-100">🔎 review</td><td class="px-4 py-2 font-mono text-xs">______</td><td class="px-4 py-2">_______________________________</td></tr>
+<tr><td class="matrix-row-head px-4 py-2 text-neutral-100">🧠 reasoning</td><td class="px-4 py-2 font-mono text-xs">______</td><td class="px-4 py-2">_______________________________</td></tr>
+<tr><td class="matrix-row-head px-4 py-2 text-neutral-100">🛡️ security</td><td class="px-4 py-2 font-mono text-xs">______</td><td class="px-4 py-2">_______________________________</td></tr>
+</tbody>
+</table>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">✅ Verification criteria — how to know you got it right</h4>
+<p class="text-neutral-300 text-sm mb-3">Your matrix is well designed if it passes these four tests:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>Isn't homogeneous:</strong> appear <strong>at least two different models</strong> (if everything went to Opus or everything to Haiku, try again).</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>Critical roles move up:</strong> reasoning and security use the strongest engine in your matrix.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>High-volume roles move down:</strong> scanning and searching use the cheapest/fastest engine.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>There’s a second look:</strong> at least one review/safety role uses a different provider from the builder.</span></li>
+</ul>
+<p class="text-neutral-300 text-sm mt-3">Each justification must cite <strong>at least one</strong> vertex of the triangle (cost, latency, or quality). "Because it’s better" is not a valid justification.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5">
+<h4 class="font-semibold text-purple-400 mb-3">Solved example (one line)</h4>
+<p class="text-neutral-300 text-sm"><strong>Role:</strong> 🛡️ security · <strong>Model:</strong> <code class="text-purple-400">opus</code> + second look at <code class="text-purple-400">GPT/Codex</code>. <strong class="text-purple-400">Rationale:</strong> the security error is costly and irreversible (maximum quality is worth high cost and latency); the 2nd provider buys independence from shared bias. It passes all four tests.</p>
+</div>
+</div>
+</section>
+<!-- RESUMO / NAVEGAÇÃO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Role ladder</strong><span class="text-neutral-400"> — Haiku scans/searches, Sonnet builds/reviews, Opus reasons/handles security. The role determines the engine.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">GPT / Codex</strong><span class="text-neutral-400"> — a second provider as an independent reviewer: different families make different mistakes.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Other providers</strong><span class="text-neutral-400"> — think by class (fast/balanced/reasoning), not by brand; the slot is replaceable.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">The trade-off</strong><span class="text-neutral-400"> — depth costs money and time; the standard is the cost of getting the role wrong.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">When to switch</strong><span class="text-neutral-400"> — by level (depth) or by provider (independence); only worthwhile for a large task (cold start).</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Heterogeneous fleet</strong><span class="text-neutral-400"> — models mixed by role, balancing the cost · latency · quality triangle ("choose 2 of 3").</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-purple-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">4.4 — Security. Download <code class="text-purple-400">.md</code> from third parties, prompt injection, and the read-only verifier subagent.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="modulo-4-2.html">← Previous module</a>
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">Track index</a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors" href="modulo-4-4.html">Next module →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagents — 2026 · a course in the format
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Track 4 · Advanced &amp; cross-environment · Module 4.3</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    // Toggle de tópicos (compatível com o padrão; expansíveis ficam abertos por padrão nesta página de módulo)
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

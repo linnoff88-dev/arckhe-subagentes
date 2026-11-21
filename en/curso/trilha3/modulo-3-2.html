@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The real savings | Subagents</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha amber T3) */
+    html:not(.dark) .text-amber-400 { color: #b45309; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(180, 83, 9, 0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(180, 83, 9, 0.08); }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(180, 83, 9, 0.08); }
+    html:not(.dark) .bg-amber-900\/30 { background-color: rgba(180, 83, 9, 0.10); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(180, 83, 9, 0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(180, 83, 9, 0.18); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #b45309; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(180, 83, 9, 0.08); }
+
+    /* Light mode - cores de apoio usadas nos boxes (blue dados / red erros / emerald ok) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - diagramas SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Pulso dos agentes nos diagramas (apenas se o usuario permitir movimento) */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes wf-bar { from { transform: translateX(-6%); } to { transform: translateX(0); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.2s} .wf-a:nth-child(3){animation-delay:.4s}
+      .wf-a:nth-child(4){animation-delay:.6s} .wf-a:nth-child(5){animation-delay:.8s}
+      .barfill { animation: wf-bar 3s ease-in-out infinite alternate; }
+      .barfill.b2{animation-delay:.5s} .barfill.b3{animation-delay:1s} .barfill.b4{animation-delay:1.4s} .barfill.b5{animation-delay:1.8s}
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha3/modulo-3-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha3/modulo-3-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha3/modulo-3-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-3-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha3/modulo-3-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagents</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentals</span>
+</a>
+<!-- Trilha 2 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">In practice</span>
+</a>
+<!-- Trilha 3 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10" href="index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orchestration</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Advanced</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-amber-400" href="../../index.html">Start</a>
+<span>/</span>
+<a class="hover:text-amber-400" href="index.html">Track 3</a>
+<span>/</span>
+<span class="text-amber-400">Module 3.2</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full mb-4">
+        MODULE 3.2 · Track 3 · Model, cost, and orchestration
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">💰 The real savings</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        Subagents cost money. But the expense doesn’t come from “using the expensive model” — it comes from using the expensive model
+        <strong class="text-amber-400">in the wrong place</strong>. The secret is to assemble a team:
+        a <strong class="text-amber-400">smart boss</strong> that thinks, and one
+        <strong class="text-amber-400">low-cost fleet</strong> that does the heavy lifting.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">6</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">~30</div>
+<div class="text-xs text-neutral-400">Minutes</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Medium</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Theory+</div>
+<div class="text-xs text-neutral-400">Type</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- ABERTURA + SVG CHEFE + FROTA -->
+<section class="mb-12">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Think of a newsroom. The <strong class="text-amber-400">editor-in-chief</strong> doesn't rush after every source:
+        it reads, decides the agenda, delegates, and wraps up the edition. The one who goes out into the field, transcribes interviews, and checks spelling is the
+        <strong class="text-amber-400">team</strong> — good people, cheaper and more numerous. If the boss did everything, the
+        payroll would explode and the newspaper would come out late. Subagents work the same way: let one
+        <strong class="text-amber-400">expensive model for thinking</strong> and a <strong class="text-amber-400">low-cost fleet work</strong>.
+        The savings don’t come from cutting quality—they come from <strong class="text-amber-400">put each model where it performs best</strong>.
+      </p>
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 mb-2 overflow-hidden">
+<svg aria-label="A smart boss, Opus model, plans and dispatches work to a fleet of many low-cost workers, Haiku model, who execute in parallel and return a final synthesis to the boss" class="w-full h-auto" role="img" viewbox="0 0 1000 260">
+<defs>
+<lineargradient id="m32-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#fbbf24"></stop><stop offset="1" stop-color="#f59e0b"></stop>
+</lineargradient>
+<filter height="180%" id="m32-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m32-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#f59e0b" opacity="0.12" r="1.3"></circle>
+</pattern>
+<marker id="m32-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fbbf24"></path></marker>
+<marker id="m32-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m32-grid)" height="260" width="1000" x="0" y="0"></rect>
+<!-- setas chefe -> frota -->
+<g fill="none" opacity="0.5" stroke="#fbbf24" stroke-width="1.8">
+<path d="M206,130 C320,130 340,40 452,40" marker-end="url(#m32-ah)"></path>
+<path d="M206,130 C320,130 340,85 452,85" marker-end="url(#m32-ah)"></path>
+<path d="M206,130 L452,130" marker-end="url(#m32-ah)"></path>
+<path d="M206,130 C320,130 340,175 452,175" marker-end="url(#m32-ah)"></path>
+<path d="M206,130 C320,130 340,220 452,220" marker-end="url(#m32-ah)"></path>
+</g>
+<!-- setas frota -> sintese -->
+<g fill="none" opacity="0.5" stroke="#38bdf8" stroke-width="1.8">
+<path d="M588,40  C700,40 720,130 800,130" marker-end="url(#m32-ahc)"></path>
+<path d="M588,85  C700,85 720,130 800,130" marker-end="url(#m32-ahc)"></path>
+<path d="M588,130 L800,130" marker-end="url(#m32-ahc)"></path>
+<path d="M588,175 C700,175 720,130 800,130" marker-end="url(#m32-ahc)"></path>
+<path d="M588,220 C700,220 720,130 800,130" marker-end="url(#m32-ahc)"></path>
+</g>
+<!-- chefe (caixa-foco com glow) -->
+<g filter="url(#m32-glow)"><rect fill="#1f1604" height="68" rx="14" stroke="url(#m32-grad)" stroke-width="2" width="166" x="40" y="96"></rect></g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="19" font-weight="600" text-anchor="middle" x="123" y="124">Boss</text>
+<text fill="#fcd9a0" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="123" y="144">Opus · thinks and decides</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="123" y="190">expensive · just 1</text>
+<!-- frota (barata, ciano, pulsando) -->
+<g font-family="Inter,sans-serif" font-size="13" font-weight="600">
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="24"></rect><text fill="#bfe6ff" text-anchor="middle" x="520" y="45">Haiku</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="69"></rect><text fill="#bfe6ff" text-anchor="middle" x="520" y="90">Haiku</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="114"></rect><text fill="#bfe6ff" text-anchor="middle" x="520" y="135">Haiku</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="159"></rect><text fill="#bfe6ff" text-anchor="middle" x="520" y="180">Haiku</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="204"></rect><text fill="#bfe6ff" text-anchor="middle" x="520" y="225">Haiku …</text></g>
+</g>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="520" y="252">low-cost fleet · many · in parallel</text>
+<!-- sintese (caixa-foco com glow) -->
+<g filter="url(#m32-glow)"><rect fill="#1f1604" height="68" rx="14" stroke="url(#m32-grad)" stroke-width="2" width="166" x="800" y="96"></rect></g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="16" font-weight="600" text-anchor="middle" x="883" y="125">Synthesis</text>
+<text fill="#fcd9a0" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="883" y="144">the boss wraps up</text>
+</svg>
+</div>
+<p class="text-xs text-neutral-500 mb-0">↑ The economics: one expensive lead decides, a fleet of cheap agents executes in parallel, and the lead wraps up the edit.</p>
+</section>
+<!-- DIVISOR -->
+<h2 class="text-2xl font-bold mb-6">Detailed content</h2>
+<!-- TÓPICO 1 — Chefe + frota -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">🏛️ The smart boss and the low-cost fleet</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The money-saving design has two roles. At the top, <strong class="text-amber-400">an expensive model</strong> — Opus or
+        Sonnet — which <strong class="text-amber-400">thinks</strong>: reads the problem, makes a plan, distributes the tasks, and brings it all together
+        at the end. Underneath, <strong class="text-amber-400">a fleet of inexpensive models</strong> — Haiku — which
+        <strong class="text-amber-400">does the heavy lifting</strong>: scans, searches, reads files, summarizes. You pay for the expensive
+        <em>once</em>, for the hard part, and the cheap one <em>often</em>, for the mechanical part.
+      </p>
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-4 flex items-center">
+<span class="mr-2">📰</span> The newsroom analogy
+        </h3>
+<p class="text-neutral-300 mb-4">
+          The editor-in-chief sets the agenda and closes the edition — they’re irreplaceable, but they’re <strong>just one</strong>. The reporting, transcription,
+          and proofreading go to the team: inexpensive, numerous, fast. Nobody asks the editor-in-chief to transcribe two hours of
+          audio. Subagents work the same way:
+        </p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>Boss (Opus/Sonnet)</strong> = decides, plans, synthesizes. Expensive — use sparingly and wisely.</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>Fleet (Haiku)</strong> = scans, searches, reads, summarizes. Inexpensive — use freely, in parallel.</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>The error</strong> = making the boss do fleet work — or making the fleet decide.</span></li>
+</ul>
+</div>
+<!-- 3 SECOES OBRIGATORIAS -->
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3 mb-6">
+<div>
+<span class="text-amber-400 font-semibold">What it is:</span>
+<p class="text-neutral-300 text-sm">A hierarchical orchestration pattern: one strong model coordinates; many low-cost models handle most of the work in parallel.</p>
+</div>
+<div>
+<span class="text-amber-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">It’s what separates “subagents are too expensive” from “subagents are cheap.” The math changes completely when the heavy lifting runs on the cheaper model.</p>
+</div>
+<div>
+<span class="text-amber-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Hierarchical fan-out · lead (reasoning) × fleet (execution) · pay the high cost 1×, the low cost N×.</p>
+</div>
+</div>
+<!-- Conceitos-chave: 4 mini-cards -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🧠</div><div class="text-sm font-semibold text-amber-400">Boss</div><div class="text-xs text-neutral-400">decides</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🐝</div><div class="text-sm font-semibold text-amber-400">Fleet</div><div class="text-xs text-neutral-400">runs</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">⚡</div><div class="text-sm font-semibold text-amber-400">Parallel</div><div class="text-xs text-neutral-400">at scale</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">💵</div><div class="text-sm font-semibold text-amber-400">Expensive 1×</div><div class="text-xs text-neutral-400">N× cheaper</div></div>
+</div>
+</section>
+<!-- TÓPICO 2 — CLAUDE_CODE_SUBAGENT_MODEL -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">🎚️ The master key: CLAUDE_CODE_SUBAGENT_MODEL</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        You can set the model for each subagent <strong class="text-amber-400">one by one</strong>, in the field
+        <code class="text-amber-400">model</code> from the file. But when you want <strong class="text-amber-400">the entire fleet</strong>
+        run it cheaply all at once, there's a shortcut: the environment variable
+        <code class="text-amber-400">CLAUDE_CODE_SUBAGENT_MODEL</code>. It defines the model
+        <strong class="text-amber-400">default for all subagents</strong> that haven't pinned down their own model — without you touching
+        each file.
+      </p>
+<!-- CODE BOX (env var) -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">in your terminal</span>
+<span class="text-xs text-amber-400">environment variable</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500"># toda a frota de subagentes passa a rodar em Haiku</span>
+<span class="text-amber-400">export</span> CLAUDE_CODE_SUBAGENT_MODEL=claude-haiku-4-5
+
+<span class="text-neutral-500"># abra o Claude Code já com a frota barata ligada</span>
+claude
+
+<span class="text-neutral-500"># o chefe (a sessão principal) continua no modelo que</span>
+<span class="text-neutral-500"># você escolheu — só os subagentes herdam o Haiku.</span></code></pre>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-amber-400 mb-3">🎯 Who's in charge of whom</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-amber-400">model</strong> in the agent file — it always takes precedence (specific).</li>
+<li><strong class="text-amber-400">CLAUDE_CODE_SUBAGENT_MODEL</strong> — default for those that don’t have a fixed model.</li>
+<li><strong class="text-amber-400">inherit</strong> — with neither, the agent inherits the lead agent’s model.</li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-base font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> The house move</h3>
+<p class="text-neutral-300 text-sm">Keep the <strong>boss</strong> in Opus/Sonnet and throw <strong>the entire fleet</strong> in Haiku with the env var. One line, and the expensive part of the system becomes just the brain—not the muscle.</p>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the variable that sets the default model for all subagents at once.</span></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">is the fastest way to make the entire fleet cheaper without editing files one by one.</span></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">env var · precedence (model &gt; env &gt; inherit) · boss outside the variable’s reach.</span></div>
+</div>
+</section>
+<!-- TÓPICO 3 — maxTurns -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">🛑 maxTurns: the spending safety rope</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The cost that should worry you isn’t the subagent that does the work — it’s the subagent that
+        <strong class="text-amber-400">gets into a loop</strong>: tries, fails, tries again, and keeps running at your expense. The
+        <code class="text-amber-400">maxTurns</code> is the cap on how many steps (tool turns) a subagent can take before
+        stopping. It's a <strong class="text-amber-400">circuit breaker</strong>: when the limit is reached, shut it down—instead of burning tokens all night.
+      </p>
+<!-- GRID ✓/✗ #1 — sem teto x com teto -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ No turn limit</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>A stuck agent tries the same thing 40 times</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>The bill goes up with no one watching</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>The loop only shows up when the bill arrives</span></li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ With maxTurns</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Hits the limit, stops, and returns what it has</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Maximum spend per subagent becomes predictable</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>The boss realizes it’s stuck and decides what to do next</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> How to size the ceiling</h3>
+<p class="text-neutral-300">A reading or summarization task usually wraps up in a few turns. If you expect ~10 steps, a limit of
+          <strong>15–20</strong> provides some slack without leaving the loop unrestricted. The inexpensive fleet can have a low cap (simple task); the lead agent, which makes
+          more back-and-forth trips, deserves a higher cap. No cap = open-ended bet.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the maximum number of turns a subagent can take before it is interrupted.</span></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">is the defense against an agent in a loop running up uncontrolled costs—the worst kind of expense.</span></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">turn cap · cost circuit breaker · low cap for the fleet, higher for the lead.</span></div>
+</div>
+</section>
+<!-- TÓPICO 4 — Multiagente ~15x + quando vale -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">📈 Multi-agent costs ~15× — and when it’s worth it</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        There's no magic: running a fleet of subagents consumes <strong class="text-amber-400">many more tokens</strong> that a single
+        conversation — in the order of <strong class="text-amber-400">~15×</strong>. Each subagent starts from scratch and
+        <strong class="text-amber-400">gathers its own context</strong> before producing. This isn't a waste
+        <em>automatic</em>: that's the price of parallelism and clean context. The right question isn't "is it expensive?", but
+        <strong class="text-amber-400">"what do I get that makes this 15× worthwhile?"</strong>.
+      </p>
+<!-- Barras comparativas (mock HTML) -->
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<div class="px-4 py-2 bg-dark-700/60 border-b border-dark-600 text-xs text-neutral-400 font-mono">relative token consumption (illustrative)</div>
+<div class="p-5 space-y-4 font-mono text-xs">
+<div>
+<div class="flex justify-between mb-1"><span class="text-neutral-300">1 single conversation</span><span class="text-neutral-400">1×</span></div>
+<div class="h-3 rounded bg-dark-700 overflow-hidden"><div class="h-full bg-emerald-500/70" style="width:7%"></div></div>
+</div>
+<div>
+<div class="flex justify-between mb-1"><span class="text-neutral-300">multi-agent fleet</span><span class="text-amber-400">~15×</span></div>
+<div class="h-3 rounded bg-dark-700 overflow-hidden"><div class="barfill h-full bg-amber-500/70" style="width:100%"></div></div>
+</div>
+<div class="text-neutral-500 pt-1">↑ 15× more tokens — only worth it when the work is truly large, noisy, or parallelizable.</div>
+</div>
+</div>
+<p class="text-xs text-neutral-500 mb-6">↑ Illustrative recreation, not an actual measurement. The proportion is there to establish the order of magnitude.</p>
+<!-- GRID ✓/✗ #2 — quando vale x quando é desperdicio -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ When 15× is worth it</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>The work is <strong>large</strong> (dozens of files, lots of reading)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>The material is <strong>noisy</strong> and you just want the clean conclusion</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>You can <strong>parallelize</strong> and save wall-clock time</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Protect the <strong>your context</strong> is worth the extra token cost</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ When it’s just waste</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>A <strong>30-second edit</strong> in a single file</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Something that <strong>depends on the entire conversation</strong> that you already have</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Small task, no heavy reading or parallelism</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Pay 15× to assemble context that was already at your fingertips</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the order of magnitude of the cost of a multi-agent fleet compared with a single conversation.</span></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">to decide with your eyes open — know the price and choose to pay it when, and only when, it's worthwhile.</span></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">~15× tokens · each agent gathers context · large/noisy/parallel × quick edit.</span></div>
+</div>
+</section>
+<!-- TÓPICO 5 — Combinacao > gastar muito -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">🧩 Combine well &gt; spend a lot</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The wrong instinct is "if it’s expensive, I need a stronger model." Almost never. The real gains come from
+        <strong class="text-amber-400">combine</strong>: the right model for the right role, the right limit, the right parallelism. A well-orchestrated Haiku fleet led by a Sonnet chief delivers <strong class="text-amber-400">more for less</strong> than everything in Opus.
+        Architecture beats brute force.
+      </p>
+<!-- SVG equacao: combinacao > gasto -->
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="A smart boss plus a low-cost fleet plus turn limits equals good, low-cost delivery. The combined result is worth more than simply putting everything on the most expensive model" class="w-full h-auto" role="img" viewbox="0 0 1000 210">
+<defs>
+<lineargradient id="m32b-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#fbbf24"></stop><stop offset="1" stop-color="#f59e0b"></stop>
+</lineargradient>
+<filter height="180%" id="m32b-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+</defs>
+<!-- termo 1 -->
+<rect fill="#0e1b26" height="62" rx="12" stroke="#38bdf8" stroke-width="2" width="172" x="30" y="74"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="116" y="100">smart boss</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="116" y="120">Opus/Sonnet</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="30" font-weight="600" text-anchor="middle" x="226" y="113">+</text>
+<!-- termo 2 -->
+<rect fill="#0e1b26" height="62" rx="12" stroke="#38bdf8" stroke-width="2" width="172" x="252" y="74"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="338" y="100">low-cost fleet</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="338" y="120">Haiku · parallel</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="30" font-weight="600" text-anchor="middle" x="448" y="113">+</text>
+<!-- termo 3 -->
+<rect fill="#0e1b26" height="62" rx="12" stroke="#38bdf8" stroke-width="2" width="172" x="474" y="74"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="560" y="100">turn caps</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="560" y="120">maxTurns</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="30" font-weight="600" text-anchor="middle" x="670" y="113">=</text>
+<!-- resultado (caixa-foco com glow) -->
+<g filter="url(#m32b-glow)"><rect fill="#1f1604" height="82" rx="14" stroke="url(#m32b-grad)" stroke-width="2" width="278" x="696" y="64"></rect></g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="18" font-weight="600" text-anchor="middle" x="835" y="98">good, low-cost delivery</text>
+<text fill="#fcd9a0" font-family="Inter,sans-serif" font-size="12.5" text-anchor="middle" x="835" y="122">architecture &gt; brute force</text>
+</svg>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Before scaling up the model, adjust the design</h3>
+<p class="text-neutral-300">Did it get stuck or become expensive? Before switching everything from Haiku to Opus, ask: can you
+          <strong>parallelize</strong>? O <strong>briefing</strong> is clear (fewer back-and-forths)? The <strong>cap</strong> is
+          suffocating a task that needed more? Most of the time the problem is architecture, not the model.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the principle that combining resources judiciously delivers more than forcing the model to scale up.</span></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">avoids the expensive, lazy solution of "put everything on Opus" when the bottleneck is orchestration.</span></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">combination (model+limit+parallelism) · architecture &gt; brute force · adjust the design before the model.</span></div>
+</div>
+</section>
+<!-- TÓPICO 6 — Medir / observar -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">🔭 Measure and observe: you can't cut what you can't see</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Real savings require <strong class="text-amber-400">look at the cost</strong>. How much did each subagent use? Which
+        one hit the limit? Where did the time go? Without monitoring, you're optimizing in the dark — cutting what was cheap and leaving the
+        expensive one running. <strong class="text-amber-400">Measure first, adjust later</strong>: that's how the boss/fleet split stops being
+a guess and becomes a number.
+      </p>
+<!-- Timeline do ciclo de medir-ajustar -->
+<div class="space-y-6 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Observe a real run</h4>
+<p class="text-sm text-neutral-400 mb-3">Run the work as it is today.</p>
+<p class="text-neutral-300 text-sm">See by subagent: model used, tokens consumed, turns spent, who hit the limit.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Find the offender</h4>
+<p class="text-sm text-neutral-400 mb-3">Spending is rarely distributed evenly.</p>
+<p class="text-neutral-300 text-sm">Almost always, an expensive agent doing fleet work or an unbounded loop accounts for most of the bill.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Adjust one parameter and measure again</h4>
+<p class="text-sm text-neutral-400 mb-3">One change at a time.</p>
+<p class="text-neutral-300 text-sm">Download an agent model, set a cap, parallelize — and compare the new run with the previous one. Repeat.</p>
+</div>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the habit of measuring subagent usage and adjusting the design based on what you observe.</span></div>
+<div><span class="text-amber-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">optimizing without measuring is guesswork; with measurement, each cut targets the cost that actually matters.</span></div>
+<div><span class="text-amber-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">observability · find the offender · measure → adjust a parameter → measure again.</span></div>
+</div>
+</section>
+<!-- BLOCO: EXEMPLO REAL (.md comentado) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">📄</span>
+<h2 class="text-2xl font-bold">Real example: a fleet agent with model + maxTurns</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The two controls in this module fit in the <strong class="text-amber-400">frontmatter</strong> of a single file
+        <code class="text-amber-400">.md</code>: <code class="text-amber-400">model</code> says <em>who</em> does (cheap model), and
+        <code class="text-amber-400">maxTurns</code> says <em>how far</em> it can come before stopping. This
+        <code class="text-amber-400">log-scanner.md</code> is a typical fleet worker: cheap, read-only, with a cap.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/log-scanner.md</span>
+<span class="text-xs text-blue-400">Markdown + YAML</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">--- # frontmatter: a CONFIGURAÇÃO do subagente</span>
+<span class="text-blue-400">name</span>: log-scanner             <span class="text-neutral-500"># minúsculas e hífens</span>
+<span class="text-blue-400">description</span>: Vasculha logs e arquivos grandes em
+  busca de erros e devolve só um resumo. Use para
+  varreduras pesadas.          <span class="text-neutral-500"># o GATILHO</span>
+<span class="text-blue-400">tools</span>: Read, Grep, Glob       <span class="text-neutral-500"># só leitura: trabalho de frota</span>
+<span class="text-blue-400">model</span>: haiku                  <span class="text-neutral-500"># BARATO — é a frota, não o chefe</span>
+<span class="text-blue-400">maxTurns</span>: 12                  <span class="text-neutral-500"># TETO — disjuntor contra loop</span>
+<span class="text-neutral-500">---</span>
+
+<span class="text-neutral-500"># corpo: o CÉREBRO do subagente</span>
+You are a fast log scanner.
+
+<span class="text-amber-400">When invoked:</span>
+1. Grep the given files for errors and warnings.
+2. Group what you find by type and file.
+3. Stop as soon as you have the summary.
+
+<span class="text-amber-400">Return:</span> a short report — counts per error type
+and the 3 files with the most issues. Nothing else.
+Do <span class="text-amber-400">not</span> open files line by line; do not loop.</code></pre>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-amber-400 mb-3">💵 model: haiku</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-amber-400">It’s the fleet</strong> — a mechanical scanning task.</li>
+<li><strong class="text-amber-400">Cheap per call</strong> — can run in parallel, at scale.</li>
+<li><strong class="text-amber-400">The environment variable takes precedence</strong> — the fixed model in the file takes precedence.</li>
+<li><strong class="text-amber-400">Read-only</strong> — with no write tool, no damage.</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-amber-400 mb-3">🛑 maxTurns: 12</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-amber-400">Step limit</strong> — stop even if it hasn’t “finished.”</li>
+<li><strong class="text-amber-400">Short on purpose</strong> — scanning doesn't need many turns.</li>
+<li><strong class="text-amber-400">Predictable cost</strong> — maximum known cost per call.</li>
+<li><strong class="text-amber-400">Kills the loop</strong> — the worst-case bill never happens.</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- BLOCO: PROMPTS PRONTOS -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">⌨️</span>
+<h2 class="text-2xl font-bold">Ready-made prompts (copy and paste)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Three prompts to apply these savings now: turn on the low-cost fleet, set a cap to prevent loops, and map out the lead/fleet split before
+        spending. Notice the pattern: <strong class="text-amber-400">right model for the right role</strong>, with
+        <strong class="text-amber-400">limit</strong>.
+      </p>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 1 — low-cost fleet by default</span>
+<span class="text-xs text-neutral-500">CLAUDE_CODE_SUBAGENT_MODEL</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Quero que toda a frota de subagentes rode em Haiku,
+mas que você (o chefe) continue em Sonnet. Me mostre
+como ligar isso com CLAUDE_CODE_SUBAGENT_MODEL e
+confirme quem ficou em qual modelo.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 2 — add a loop limit</span>
+<span class="text-xs text-neutral-500">maxTurns</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Crie um subagente de varredura de logs em Haiku,
+read-only, com maxTurns 12 para ele não entrar em
+loop. Quero o arquivo .md pronto, com model e maxTurns
+no frontmatter.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 3 — design the split before spending</span>
+<span class="text-xs text-neutral-500">boss × fleet</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Para este trabalho [descreva], me proponha a divisão
+chefe/frota: o que fica no modelo caro (decidir/juntar)
+e o que vai para a frota Haiku em paralelo. Diga qual
+modelo e qual maxTurns para cada papel — e por quê.</code></pre>
+</div>
+</div>
+</section>
+<!-- BLOCO: TELA SIMULADA (painel de custo por subagente) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">🖥️</span>
+<h2 class="text-2xl font-bold">Simulated screen: the fleet cost dashboard</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        This is how the savings show up when you <strong class="text-amber-400">observes</strong>: o
+        <strong class="text-amber-400">boss in Opus</strong> barely does any work, because it only thinks; the
+        <strong class="text-amber-400">Haiku fleet</strong> does the heavy lifting for a fraction of the cost; and there's a warning where an agent
+        touched the <code class="text-amber-400">maxTurns</code>. This is the diagram that shows <em>where</em> cut — before guessing.
+      </p>
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<!-- barra de título -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700/60 border-b border-dark-600">
+<div class="flex items-center space-x-2"><span class="w-3 h-3 rounded-full bg-red-400/70"></span><span class="w-3 h-3 rounded-full bg-amber-400/70"></span><span class="w-3 h-3 rounded-full bg-emerald-400/70"></span></div>
+<span class="text-xs text-neutral-400 font-mono">claude code · /cost · fleet running</span>
+<span class="text-xs text-amber-400 font-mono">⏱ 01:12</span>
+</div>
+<!-- linhas: chefe + frota -->
+<div class="p-4 space-y-3 font-mono text-xs">
+<div class="flex items-center gap-3"><span class="text-amber-400 w-44 shrink-0">★ boss (session)</span><span class="text-neutral-500 w-14 shrink-0">Opus</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="h-full bg-amber-500/70" style="width:14%"></div></div><span class="text-neutral-400 w-24 text-right shrink-0">~38k tok</span></div>
+<div class="flex items-center gap-3"><span class="text-neutral-300 w-44 shrink-0">● scanner-logs #1</span><span class="text-neutral-500 w-14 shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill h-full bg-emerald-500/70" style="width:58%"></div></div><span class="text-neutral-400 w-24 text-right shrink-0">~9k tok</span></div>
+<div class="flex items-center gap-3"><span class="text-neutral-300 w-44 shrink-0">● scanner-logs #2</span><span class="text-neutral-500 w-14 shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b2 h-full bg-emerald-500/70" style="width:47%"></div></div><span class="text-neutral-400 w-24 text-right shrink-0">~7k tok</span></div>
+<div class="flex items-center gap-3"><span class="text-neutral-300 w-44 shrink-0">● grep-massa #3</span><span class="text-neutral-500 w-14 shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b3 h-full bg-emerald-500/70" style="width:64%"></div></div><span class="text-neutral-400 w-24 text-right shrink-0">~11k tok</span></div>
+<div class="flex items-center gap-3"><span class="text-red-400 w-44 shrink-0">● doc-reader #4</span><span class="text-neutral-500 w-14 shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b4 h-full bg-red-500/60" style="width:100%"></div></div><span class="text-red-400 w-24 text-right shrink-0">maxTurns!</span></div>
+<div class="text-neutral-500 pt-1">4 Haiku subagents · 1 hit the limit (12 turns) and stopped — without becoming a loop.</div>
+</div>
+<!-- rodapé: total -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-800 border-t border-dark-600 font-mono text-xs">
+<span class="text-neutral-400">96% of tokens on the low-cost fleet · 14% on the lead</span>
+<div class="flex items-center gap-2">
+<span class="text-neutral-500">spending distribution</span>
+<span class="text-emerald-400">healthy</span>
+</div>
+</div>
+</div>
+<p class="text-xs text-neutral-500">↑ Illustrative recreation of the cost panel (not a real screenshot). The lead thinks for a little while; the fleet carries the workload — and the cap stopped the stuck agent.</p>
+</section>
+<!-- BLOCO: EXERCÍCIO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">🎯</span>
+<h2 class="text-2xl font-bold">Exercise</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+          Choose <strong class="text-amber-400">a real task</strong> you'd handle with subagents (e.g., "audit 50
+          log files from the last deploy"). Draw the <strong class="text-amber-400">commander/fleet division</strong>: what stays with
+          the expensive model, what goes to the low-cost fleet, and what <strong class="text-amber-400">cap</strong> each one takes.
+        </p>
+<div class="bg-dark-800/60 rounded-lg p-5 mb-6">
+<h4 class="font-semibold text-amber-400 mb-3">How to do it</h4>
+<ol class="space-y-2 text-neutral-300 text-sm list-decimal list-inside">
+<li>Write the work in one line and separate <strong>decide/bring together</strong> (manager) of <strong>read/search/summarize</strong> (fleet).</li>
+<li>For each part, choose a <strong>model</strong> (Opus/Sonnet for the manager; Haiku for the fleet) and justify your choice.</li>
+<li>Define a <strong>maxTurns</strong> by role (short in the fleet, broader in the lead agent) and say how you'd connect the cheap fleet (env var or <code class="text-amber-400">model</code> in the file).</li>
+</ol>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">✅ Verification criteria — how to know you got it right</h4>
+<p class="text-neutral-300 text-sm mb-3">Your design passes if it meets the <strong>four</strong> points:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>The expensive one only thinks:</strong> the powerful model appears only for deciding, planning, and synthesizing, never for raw scanning.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>The fleet is Haiku and parallel:</strong> the heavy lifting is done by the cheap model and can run at scale.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>Every agent has a limit:</strong> no role is left without <code>maxTurns</code> — short on the fleet, longer on the boss.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>The 15× is justified:</strong> you can say in one sentence why it’s worth paying for multi-agent in this case (large/noisy/parallel).</span></li>
+</ul>
+<p class="text-neutral-300 text-sm mt-3">If the task is small and the 15× <em>no</em> if that’s justified, the right answer is <strong>don't use a fleet</strong> — and noticing that also counts as a success.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5">
+<h4 class="font-semibold text-amber-400 mb-3">Solved example</h4>
+<p class="text-neutral-300 text-sm"><strong>Work:</strong> "audit 50 deploy logs and tell me the 3 most frequent errors". <strong class="text-amber-400">Boss (Sonnet):</strong> divides the 50 into batches, combines the summaries, and ranks the errors — <code>maxTurns</code> 25. <strong class="text-amber-400">Fleet (Haiku, ~5 in parallel):</strong> each one scans a read-only batch and returns the count — <code>maxTurns</code> 12. <strong class="text-amber-400">Is 15× justified?</strong> Yes: 50 files, noisy material, parallelizable — I only want the clean ranking.</p>
+</div>
+</div>
+</section>
+<!-- RESUMO / NAVEGAÇÃO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Boss + fleet</strong><span class="text-neutral-400"> — an expensive model thinks (Opus/Sonnet); a cheap fleet (Haiku) does the heavy lifting in parallel.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">CLAUDE_CODE_SUBAGENT_MODEL</strong><span class="text-neutral-400"> — one env var downgrades the whole fleet to Haiku at once; <code>model</code> in the file always takes precedence.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">maxTurns</strong><span class="text-neutral-400"> — the circuit breaker: a step limit that kills loops and makes per-agent spending predictable.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">~15× and when it’s worth it</strong><span class="text-neutral-400"> — multi-agent costs much more; it's only worth it for large, noisy, or parallel work.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Combine &gt; spend</strong><span class="text-neutral-400"> — a well-balanced model+cap+parallelism delivers more than putting everything on Opus.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Measure and observe</strong><span class="text-neutral-400"> — check the cost per subagent, find the offender, adjust one parameter, and measure again.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-amber-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">3.3 — Chaining subagents. The conductor coordinates A→B→C; agents don’t call agents, and the sequence stays in the boss’s hands.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="modulo-3-1.html">← Previous module</a>
+<a class="flex-1 text-center px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-500 transition-colors" href="modulo-3-3.html">Next module →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagents — 2026 · a course in the format
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Track 3 · Orchestration · Module 3.2</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    // Toggle de tópicos (compatível com o padrão; expansíveis ficam abertos por padrão nesta página de módulo)
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

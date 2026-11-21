@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Modelo por tarea | Subagentes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha amber T3) */
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(146, 64, 14, 0.10); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(146, 64, 14, 0.07); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(146, 64, 14, 0.25); }
+    html:not(.dark) .border-amber-500\/20 { border-color: rgba(146, 64, 14, 0.18); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(146, 64, 14, 0.16); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(146, 64, 14, 0.07); }
+    html:not(.dark) .bg-amber-600 { background-color: #d97706; }
+    html:not(.dark) .hover\:bg-amber-500:hover { background-color: #f59e0b; }
+
+    /* Light mode - cores de apoio usadas nos boxes (blue dados / red erros / verde ok) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(146, 64, 14, 0.08); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - diagramas SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Pulso dos agentes nos diagramas (apenas se o usuario permitir movimento) */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes wf-bar { from { transform: translateX(-6%); } to { transform: translateX(0); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.2s} .wf-a:nth-child(3){animation-delay:.4s}
+      .wf-a:nth-child(4){animation-delay:.6s} .wf-a:nth-child(5){animation-delay:.8s}
+      .barfill { animation: wf-bar 3s ease-in-out infinite alternate; }
+      .barfill.b2{animation-delay:.5s} .barfill.b3{animation-delay:1s} .barfill.b4{animation-delay:1.4s} .barfill.b5{animation-delay:1.8s}
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha3/modulo-3-1.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha3/modulo-3-1.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha3/modulo-3-1.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-1.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha3/modulo-3-1.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-3-1.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagentes</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentos</span>
+</a>
+<!-- Trilha 2 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">En la práctica</span>
+</a>
+<!-- Trilha 3 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10" href="index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orquestación</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Avanzado</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-amber-400" href="../../index.html">Inicio</a>
+<span>/</span>
+<a class="hover:text-amber-400" href="index.html">Ruta 3</a>
+<span>/</span>
+<span class="text-amber-400">Módulo 3.1</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full mb-4">
+        MÓDULO 3.1 · Ruta 3 · Modelo, costo y orquestación
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">🎚️ Modelo por tarea</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        Todo subagente se ejecuta <strong class="text-amber-400">alguno</strong> modelo. Elegir mal cuesta caro en ambos sentidos:
+        un <strong class="text-amber-400">Opus</strong> para recorrer un archivo es dinero desperdiciado; un <strong class="text-amber-400">Haiku</strong>
+        para decidir la arquitectura es dinero desperdiciado. Asignar la tarea al tier adecuado es la primera palanca de ahorro de la Trilha 3.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">6</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">~28</div>
+<div class="text-xs text-neutral-400">Minutos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Medio</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Decisión</div>
+<div class="text-xs text-neutral-400">Tipo</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- ABERTURA + SVG ESCADA -->
+<section class="mb-12">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Piensa en una <strong class="text-amber-400">taller mecánico</strong>. Para cambiar una llanta no llamas al ingeniero jefe: mandas al
+        ayudante, es rápido y económico. Para reconstruir el motor, ahí sí entra el maestro. Los modelos de IA funcionan igual: existe un
+        <strong class="text-amber-400">tier bajo</strong> (rápido, barato, excelente para trabajo pesado), un <strong class="text-amber-400">tier medio</strong>
+        (el operario competente que construye y revisa) y un <strong class="text-amber-400">tier alto</strong> (el maestro al que solo
+        recurres cuando el problema exige un razonamiento de verdad). En Claude Code estos tres son <strong class="text-amber-400">Haiku</strong>,
+        <strong class="text-amber-400">Sonnet</strong> e <strong class="text-amber-400">Opus</strong> — y cada subagente puede ejecutar el suyo.
+      </p>
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 mb-2 overflow-hidden">
+<svg aria-label="Escalera de tres peldaños: Haiku abajo (barato y rápido, para escanear y resumir), Sonnet en el medio (intermedio, para construir y revisar) y Opus arriba (caro y lento, para razonamiento, seguridad y arquitectura). El costo y la profundidad del razonamiento aumentan con cada peldaño; la latencia también." class="w-full h-auto" role="img" viewbox="0 0 1000 320">
+<defs>
+<lineargradient id="m31-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#fbbf24"></stop><stop offset="1" stop-color="#f59e0b"></stop>
+</lineargradient>
+<filter height="180%" id="m31-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m31-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#f59e0b" opacity="0.12" r="1.3"></circle>
+</pattern>
+</defs>
+<rect fill="url(#m31-grid)" height="320" width="1000" x="0" y="0"></rect>
+<!-- trilho tracejado da escada -->
+<path d="M120,250 L360,250 L360,170 L620,170 L620,90 L880,90" fill="none" opacity="0.5" stroke="#f59e0b" stroke-dasharray="9 9" stroke-width="2"></path>
+<!-- eixos / setas de leitura -->
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="500" y="300">costo ↑ · razonamiento ↑ · latencia ↑  →</text>
+<!-- DEGRAU 1: Haiku (ciano = trabalhador barato) -->
+<rect fill="#0e1b26" height="48" rx="11" stroke="#38bdf8" stroke-width="2" width="200" x="120" y="250"></rect>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="17" font-weight="600" text-anchor="middle" x="220" y="272">Haiku</text>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="220" y="290">escanear · buscar · resumir</text>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="220" y="236">$ · rápido</text>
+<!-- DEGRAU 2: Sonnet (ciano) -->
+<rect fill="#0e1b26" height="48" rx="11" stroke="#38bdf8" stroke-width="2" width="200" x="380" y="170"></rect>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="17" font-weight="600" text-anchor="middle" x="480" y="192">Sonnet</text>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="480" y="210">construir · revisar</text>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="480" y="156">$$ · equilibrado</text>
+<!-- DEGRAU 3: Opus (cor da trilha + glow = caixa-foco) -->
+<g filter="url(#m31-glow)"><rect fill="#1f1604" height="64" rx="14" stroke="url(#m31-grad)" stroke-width="2" width="220" x="640" y="62"></rect></g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="19" font-weight="600" text-anchor="middle" x="750" y="90">Opus</text>
+<text fill="#fcd9a0" font-family="Inter,sans-serif" font-size="11.5" text-anchor="middle" x="750" y="110">razonamiento · seguridad · arquitectura</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="750" y="48">$$$ · profundo</text>
+</svg>
+</div>
+<p class="text-xs text-neutral-500 mb-0">↑ La escalera de tiers: cada peldaño hacia arriba aporta más razonamiento, pero cuesta más y aumenta la latencia. Sube solo hasta donde lo exija la tarea.</p>
+</section>
+<!-- DIVISOR -->
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+<!-- TÓPICO 1 — Haiku -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">⚡ Haiku — el trabajador de tareas rutinarias</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Haiku es el nivel <strong class="text-amber-400">barato y rápido</strong>. Destaca en el trabajo mecánico de alto volumen:
+        <strong class="text-amber-400">escanear</strong> una carpeta entera, <strong class="text-amber-400">buscar</strong> una cadena en cientos de
+        archivos, <strong class="text-amber-400">resumir</strong> un registro enorme, <strong class="text-amber-400">leer documentación</strong> y devuelve los 5
+        puntos que importan. Tareas en las que la respuesta es «encuentra e informa», no «piensa a fondo».
+      </p>
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-4 flex items-center">
+<span class="mr-2">🔎</span> El punto ideal de Haiku
+        </h3>
+<p class="text-neutral-300 mb-4">
+          Cuando el subagente va a generar una <strong>límite de lectura</strong> que nunca vas a releer — solo importa la conclusión — quieres el tier más barato que haga el trabajo. Pagar caro por esto es tirar dinero en un trabajo que no requiere inteligencia:
+        </p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>Escanear</strong> — buscar un patrón en archivos/directorios.</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>Buscar</strong> — localizar dónde aparece algo en un repositorio grande.</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>Resumir</strong> — resumir un log, un PDF, una transcripción.</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>Leer docs</strong> — traer los datos de una página, sin pegar la página.</span></li>
+</ul>
+</div>
+<!-- 3 SECOES OBRIGATORIAS -->
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3 mb-6">
+<div>
+<span class="text-amber-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">El tier de menor costo y menor latencia. Piensa de forma superficial, pero ejecuta rápido y a gran escala — ideal para el trabajo de "búsqueda" que alimenta el resto.</p>
+</div>
+<div>
+<span class="text-amber-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">La mayor parte de lo que hace un subagente es lectura en bruto descartable. Ejecutarlo con Haiku reduce el costo sin afectar la calidad del resultado final.</p>
+</div>
+<div>
+<span class="text-amber-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Barato · rápido · alto volumen · «encuentra e informa» · trabajo mecánico descartable.</p>
+</div>
+</div>
+<!-- Conceitos-chave: 4 mini-cards -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🔦</div><div class="text-sm font-semibold text-amber-400">Escanear</div><div class="text-xs text-neutral-400">carpetas</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🔍</div><div class="text-sm font-semibold text-amber-400">Buscar</div><div class="text-xs text-neutral-400">cadenas</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🗜️</div><div class="text-sm font-semibold text-amber-400">Resumir</div><div class="text-xs text-neutral-400">logs</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">📚</div><div class="text-sm font-semibold text-amber-400">Leer docs</div><div class="text-xs text-neutral-400">hechos</div></div>
+</div>
+</section>
+<!-- TÓPICO 2 — Sonnet -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">🔧 Sonnet: el operario competente</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Sonnet es el nivel <strong class="text-amber-400">medio</strong> — el caballo de batalla del día a día. Él
+        <strong class="text-amber-400">construye</strong> (escribe código, crea archivos, implementa un paso de un plan) y
+        <strong class="text-amber-400">revisa</strong> (lee un diff y señala errores). Es lo bastante inteligente para la mayoría de las tareas reales
+        y aun así mucho más barato que el tier alto. Cuando tienes dudas, Sonnet suele ser la opción segura por defecto.
+      </p>
+<!-- TIMELINE (1 timeline obrigatória) -->
+<div class="space-y-6 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Recibe una tarea concreta</h4>
+<p class="text-sm text-neutral-400 mb-3">Crear o revisar algo bien definido.</p>
+<p class="text-neutral-300 text-sm">"Implementa la validación de correo electrónico en este formulario" o "revisa este diff y señala errores y pruebas faltantes".</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Ejecuta con competencia</h4>
+<p class="text-sm text-neutral-400 mb-3">Buen razonamiento, costo razonable.</p>
+<p class="text-neutral-300 text-sm">Entiende la intención, escribe código correcto y sigue el estándar del proyecto. Para eso no necesita el razonamiento de frontera de Opus.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Entrega al ritmo adecuado</h4>
+<p class="text-sm text-neutral-400 mb-3">Equilibrio entre calidad y precio.</p>
+<p class="text-neutral-300 text-sm">El resultado es sólido sin inflar la cuenta. Por eso Sonnet es el nivel «estándar» de quienes construyen y revisan durante todo el día.</p>
+</div>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> La opción sensata por defecto</h3>
+<p class="text-neutral-300">Si no puedes justificar por qué la tarea necesita Opus, casi siempre puedes resolverla con Sonnet. Y si solo se trata de "buscar e informar", baja a Haiku. El ejercicio mental es siempre: <strong>¿Qué tan a fondo debe pensar esta tarea?</strong></p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">el nivel intermedio: inteligente para construir y revisar, con un costo controlado.</span></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">es la opción predeterminada que cubre la mayoría de las tareas; saberlo evita el reflejo de «todo en Opus».</span></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">construir · revisar · opción segura por defecto · equilibrio entre calidad y costo.</span></div>
+</div>
+</section>
+<!-- TÓPICO 3 — Opus -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">🧠 Opus — el maestro al que solo llamas cuando lo necesitas</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Opus es el nivel <strong class="text-amber-400">caro y más lento</strong>, reservado para lo que realmente requiere
+        <strong class="text-amber-400">razonamiento profundo</strong>: decisiones de <strong class="text-amber-400">arquitectura</strong>,
+        análisis de <strong class="text-amber-400">seguridad</strong>, planificación delicada, depuración de un problema que nadie entiende.
+        Aquí el costo extra vale la pena: un error de arquitectura cuesta mucho más que unos cuantos tokens adicionales.
+      </p>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">🏛️</div>
+<h4 class="font-semibold text-amber-400 mb-1">Arquitectura</h4>
+<p class="text-xs text-neutral-400 mb-2">Decisiones de largo alcance</p>
+<p class="text-neutral-300 text-sm">"¿Cómo estructurar este módulo?" — una decisión que pesará durante meses.</p>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">🔐</div>
+<h4 class="font-semibold text-amber-400 mb-1">Seguridad</h4>
+<p class="text-xs text-neutral-400 mb-2">Dónde un error cuesta caro</p>
+<p class="text-neutral-300 text-sm">Encontrar una falla de inyección o una filtración exige pensar como atacante.</p>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">🧩</div>
+<h4 class="font-semibold text-amber-400 mb-1">Razonamiento difícil</h4>
+<p class="text-xs text-neutral-400 mb-2">Problema enredado</p>
+<p class="text-neutral-300 text-sm">Un bug que atraviesa cinco archivos y no tiene una causa obvia.</p>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">🗺️</div>
+<h4 class="font-semibold text-amber-400 mb-1">Planificación</h4>
+<p class="text-xs text-neutral-400 mb-2">Plan que otros siguen</p>
+<p class="text-neutral-300 text-sm">Dividir un trabajo grande en pasos que ejecutarán varios subagentes.</p>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-2xl mb-2">⚖️</div>
+<h4 class="font-semibold text-amber-400 mb-1">Ventajas y desventajas</h4>
+<p class="text-xs text-neutral-400 mb-2">Sopesar las opciones a fondo</p>
+<p class="text-neutral-300 text-sm">Comparar dos enfoques y justificar la elección con matices.</p>
+</div>
+<div class="bg-amber-900/20 rounded-xl p-5 border border-amber-500/30 flex flex-col justify-center">
+<div class="text-2xl mb-2">💎</div>
+<h4 class="font-semibold text-amber-400 mb-1">El costo se compensa</h4>
+<p class="text-neutral-300 text-sm">En tareas poco frecuentes y de alto riesgo, el tier caro es la inversión más barata que existe.</p>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Opus es la excepción, no el valor predeterminado</h3>
+<p class="text-neutral-300">El instinto de quien empieza es "usa el mejor modelo para todo". Es un error. Opus debe ser la <strong>minoría</strong> de tus subagentes; solo aquellos en los que equivocarse al decidir tiene un costo alto. Para el resto, Haiku y Sonnet entregan el mismo resultado por una fracción del precio.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">el nivel de razonamiento máximo, más caro y lento, para decisiones de alto riesgo.</span></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">saber cuándo vale la pena usar Opus (y cuándo no) es lo que distingue a quien ahorra de quien desperdicia.</span></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">arquitectura · seguridad · razonamiento profundo · excepción justificada.</span></div>
+</div>
+</section>
+<!-- TÓPICO 4 — Raciocínio × custo × latência -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">📐 Los tres ejes: razonamiento × costo × latencia</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Subir de tier no es solo «ser más inteligente». Son <strong class="text-amber-400">tres diales</strong> que se mueven juntos:
+        más <strong class="text-amber-400">razonamiento</strong> viene con más <strong class="text-amber-400">costo</strong> y más
+        <strong class="text-amber-400">latencia</strong> (tarda más en responder). Elegir un modelo es decidir
+        <em>de cuánto de cada uno</em> la tarea precisa — y dejar de pagar por lo que no usa.
+      </p>
+<!-- GRID ✓/✗ #1 -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Tiene sentido subir de tier cuando…</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>La tarea requiere un razonamiento en el que el tier inferior se equivoca</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>El error es costoso (arquitectura, seguridad)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>La decisión es válida por mucho tiempo</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Puedes justificar el costo adicional</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Subir de tier es un desperdicio cuando…</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Es solo escanear, buscar o resumir</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>La salida es descartable (nadie la vuelve a leer)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Ejecutas esto cientos de veces</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>La latencia importa (quieres rapidez)</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">⏱️</span> La latencia también cuenta</h3>
+<p class="text-neutral-300">En un <strong>fan-out</strong> con 30 subagentes de búsqueda, un modelo lento multiplica la espera por 30. Haiku no solo es más barato: es más <strong>rápido</strong>, y eso cambia la sensación de usar el sistema. Un nivel alto para una tarea trivial te hace esperar en vano.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">la compensación entre tres ejes que todo nivel conlleva: razonamiento, costo y latencia aumentan juntos.</span></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">elegir un modelo es dosificar estos tres; solo aciertas si ves los tres al mismo tiempo.</span></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">razonamiento · costo · latencia · "paga solo por lo que usa la tarea".</span></div>
+</div>
+</section>
+<!-- TÓPICO 5 — A armadilha do começar em branco -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">🪤 La trampa: el subagente empieza en blanco</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Este es el detalle que atrapa a mucha gente. El subagente <strong class="text-amber-400">no hereda tu conversación</strong> — él
+        <strong class="text-amber-400">empieza desde cero</strong>, con la ventana vacía. Antes de producir cualquier cosa, necesita
+        <strong class="text-amber-400">reunir el contexto por sí solo</strong>: leer los archivos y entender el terreno. Eso cambia el cálculo: parte de
+        su trabajo consiste solo en «ubicarse», y ese trabajo de lectura es justo lo que un nivel barato hace bien.
+      </p>
+<!-- CODE BOX (1 code box) — ilustra o começar em branco -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">qué ve el subagente al nacer</span>
+<span class="text-xs text-amber-400">ventana en blanco</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500"># o maestro já conversou com você por 1h.</span>
+<span class="text-neutral-500"># o subagente NÃO sabe nada disso. ele nasce assim:</span>
+
+<span class="text-amber-400">contexto:</span> (vazio)
+<span class="text-amber-400">tarefa:</span>   "ache onde o login quebra nos 40 arquivos de /auth"
+
+<span class="text-neutral-500"># 1º ele GASTA tokens só pra se situar:</span>
+<span class="text-neutral-500">#   - lista a pasta /auth</span>
+<span class="text-neutral-500">#   - abre os 40 arquivos</span>
+<span class="text-neutral-500">#   - mapeia o fluxo de login</span>
+<span class="text-neutral-500"># SÓ DEPOIS ele começa a raciocinar sobre o bug.</span>
+
+<span class="text-neutral-500"># lição: essa fase de "reunir contexto" é leitura bruta</span>
+<span class="text-neutral-500"># → é trabalho de Haiku, não de Opus.</span></code></pre>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Por qué esto es una trampa de costos</h3>
+<p class="text-neutral-300">Si le das toda la tarea a Opus, estás pagando el tier más caro por una fase que es <strong>solo lectura</strong> (listar carpeta, abrir archivo). Muchas veces lo ideal es separar: uno <strong>Haiku</strong> reúne y resume el contexto, y solo el <strong>razonamiento final</strong> — si es difícil, sube de nivel. No pagues Opus para abrir archivos.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">el subagente nace sin contexto y gasta esfuerzo solo para ubicarse antes de pensar.</span></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">cambia la elección del modelo: la fase de «reunir contexto» es una lectura barata, no un razonamiento costoso.</span></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">ventana en blanco · reunir contexto · leer ≠ razonar · separar las fases.</span></div>
+</div>
+</section>
+<!-- TÓPICO 6 — Vale pra grande / desperdício pra 30s + inherit -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">⚖️ Las tareas grandes valen la pena; las de 30s son un desperdicio</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Hay un <strong class="text-amber-400">costo fijo</strong> al lanzar un subagente: nace en blanco, reúne contexto y después trabaja.
+        Para una <strong class="text-amber-400">tarea grande</strong>, ese costo se diluye: vale la pena. Para una
+        <strong class="text-amber-400">microtarea de 30 segundos</strong>, la sobrecarga de "ubicarse" supera el trabajo en sí: es
+        un desperdicio. Y para el caso común, existe el atajo honesto: <strong class="text-amber-400">heredar el modelo del padre</strong>.
+      </p>
+<!-- GRID ✓/✗ #2 -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Vale la pena el subagente (tarea grande)</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Leer y cruzar decenas de archivos</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Investigación exhaustiva que genera una pared de texto</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Trabajo que se ejecuta en paralelo (fan-out)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>El costo de orientarse se diluye en el tamaño</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Desperdicio (tarea de 30 segundos)</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Cambiar una línea que ya tienes enfrente</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Responder algo que el maestro ya sabe</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Tarea en la que «reunir contexto» &gt; el trabajo</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Edición rápida en medio de la conversación</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">🧬</span> inherit-from-parent — el valor predeterminado honesto</h3>
+<p class="text-neutral-300 mb-3">
+          Si no declaras <code class="text-amber-400">model</code> en el subagente, suele <strong>heredar el modelo del padre</strong>
+          (el maestro). Es el comportamiento predeterminado y casi siempre razonable: solo fijas un modelo cuando tienes un <strong>motivo claro</strong>
+          para desviarse del padre.
+        </p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-0.5">→</span><span><strong>Heredar</strong> — dejar sin <code class="text-amber-400">model</code>: el subagente se ejecuta con el modelo del director. Es la opción segura por defecto.</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-0.5">→</span><span><strong>Forzar hacia abajo</strong> — <code class="text-amber-400">model: haiku</code> en un agente de búsqueda, incluso con un maestro en Opus: ahorro.</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-0.5">→</span><span><strong>Forzar hacia arriba</strong> — <code class="text-amber-400">model: opus</code> en un revisor de seguridad, incluso con un maestro en Sonnet: calidad donde más importa.</span></li>
+</ul>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">el subagente tiene un costo fijo de arranque; heredar el modelo del padre es el valor predeterminado cuando no quieres elegir.</span></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">evita lanzar un subagente para una microtarea y enseña cuándo vale la pena fijar el modelo.</span></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">costo fijo de inicio · tarea grande × 30s · inherit-from-parent · forzar hacia arriba/abajo.</span></div>
+</div>
+</section>
+<!-- BLOCO DESTAQUE: TABELA RICA Modelo×Raciocínio×Custo×Quando usar -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">📊</span>
+<h2 class="text-2xl font-bold">La tabla de decisión: Modelo × Razonamiento × Costo × Cuándo usarlo</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Esta es la <strong class="text-amber-400">tabla canónica</strong> del curso para elegir un modelo. Lee de izquierda a derecha:
+        cada nivel tiene un grado de razonamiento, un costo relativo, una latencia y un conjunto de tareas para las que es la opción adecuada. Consérvala;
+        volverá en la Ruta 4 cuando comparemos modelos de otros proveedores.
+      </p>
+<div class="overflow-x-auto rounded-xl border border-amber-500/30 mb-6">
+<table class="w-full text-sm text-left">
+<thead class="bg-amber-500/20 text-amber-400">
+<tr>
+<th class="px-4 py-3 font-semibold">Modelo</th>
+<th class="px-4 py-3 font-semibold">Razonamiento</th>
+<th class="px-4 py-3 font-semibold">Costo</th>
+<th class="px-4 py-3 font-semibold">Latencia</th>
+<th class="px-4 py-3 font-semibold">Cuándo usar</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-dark-600">
+<tr class="bg-dark-800">
+<td class="px-4 py-4 align-top">
+<div class="font-bold text-amber-400">Haiku</div>
+<div class="text-xs text-neutral-400">el ayudante</div>
+</td>
+<td class="px-4 py-4 align-top text-neutral-300">Superficial<div class="text-xs text-neutral-500 mt-1">busca e informa</div></td>
+<td class="px-4 py-4 align-top"><span class="text-emerald-400 font-semibold">$</span><div class="text-xs text-neutral-500 mt-1">el más barato</div></td>
+<td class="px-4 py-4 align-top"><span class="text-emerald-400 font-semibold">Baja</span><div class="text-xs text-neutral-500 mt-1">el más rápido</div></td>
+<td class="px-4 py-4 align-top text-neutral-300">Escanear, buscar, resumir, leer documentación, hacer barridos, reunir contexto sin procesar.</td>
+</tr>
+<tr class="bg-dark-800">
+<td class="px-4 py-4 align-top">
+<div class="font-bold text-amber-400">Sonnet</div>
+<div class="text-xs text-neutral-400">el trabajador</div>
+</td>
+<td class="px-4 py-4 align-top text-neutral-300">Bueno<div class="text-xs text-neutral-500 mt-1">construye y revisa</div></td>
+<td class="px-4 py-4 align-top"><span class="text-amber-400 font-semibold">$$</span><div class="text-xs text-neutral-500 mt-1">medio</div></td>
+<td class="px-4 py-4 align-top"><span class="text-amber-400 font-semibold">Media</span><div class="text-xs text-neutral-500 mt-1">equilibrada</div></td>
+<td class="px-4 py-4 align-top text-neutral-300">Crear código, implementar pasos, revisar diffs. <strong class="text-amber-400">Default</strong> cuando tengas dudas.</td>
+</tr>
+<tr class="bg-dark-800">
+<td class="px-4 py-4 align-top">
+<div class="font-bold text-amber-400">Opus</div>
+<div class="text-xs text-neutral-400">el maestro</div>
+</td>
+<td class="px-4 py-4 align-top text-neutral-300">Profundo<div class="text-xs text-neutral-500 mt-1">piensa a fondo</div></td>
+<td class="px-4 py-4 align-top"><span class="text-red-400 font-semibold">$$$</span><div class="text-xs text-neutral-500 mt-1">el más caro</div></td>
+<td class="px-4 py-4 align-top"><span class="text-red-400 font-semibold">Alta</span><div class="text-xs text-neutral-500 mt-1">el más lento</div></td>
+<td class="px-4 py-4 align-top text-neutral-300">Arquitectura, seguridad, planificación, depuración compleja. <strong class="text-amber-400">Excepción</strong> justificada.</td>
+</tr>
+<tr class="bg-amber-900/20">
+<td class="px-4 py-4 align-top">
+<div class="font-bold text-amber-400">inherit</div>
+<div class="text-xs text-neutral-400">hereda del padre</div>
+</td>
+<td class="px-4 py-4 align-top text-neutral-300">= del maestro<div class="text-xs text-neutral-500 mt-1">qué usa el padre</div></td>
+<td class="px-4 py-4 align-top text-neutral-300">= del maestro</td>
+<td class="px-4 py-4 align-top text-neutral-300">= del maestro</td>
+<td class="px-4 py-4 align-top text-neutral-300">Cuándo no hay motivo para desviarse. Omite el campo <code class="text-amber-400">model</code> y listo.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Cómo leer la tabla en la práctica</h3>
+<p class="text-neutral-300">Empieza desde abajo: ¿la tarea es «buscar e informar»? <strong>Haiku</strong>. ¿No? ¿Ella "construye o revisa"? <strong>Sonnet</strong>. Solo sube a <strong>Opus</strong> si puedes decir en voz alta por qué el razonamiento debe ser lo mejor posible. ¿No sabes justificarlo? No lo subas.</p>
+</div>
+</section>
+<!-- BLOCO: EXEMPLO REAL (.md comentado) — 3 agentes, 3 modelos justificados -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">📄</span>
+<h2 class="text-2xl font-bold">Ejemplo real: tres agentes, tres modelos</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        La elección del modelo está en el campo <code class="text-amber-400">model</code> del frontmatter. Mira tres subagentes de un mismo
+        proyecto, cada uno en el nivel <strong class="text-amber-400">justificado</strong> para tu tarea — y lee el comentario que lo explica
+        <em>por qué</em> cada uno está donde está.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/ (tres archivos)</span>
+<span class="text-xs text-blue-400">Markdown + YAML</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500"># ── 1) file-scout.md ── varre o repo atrás de um padrão</span>
+<span class="text-neutral-500">---</span>
+<span class="text-blue-400">name</span>: file-scout
+<span class="text-blue-400">description</span>: Varre o repositório atrás de onde um símbolo
+  ou string aparece e devolve só os caminhos + linhas.
+<span class="text-blue-400">tools</span>: Read, Grep, Glob       <span class="text-neutral-500"># só leitura</span>
+<span class="text-blue-400">model</span>: haiku                  <span class="text-amber-400"># ← é "ache e relate": tier barato basta</span>
+<span class="text-neutral-500">---</span>
+You are a fast code scout. Liste apenas os arquivos e linhas
+onde o alvo aparece. Não explique, não opine. Só o mapa.
+
+
+<span class="text-neutral-500"># ── 2) feature-builder.md ── implementa um passo do plano</span>
+<span class="text-neutral-500">---</span>
+<span class="text-blue-400">name</span>: feature-builder
+<span class="text-blue-400">description</span>: Implementa um passo bem-definido de um plano
+  (uma função, uma validação, um endpoint) e roda os testes.
+<span class="text-blue-400">tools</span>: Read, Edit, Write, Bash
+<span class="text-blue-400">model</span>: sonnet                 <span class="text-amber-400"># ← constrói código: o operário competente</span>
+<span class="text-neutral-500">---</span>
+You are a focused implementer. Implemente exatamente o passo
+pedido, siga o padrão do projeto e rode os testes ao final.
+
+
+<span class="text-neutral-500"># ── 3) security-reviewer.md ── caça falha de segurança</span>
+<span class="text-neutral-500">---</span>
+<span class="text-blue-400">name</span>: security-reviewer
+<span class="text-blue-400">description</span>: Revisa o diff em busca de falhas de segurança
+  (injeção, vazamento, authz). Use após mexer em auth/pagamentos.
+<span class="text-blue-400">tools</span>: Read, Grep, Glob       <span class="text-neutral-500"># read-only: revisor não edita</span>
+<span class="text-blue-400">model</span>: opus                   <span class="text-amber-400"># ← raciocínio de segurança: o erro é caro</span>
+<span class="text-neutral-500">---</span>
+You are a senior security reviewer. Pense como atacante.
+Aponte cada risco com arquivo:linha e a gravidade. Não conserte.</code></pre>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="text-xs text-neutral-500 mb-1">file-scout</div>
+<div class="font-semibold text-amber-400 mb-2">model: haiku</div>
+<p class="text-neutral-300 text-sm">Solo localiza y enumera. Cero razonamiento profundo → el tier más barato y rápido es el adecuado.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="text-xs text-neutral-500 mb-1">feature-builder</div>
+<div class="font-semibold text-amber-400 mb-2">model: sonnet</div>
+<p class="text-neutral-300 text-sm">Escribe código correcto siguiendo un plan. Trabajo de construcción real → el nivel medio predeterminado.</p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="text-xs text-neutral-500 mb-1">security-reviewer</div>
+<div class="font-semibold text-amber-400 mb-2">model: opus</div>
+<p class="text-neutral-300 text-sm">Encontrar un fallo requiere pensar a fondo, y equivocarse cuesta caro → aquí se justifica el nivel alto.</p>
+</div>
+</div>
+</section>
+<!-- BLOCO: PROMPTS PRONTOS -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">⌨️</span>
+<h2 class="text-2xl font-bold">Prompts listos (copia y pega)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Tres prompts para indicarle al maestro <strong class="text-amber-400">adaptar el modelo a la tarea</strong>. Fíjate en el patrón: dices el
+        <strong class="text-amber-400">tier</strong> e a <strong class="text-amber-400">razón</strong> — y deja el trabajo barato en Haiku, el costoso en Opus.
+      </p>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 1 — barato para escanear, caro para decidir</span>
+<span class="text-xs text-neutral-500">divide las fases</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Use um subagente em Haiku pra escanear /auth e me
+trazer só os trechos que tocam o login. Depois,
+com esse resumo, use Opus só pra decidir onde está
+o bug. Não rode o Opus na varredura.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 2 — fijar el modelo de un agente</span>
+<span class="text-xs text-neutral-500">define el campo model</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Crie um subagente "doc-summarizer" read-only com
+model: haiku — a tarefa é só ler docs e resumir,
+então quero o tier mais barato e rápido.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 3 — subir el nivel donde más se necesita</span>
+<span class="text-xs text-neutral-500">justifica el Opus</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Esse é um revisor de segurança: coloque model: opus.
+O erro aqui é caro, então quero o raciocínio máximo,
+mesmo custando mais. Mantenha o agente read-only.</code></pre>
+</div>
+</div>
+</section>
+<!-- BLOCO: TELA SIMULADA (status line com modelo do subagente) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">🖥️</span>
+<h2 class="text-2xl font-bold">Pantalla simulada: el modelo de cada subagente</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Así es como aparece la elección en la terminal. El maestro lanzó tres subagentes y la <strong class="text-amber-400">línea de estado</strong>
+        muestra, para cada uno, <strong class="text-amber-400">qué modelo</strong> está en ejecución. Observa el diseño: la flota de exploración en
+        <strong class="text-amber-400">Haiku</strong>, el builder en <strong class="text-amber-400">Sonnet</strong>, y solo el revisor de seguridad en
+        <strong class="text-amber-400">Opus</strong> — jefe costoso, trabajadores baratos.
+      </p>
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<!-- barra de título -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700/60 border-b border-dark-600">
+<div class="flex items-center space-x-2"><span class="w-3 h-3 rounded-full bg-red-400/70"></span><span class="w-3 h-3 rounded-full bg-amber-400/70"></span><span class="w-3 h-3 rounded-full bg-emerald-400/70"></span></div>
+<span class="text-xs text-neutral-400 font-mono">claude code · auth-refactor · 3 subagentes</span>
+<span class="text-xs text-amber-400 font-mono">⏱ 00:31</span>
+</div>
+<!-- subagentes -->
+<div class="p-4 space-y-3 font-mono text-xs">
+<div class="flex items-center gap-3"><span class="text-amber-400 w-44 shrink-0">● file-scout</span><span class="px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 w-16 text-center shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill h-full bg-amber-500/70" style="width:84%"></div></div><span class="text-neutral-400 w-20 text-right shrink-0">38k tok</span></div>
+<div class="flex items-center gap-3"><span class="text-amber-400 w-44 shrink-0">● doc-summarizer</span><span class="px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 w-16 text-center shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b2 h-full bg-amber-500/70" style="width:71%"></div></div><span class="text-neutral-400 w-20 text-right shrink-0">52k tok</span></div>
+<div class="flex items-center gap-3"><span class="text-amber-400 w-44 shrink-0">● feature-builder</span><span class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 w-16 text-center shrink-0">Sonnet</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b3 h-full bg-amber-500/70" style="width:46%"></div></div><span class="text-neutral-400 w-20 text-right shrink-0">119k tok</span></div>
+<div class="flex items-center gap-3"><span class="text-amber-400 w-44 shrink-0">● security-reviewer</span><span class="px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 w-16 text-center shrink-0">Opus</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b4 h-full bg-amber-500/70" style="width:29%"></div></div><span class="text-neutral-400 w-20 text-right shrink-0">88k tok</span></div>
+<div class="text-neutral-500 pt-1">2× Haiku + 1× Sonnet + 1× Opus · solo el trabajo que requiere pensar a fondo justifica el nivel más caro</div>
+</div>
+<!-- status line -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-800 border-t border-dark-600 font-mono text-xs">
+<span class="text-neutral-400">maestro · <span class="text-amber-400">Opus</span></span>
+<div class="flex items-center gap-2">
+<span class="text-neutral-500">tu contexto</span>
+<div class="w-28 h-2 rounded bg-dark-700 overflow-hidden"><div class="h-full bg-amber-500/70" style="width:14%"></div></div>
+<span class="text-amber-400">14%</span>
+</div>
+</div>
+</div>
+<p class="text-xs text-neutral-500">↑ Recreación ilustrativa del terminal (no es una captura de pantalla real). La línea de estado revela el modelo de cada subagente, y la flota económica carga con la mayor parte del trabajo.</p>
+</section>
+<!-- BLOCO: EXERCÍCIO (atribuir modelo a 6 tarefas) -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">🎯</span>
+<h2 class="text-2xl font-bold">Ejercicio: asigna el modelo a 6 tareas</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+          Para cada una de las <strong class="text-amber-400">6 tareas</strong> abajo, elige el tier — <strong class="text-amber-400">Haiku</strong>,
+          <strong class="text-amber-400">Sonnet</strong> o <strong class="text-amber-400">Opus</strong> — y escribe
+          <strong class="text-amber-400">una frase</strong> justificando. Usa la tabla de decisión como guía.
+        </p>
+<div class="bg-dark-800/60 rounded-lg p-5 mb-6">
+<h4 class="font-semibold text-amber-400 mb-3">Las 6 tareas</h4>
+<ol class="space-y-2 text-neutral-300 text-sm list-decimal list-inside">
+<li>Buscar en cuáles de los 300 archivos del proyecto está la función <code class="text-amber-400">parseToken</code> se invoca.</li>
+<li>Decidir cómo reorganizar la arquitectura de carpetas de un monorepo que creció demasiado.</li>
+<li>Implementar la máscara de teléfono en un campo de formulario, siguiendo el patrón del proyecto.</li>
+<li>Resumir un registro de compilación de 4.000 líneas en los 5 errores importantes.</li>
+<li>Auditar un endpoint de pago en busca de fallas de autorización.</li>
+<li>Revisar un diff de 60 líneas que agrega un botón y ajusta un CSS.</li>
+</ol>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">✅ Criterio de verificación — respuestas comentadas</h4>
+<p class="text-neutral-300 text-sm mb-3">Compara tu respuesta con esta clave. Acertar el <strong>tier</strong> importa, pero acertar con la <strong>razón</strong> importa más: es la que vas a reutilizar en tareas nuevas.</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">1.</span><span><strong class="text-amber-400">Haiku</strong> — es puro «busca e informa», alto volumen, cero razonamiento profundo.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">2.</span><span><strong class="text-amber-400">Opus</strong> — arquitectura: decisión de largo alcance, costosa si te equivocas.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">3.</span><span><strong class="text-amber-400">Sonnet</strong> — construir código bien definido siguiendo un patrón: el operario.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">4.</span><span><strong class="text-amber-400">Haiku</strong> — resumir un log es una compresión de lectura, descartable y rápida.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">5.</span><span><strong class="text-amber-400">Opus</strong> — seguridad de pagos: pensar como atacante, un error muy costoso.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">6.</span><span><strong class="text-amber-400">Sonnet</strong> — revisar un diff trivial: trabajo de revisión estándar, sin alto riesgo.</span></li>
+</ul>
+<p class="text-neutral-300 text-sm mt-3">Puntuación de tiers: <strong>Haiku ×2 · Sonnet ×2 · Opus ×2</strong>. Si pusiste todo en Opus, vuelve a leer el tema 3: Opus es la <em>minoría</em>.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5">
+<h4 class="font-semibold text-amber-400 mb-3">Ejemplo resuelto</h4>
+<p class="text-neutral-300 text-sm"><strong>Tarea:</strong> "buscar dónde <code class="text-amber-400">parseToken</code> se invoca en los 300 archivos». <strong class="text-amber-400">Nivel:</strong> Haiku. <strong>Razón:</strong> es un barrido de «encuentra e informa»: gran volumen, lectura descartable y ninguna decisión difícil; pagar Sonnet u Opus aquí sería tirar el dinero.</p>
+</div>
+</div>
+</section>
+<!-- RESUMO / NAVEGAÇÃO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Haiku</strong><span class="text-neutral-400"> — barato y rápido; escanear, buscar, resumir, leer documentación. El trabajo manual descartable.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Sonnet</strong><span class="text-neutral-400"> — intermedio; construir y revisar. La opción predeterminada sensata cuando tienes dudas.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Opus</strong><span class="text-neutral-400"> — costoso y profundo; arquitectura, seguridad, razonamiento difícil. Excepción justificada, no predeterminada.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Tres ejes</strong><span class="text-neutral-400"> — el razonamiento, el costo y la latencia aumentan juntos; paga solo por lo que requiere la tarea.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Empieza en blanco</strong><span class="text-neutral-400"> — el subagente reúne el contexto por su cuenta; esta fase consiste en una lectura barata, no en razonamiento costoso.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Grande × 30s + inherit</strong><span class="text-neutral-400"> — el subagente sirve para tareas grandes, pero es un desperdicio para microtareas; si no hay motivo, hereda el modelo del padre.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-amber-400 mb-2">Próximo módulo:</h3>
+<p class="text-neutral-300">3.2 — El ahorro real. Un jefe inteligente + una flota de Haiku, <code class="text-amber-400">CLAUDE_CODE_SUBAGENT_MODEL</code>, <code class="text-amber-400">maxTurns</code> y por qué usar varios agentes cuesta ~15× — y cuándo vale la pena.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">← Volver al índice de la ruta</a>
+<a class="flex-1 text-center px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-500 transition-colors" href="modulo-3-2.html">Próximo módulo →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagentes — 2026 · un curso en formato
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Ruta 3 · Modelo, costo y orquestación · Módulo 3.1</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    // Toggle de tópicos (compatível com o padrão; expansíveis ficam abertos por padrão nesta página de módulo)
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

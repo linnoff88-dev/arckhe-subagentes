@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tools and permissions | Subagents</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha blue T2) */
+    html:not(.dark) .text-blue-400 { color: #1d4ed8; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(29, 78, 216, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(29, 78, 216, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(29, 78, 216, 0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(29, 78, 216, 0.18); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #1d4ed8; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(29, 78, 216, 0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(29, 78, 216, 0.08); }
+    html:not(.dark) .from-blue-900\/30 { --tw-gradient-from: rgba(29, 78, 216, 0.12); }
+
+    /* Light mode - cores de apoio (emerald ok / red erro) */
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+
+    /* Light mode - remove gradientes */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas suavizadas (OBRIGATORIO - 2 regras) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Animacoes SVG (apenas se usuario permitir) */
+    @keyframes perm-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes perm-flow { 0% { stroke-dashoffset: 60; } 100% { stroke-dashoffset: 0; } }
+    @media (prefers-reduced-motion: no-preference) {
+      .perm-node { animation: perm-pulse 2.4s ease-in-out infinite; }
+      .perm-node:nth-child(2){animation-delay:.3s}
+      .perm-node:nth-child(3){animation-delay:.6s}
+      .perm-node:nth-child(4){animation-delay:.9s}
+      .perm-arrow { animation: perm-flow 2s linear infinite; }
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha2/modulo-2-4.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha2/modulo-2-4.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha2/modulo-2-4.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha2/modulo-2-4.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-2-4.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha2/modulo-2-4.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagents</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentals</span>
+</a>
+<!-- Trilha 2 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10" href="index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">In practice</span>
+</a>
+<!-- Trilha 3 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orchestration</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Advanced</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-blue-400" href="../../index.html">Start</a>
+<span>/</span>
+<a class="hover:text-blue-400" href="index.html">Track 2</a>
+<span>/</span>
+<span class="text-blue-400">Module 2.4</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">
+        MODULE 2.4 · Track 2 · Building in practice
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">🔑 Tools and permissions</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        A well-configured subagent does only what it needs to — nothing more, nothing less.
+        Learning to <strong class="text-blue-400">limit tools</strong> is the difference between a reliable agent
+        and one you hesitate to run in production.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">7</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">~30</div>
+<div class="text-xs text-neutral-400">Minutes</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">Medium</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">Practice</div>
+<div class="text-xs text-neutral-400">Type</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- ABERTURA + SVG CAMADAS DE PERMISSAO -->
+<section class="mb-12">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Think of a vault with several layers of security. What can the agent <em>can do</em>
+        is determined by the <strong class="text-blue-400">tools you list in the field <code>tools</code></strong>
+        — not by the prompt text. The prompt says "what to do"; the tools say "with what".
+        Mixing the two is the most common mistake when creating subagents.
+      </p>
+<!-- SVG: CAMADA DE PERMISSAO vs PROMPT -->
+<div class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-6 mb-8">
+<svg aria-label="Diagram showing two layers: the permission layer (tools) blocking actions at the structural level, and the prompt layer guiding behavior within what’s allowed" class="w-full h-auto" font-family="Inter,sans-serif" role="img" viewbox="0 0 760 300" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="m24-glow">
+<fegaussianblur result="blur" stddeviation="1.8"></fegaussianblur>
+<femerge><femergenode in="blur"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<marker id="m24-arrow" markerheight="8" markerwidth="8" orient="auto" refx="6" refy="3">
+<path d="M0,0 L0,6 L8,3 z" fill="#38bdf8"></path>
+</marker>
+</defs>
+<!-- Fundo base -->
+<rect fill="#111827" height="280" opacity="0.6" rx="12" width="740" x="10" y="10"></rect>
+<!-- Agente (esquerda) -->
+<rect class="perm-node" fill="#1e3a5f" filter="url(#m24-glow)" height="100" rx="8" stroke="#3b82f6" stroke-width="2" width="130" x="40" y="100"></rect>
+<text fill="#93c5fd" font-size="12" font-weight="600" text-anchor="middle" x="105" y="145">Subagent</text>
+<text fill="#64748b" font-size="10" text-anchor="middle" x="105" y="162">try Write()</text>
+<!-- Seta agente -> camada permissao -->
+<line class="perm-arrow" marker-end="url(#m24-arrow)" stroke="#38bdf8" stroke-dasharray="5 3" stroke-width="1.5" x1="170" x2="240" y1="150" y2="150"></line>
+<!-- Camada PERMISSAO (bloqueio) -->
+<rect fill="#1c2b3a" height="180" rx="10" stroke="#38bdf8" stroke-width="2" width="160" x="240" y="60"></rect>
+<text fill="#38bdf8" font-size="11" font-weight="700" letter-spacing="1" text-anchor="middle" x="320" y="90">TOOLS LAYER</text>
+<text fill="#94a3b8" font-size="10" text-anchor="middle" x="320" y="108">tools: [...] field</text>
+<!-- items permitidos -->
+<rect fill="#064e3b" height="22" rx="4" stroke="#10b981" stroke-width="1" width="124" x="258" y="118"></rect>
+<text fill="#34d399" font-size="10" text-anchor="middle" x="320" y="133">✓ Read</text>
+<rect fill="#064e3b" height="22" rx="4" stroke="#10b981" stroke-width="1" width="124" x="258" y="145"></rect>
+<text fill="#34d399" font-size="10" text-anchor="middle" x="320" y="160">✓ Grep</text>
+<rect fill="#450a0a" height="22" rx="4" stroke="#ef4444" stroke-width="1" width="124" x="258" y="172"></rect>
+<text fill="#f87171" font-size="10" text-anchor="middle" x="320" y="187">✗ Write (blocked)</text>
+<rect fill="#450a0a" height="22" rx="4" stroke="#ef4444" stroke-width="1" width="124" x="258" y="199"></rect>
+<text fill="#f87171" font-size="10" text-anchor="middle" x="320" y="214">✗ Bash (blocked)</text>
+<!-- Seta tools layer -> execucao -->
+<line class="perm-arrow" marker-end="url(#m24-arrow)" stroke="#38bdf8" stroke-dasharray="5 3" stroke-width="1.5" x1="400" x2="470" y1="150" y2="150"></line>
+<!-- Camada PROMPT (orienta) -->
+<rect fill="#1e1b30" height="140" rx="10" stroke="#8b5cf6" stroke-width="1.5" width="140" x="470" y="80"></rect>
+<text fill="#a78bfa" font-size="11" font-weight="700" letter-spacing="1" text-anchor="middle" x="540" y="108">PROMPT LAYER</text>
+<text fill="#94a3b8" font-size="10" text-anchor="middle" x="540" y="126">description: field</text>
+<text fill="#c4b5fd" font-size="10" text-anchor="middle" x="540" y="148">"Read .ts files</text>
+<text fill="#c4b5fd" font-size="10" text-anchor="middle" x="540" y="163">and report problems"</text>
+<text fill="#64748b" font-size="9" text-anchor="middle" x="540" y="185">(guides behavior)</text>
+<text fill="#64748b" font-size="9" text-anchor="middle" x="540" y="200">(does not grant access)</text>
+<!-- Resultado final -->
+<rect class="perm-node" fill="#0c1a2e" height="80" rx="8" stroke="#38bdf8" stroke-width="1.5" width="90" x="640" y="110"></rect>
+<text fill="#38bdf8" font-size="11" font-weight="600" text-anchor="middle" x="685" y="145">Execution</text>
+<text fill="#94a3b8" font-size="10" text-anchor="middle" x="685" y="162">just read, never</text>
+<text fill="#94a3b8" font-size="10" text-anchor="middle" x="685" y="176">writes</text>
+<line marker-end="url(#m24-arrow)" stroke="#38bdf8" stroke-width="1.5" x1="610" x2="638" y1="150" y2="150"></line>
+<!-- Legenda -->
+<text fill="#64748b" font-size="10" x="40" y="270">Permission layer (tools) = what is structurally possible</text>
+<text fill="#64748b" font-size="10" x="40" y="284">Prompt layer (description) = how the agent behaves within what’s possible</text>
+</svg>
+</div>
+</section>
+<!-- CONTEUDO DETALHADO -->
+<h2 class="text-2xl font-bold mb-6">Detailed content</h2>
+<!-- TOPICO 1 -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">🎯 Give it only what it needs</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The principle of least privilege is simple: <strong class="text-blue-400">an agent that doesn't need to write shouldn't have permission to write</strong>.
+        It seems obvious, but it’s violated all the time. The cost of being too generous with tools doesn’t show up
+        the first time you use them—it shows up when the agent makes an unexpected decision in production.
+      </p>
+<!-- Box conceito principal -->
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="font-bold text-blue-400 mb-3">Least privilege principle applied to subagents</h3>
+<p class="text-neutral-300 text-sm leading-relaxed">
+          Each tool you add to the field <code class="text-blue-400 bg-dark-700 px-1 rounded">tools</code>
+          expands the agent's scope of action. Expand only when the agent needs the tool to achieve
+          the specific objective. When in doubt, start without it — you can add it later; undoing damage in
+          production is much more expensive.
+        </p>
+</div>
+<!-- Timeline: evolucao de permissoes -->
+<div class="relative pl-6 border-l-2 border-blue-500/30 space-y-6 mb-6">
+<div class="relative">
+<div class="absolute -left-[1.65rem] top-1 w-5 h-5 rounded-full bg-blue-500/20 border-2 border-blue-400 flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-blue-400"></div>
+</div>
+<h4 class="font-semibold text-blue-400 mb-1">Draft — unrestricted</h4>
+<p class="text-neutral-400 text-sm">You include everything: Read, Write, Bash, WebSearch. The agent works, but isn't auditable.</p>
+</div>
+<div class="relative">
+<div class="absolute -left-[1.65rem] top-1 w-5 h-5 rounded-full bg-blue-500/20 border-2 border-blue-400 flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-blue-400"></div>
+</div>
+<h4 class="font-semibold text-blue-400 mb-1">Refinement — only what you use</h4>
+<p class="text-neutral-400 text-sm">You observe which tools the agent actually called. Remove the rest.</p>
+</div>
+<div class="relative">
+<div class="absolute -left-[1.65rem] top-1 w-5 h-5 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+</div>
+<h4 class="font-semibold text-emerald-400 mb-1">Production — minimum validated</h4>
+<p class="text-neutral-400 text-sm">Only the necessary tools. Behavior is predictable and risk is contained.</p>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">structural constraint that determines what the agent can do, regardless of what the prompt says.</span></div>
+<div><span class="text-blue-400 font-semibold">Why it matters:</span> <span class="text-neutral-300 text-sm">accidental damage becomes impossible when the destructive tool simply isn't in the agent's context.</span></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">least privilege · tools field · expand only when necessary · auditability.</span></div>
+</div>
+</section>
+<!-- TOPICO 2 -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">📖 Read-only agents: Read, Grep, Glob</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Most analysis, review, and research agents <strong class="text-blue-400">you don't need to write anything</strong>.
+        The trio <code class="text-blue-400 bg-dark-800 px-1 rounded">Read</code>, <code class="text-blue-400 bg-dark-800 px-1 rounded">Grep</code>
+        e <code class="text-blue-400 bg-dark-800 px-1 rounded">Glob</code> covers practically every file-reading use case —
+        inspecting files, searching patterns, listing structure. With just these three, you can create an agent
+        that can learn everything about the repository without changing a byte.
+      </p>
+<!-- Grid ✓/✗ -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ What the trio covers</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Read</strong> — read any project file, including configs and secrets (be careful when reporting)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Grep</strong> — search for patterns in text, ideal for finding functions, TODOs, and imports</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Glob</strong> — list files by default, map folder structure</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Combined: complete mapping + semantic search + context reading</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ What they don’t do</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Create or modify files (Write)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Run system commands (Bash)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Make HTTP requests (WebFetch, WebSearch)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Interact with external MCP servers</span></li>
+</ul>
+</div>
+</div>
+<!-- Dica pratica -->
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h4 class="font-semibold text-primary mb-2">Tip: Glob + Read in sequence</h4>
+<p class="text-neutral-300 text-sm">
+          A very useful pattern: use <strong>Glob</strong> to find out which files exist, then
+          <strong>Read</strong> to read only the relevant ones. This is much more efficient than
+          asking the agent to "read everything" — it will prioritize based on the pattern you defined in the Glob.
+        </p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">minimum set of tools for agents that only observe and report — with no ability to change state.</span></div>
+<div><span class="text-blue-400 font-semibold">Why it matters:</span> <span class="text-neutral-300 text-sm">read-only agents are safe to run unsupervised — the worst they can do is deliver an incorrect report.</span></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">Read · Grep · Glob · immutable state · safe review.</span></div>
+</div>
+</section>
+<!-- TOPICO 3 -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">⚖️ Allowed x disallowed — the concrete list</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The file <code class="text-blue-400 bg-dark-800 px-1 rounded">.md</code> of a subagent has a field
+        <code class="text-blue-400 bg-dark-800 px-1 rounded">tools</code> that receives a list. Everything on the list
+        is allowed — everything outside it is automatically blocked, with no additional configuration.
+        There is no "explicitly deny": you <strong class="text-blue-400">includes what it can</strong>, the rest doesn’t exist for the agent.
+      </p>
+<!-- Tabela allowed/disallowed -->
+<div class="overflow-x-auto mb-6">
+<table class="w-full text-sm border border-dark-600 rounded-xl overflow-hidden">
+<thead>
+<tr class="bg-dark-700 text-neutral-400 uppercase text-xs tracking-wide">
+<th class="px-4 py-3 text-left">Tool</th>
+<th class="px-4 py-3 text-left">Category</th>
+<th class="px-4 py-3 text-left">Risk if included unnecessarily</th>
+<th class="px-4 py-3 text-left">Include when...</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-dark-600">
+<tr class="bg-dark-800">
+<td class="px-4 py-3 text-emerald-400 font-mono">Read</td>
+<td class="px-4 py-3 text-neutral-400">Reading</td>
+<td class="px-4 py-3 text-neutral-400">Low (can read secrets)</td>
+<td class="px-4 py-3 text-neutral-300">Needs to inspect file contents</td>
+</tr>
+<tr class="bg-dark-800/50">
+<td class="px-4 py-3 text-emerald-400 font-mono">Grep</td>
+<td class="px-4 py-3 text-neutral-400">Search</td>
+<td class="px-4 py-3 text-neutral-400">Low</td>
+<td class="px-4 py-3 text-neutral-300">Needs to search for patterns in the codebase</td>
+</tr>
+<tr class="bg-dark-800">
+<td class="px-4 py-3 text-emerald-400 font-mono">Glob</td>
+<td class="px-4 py-3 text-neutral-400">Listing</td>
+<td class="px-4 py-3 text-neutral-400">Low</td>
+<td class="px-4 py-3 text-neutral-300">Needs to map the file structure</td>
+</tr>
+<tr class="bg-dark-800/50">
+<td class="px-4 py-3 text-yellow-400 font-mono">Write</td>
+<td class="px-4 py-3 text-neutral-400">Writing</td>
+<td class="px-4 py-3 text-yellow-400">Medium (modifies files)</td>
+<td class="px-4 py-3 text-neutral-300">Agent needs to generate or edit artifacts</td>
+</tr>
+<tr class="bg-dark-800">
+<td class="px-4 py-3 text-yellow-400 font-mono">Edit</td>
+<td class="px-4 py-3 text-neutral-400">Writing</td>
+<td class="px-4 py-3 text-yellow-400">Medium (patches files)</td>
+<td class="px-4 py-3 text-neutral-300">Agent needs to make precise edits</td>
+</tr>
+<tr class="bg-dark-800/50">
+<td class="px-4 py-3 text-red-400 font-mono">Bash</td>
+<td class="px-4 py-3 text-neutral-400">Execution</td>
+<td class="px-4 py-3 text-red-400">High (runs any command)</td>
+<td class="px-4 py-3 text-neutral-300">Agent needs to run scripts/tests</td>
+</tr>
+<tr class="bg-dark-800">
+<td class="px-4 py-3 text-red-400 font-mono">WebFetch</td>
+<td class="px-4 py-3 text-neutral-400">Network</td>
+<td class="px-4 py-3 text-red-400">High (external access)</td>
+<td class="px-4 py-3 text-neutral-300">Agent needs to fetch external data</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">tool allowlist — includes what's allowed; everything else is automatically blocked.</span></div>
+<div><span class="text-blue-400 font-semibold">Why it matters:</span> <span class="text-neutral-300 text-sm">the “deny by default” mental model is safer than trying to list what is prohibited.</span></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">allowlist · deny-by-default · tools field · risk levels per tool.</span></div>
+</div>
+</section>
+<!-- TOPICO 4 -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">🔌 Allowed MCPs — access to the outside world</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        MCP tools (<em>Model Context Protocol</em>) give the agent access to external systems:
+        databases, APIs, browsers, services. They are more powerful — and riskier — than native tools.
+        The decision to include an MCP in a subagent should be <strong class="text-blue-400">intentional and specific</strong>:
+        does the agent need this MCP server to complete its function?
+      </p>
+<!-- Box dados/pesquisa -->
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">How MCP servers are inherited</h4>
+<p class="text-neutral-300 text-sm mb-3">
+          By default, subagents inherit the MCP servers from the parent context. This means that if you have
+          a database server configured globally, the child agent can also access it
+          — unless you explicitly restrict it with <code class="text-blue-400 bg-dark-800 px-1 rounded">mcpServers: []</code>
+          (empty list = no MCPs) or list only the allowed ones.
+        </p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400">→</span><span><strong>Default inheritance:</strong> all MCPs from the parent context are available</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400">→</span><span><strong>Total restriction:</strong> <code class="text-blue-400">mcpServers: []</code> — with no access to any MCP</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400">→</span><span><strong>The list specifies:</strong> only the listed servers are available</span></li>
+</ul>
+</div>
+<!-- Grid ✓/✗ MCPs -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ MCPs are generally safe for subagents</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Database read MCP (SELECT only)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Search MCP (Brave, tavily) with a rate limit</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>MCP for accessing internal documentation (read-only)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>GitHub MCP for reading PRs and issues</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ MCPs that need careful review</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>MCP that can send emails or messages</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>MCP with database write access</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>MCP for running deploys or infrastructure</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Payments or billing MCP</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">MCP servers extend the agent’s reach to external systems — automatic inheritance from the parent context.</span></div>
+<div><span class="text-blue-400 font-semibold">Why it matters:</span> <span class="text-neutral-300 text-sm">a code analysis agent doesn't need — and shouldn't have — access to a deployment MCP.</span></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">MCP inheritance · mcpServers: [] · explicit restriction · isolation principle.</span></div>
+</div>
+</section>
+<!-- TOPICO 5 -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">🛡️ Real permissions beat the prompt "don't do it"</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        One of the most common pitfalls: putting instructions in the prompt like “never delete files”
+        or “don’t run system commands” while the field <code class="text-blue-400 bg-dark-800 px-1 rounded">tools</code>
+        still includes <code class="text-red-400 bg-dark-800 px-1 rounded">Bash</code>.
+        <strong class="text-blue-400">The prompt provides guidance; the tools field is law.</strong>
+        Natural-language instructions can be misinterpreted, ignored under pressure, or bypassed—the tool list can’t.
+      </p>
+<!-- Alerta -->
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h4 class="font-bold text-red-400 mb-3">Don't rely on the prompt alone for security</h4>
+<div class="space-y-3 text-neutral-300 text-sm">
+<p>The agent receives the prompt as high-level context, but the LLM is a probabilistic system.
+          Under high pressure, with ambiguous instructions or long chains, it may:</p>
+<ul class="space-y-2 ml-4">
+<li class="flex items-start space-x-2"><span class="text-red-400">—</span><span>Reasoning that "the exception applies to this specific case"</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">—</span><span>Interpret a vague instruction unexpectedly</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">—</span><span>Be manipulated by prompt injection in the content it processes</span></li>
+</ul>
+<p class="mt-3 font-medium text-red-300">Remove the tool. Don’t instruct the agent not to use it.</p>
+</div>
+</div>
+<!-- Dica pratica -->
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h4 class="font-semibold text-primary mb-2">Practical rule: tools as contract, prompt as style</h4>
+<p class="text-neutral-300 text-sm">
+          Use the field <strong>tools</strong> to define what the agent <em>can</em> do (immutable contract).
+          Use the <strong>prompt / description</strong> to define <em>how</em> it should do (tone, format, criteria).
+          Mixing the two—using the prompt to prohibit what the tools allow—is false security.
+        </p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the structural constraint (tools) is absolute; prompt instructions are probabilistic and can be bypassed.</span></div>
+<div><span class="text-blue-400 font-semibold">Why it matters:</span> <span class="text-neutral-300 text-sm">Real security doesn’t depend on the LLM following instructions—it depends on the LLM not having the tool needed to cause harm.</span></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">tools as contract · prompt as style · false sense of security · prompt injection.</span></div>
+</div>
+</section>
+<!-- TOPICO 6 -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">👁️ "If it can read it, assume it will"</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        When you include <code class="text-blue-400 bg-dark-800 px-1 rounded">Read</code> in the tools field,
+        the agent <em>can</em> read any file accessible in the project — including <code>.env</code>,
+        SSH keys, tokens in configs. This is expected and useful, but requires you to know what the agent
+        <strong class="text-blue-400">can do</strong> and that the reports it generates don’t leak sensitive data.
+      </p>
+<!-- Tela simulada: agente lendo .env -->
+<div class="rounded-xl border border-blue-500/30 bg-dark-900/60 p-5 mb-6">
+<div class="flex items-center space-x-2 mb-3 border-b border-dark-600 pb-3">
+<div class="flex space-x-1.5"><div class="w-3 h-3 rounded-full bg-red-500/70"></div><div class="w-3 h-3 rounded-full bg-yellow-500/70"></div><div class="w-3 h-3 rounded-full bg-emerald-500/70"></div></div>
+<span class="text-neutral-500 text-xs font-mono">code-reviewer — execution</span>
+<span class="ml-auto text-blue-400 text-xs font-semibold border border-blue-500/30 px-2 py-0.5 rounded">ILLUSTRATIVE</span>
+</div>
+<div class="font-mono text-sm space-y-1.5">
+<div><span class="text-neutral-500">→</span> <span class="text-blue-400">Read</span><span class="text-neutral-400">(".env")</span></div>
+<div class="ml-4 text-neutral-500 text-xs"># agent can read — tools includes Read</div>
+<div><span class="text-neutral-500">→</span> <span class="text-neutral-300">reading 12 environment variables...</span></div>
+<div><span class="text-neutral-500">→</span> <span class="text-emerald-400">analysis complete</span></div>
+<div class="mt-2 bg-dark-700 rounded p-3">
+<div class="text-yellow-400 text-xs font-semibold mb-1">REPORT — code-reviewer</div>
+<div class="text-neutral-300 text-xs">I found 3 variables without a scope prefix. Details sent</div>
+<div class="text-neutral-300 text-xs">to the orchestrator. <span class="text-red-400">[values hidden for security]</span></div>
+</div>
+<div class="mt-2 text-xs text-neutral-500">
+<span class="text-emerald-400">✓</span> Good: agent read, analyzed, and masked values in the report<br/>
+<span class="text-red-400">✗</span> Bad: agent read and reproduced the values in the report
+          </div>
+</div>
+</div>
+<!-- Dica pratica -->
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-5 mb-6">
+<h4 class="font-semibold text-primary mb-2">Instruct the agent not to reproduce sensitive data</h4>
+<p class="text-neutral-300 text-sm">
+          For agents with Read access in real projects, include this in the prompt:
+          <em>"Never reproduce environment variable values, keys, tokens, or passwords in reports.
+          Only mention that they exist and whether they are configured correctly."</em>
+          Here, the prompt is YES and this is the right place — you are not prohibiting a tool; you are guiding
+          behavior within what is allowed.
+        </p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">read access implies access to all live content — including sensitive data in the repo.</span></div>
+<div><span class="text-blue-400 font-semibold">Why it matters:</span> <span class="text-neutral-300 text-sm">reports generated by agents can leak data if the agent reproduces what it read without filtering.</span></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">implicit access · sensitive data · read/report separation · concealment instruction.</span></div>
+</div>
+</section>
+<!-- TOPICO 7 -->
+<section class="mb-16" id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">7</span>
+<h2 class="text-2xl font-bold">🔬 Granularity — Bash and the special case</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+<code class="text-blue-400 bg-dark-800 px-1 rounded">Bash</code> and the most powerful tool, and the one
+        that requires the most care. With Bash, the agent can run any system command — install packages,
+        delete files, make requests with curl, start processes. When Bash is necessary,
+        the granularity comes from <strong class="text-blue-400">precise description in the prompt</strong> about which commands are expected, combined with <strong class="text-blue-400">allowedTools in settings.json</strong>
+        from the project to restrict which binaries can be called.
+      </p>
+<!-- Exemplo .md: code-reviewer so leitura -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500 font-mono">code-reviewer.md — read-only subagent example</span>
+<span class="text-xs text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-mono">.md example</span>
+</div>
+<pre class="text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code>---
+name: code-reviewer
+description: |
+  Revisor de codigo que analisa qualidade, padroes e problemas potenciais.
+  Leia arquivos .ts, .js e .py no caminho indicado. Reporte: (1) problemas
+  criticos, (2) sugestoes de melhoria, (3) pontos positivos. Nao altere
+  nenhum arquivo. Nao execute comandos. Entregue um relatorio estruturado.
+tools:
+  - Read
+  - Grep
+  - Glob
+# Sem Write, sem Edit, sem Bash, sem WebFetch
+# Nenhum MCP server necessario para este agente
+---</code></pre>
+</div>
+<!-- Prompts prontos -->
+<div class="space-y-4 mb-6">
+<h3 class="font-semibold text-blue-400 text-lg">Ready-made prompts</h3>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs uppercase tracking-wide text-neutral-500">Prompt 1 — create a read-only agent</span>
+</div>
+<p class="text-neutral-300 text-sm font-mono leading-relaxed bg-dark-700 rounded-lg p-4">
+            "Create a subagent named <strong>doc-auditor</strong> that is completely read-only.
+            It should read Markdown files in the /docs directory, check whether each one has
+            frontmatter with 'title', 'date', and 'author', and generate a compliance report.
+            List the required tools and explain why it doesn't need Write or Bash."
+          </p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs uppercase tracking-wide text-neutral-500">Prompt 2 — audit permissions for an existing agent</span>
+</div>
+<p class="text-neutral-300 text-sm font-mono leading-relaxed bg-dark-700 rounded-lg p-4">
+            "Read the .claude/agents/meu-agente.md file and assess whether all the tools listed
+            in tools are necessary for the task described in description.
+            For each tool, say: necessary, unnecessary, or it depends.
+            Suggest a streamlined version of the tools list."
+          </p>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs uppercase tracking-wide text-neutral-500">Prompt 3 — compare Read vs Bash granularity</span>
+</div>
+<p class="text-neutral-300 text-sm font-mono leading-relaxed bg-dark-700 rounded-lg p-4">
+            "I want an agent that checks whether the package.json file has dependency X.
+            Explain how to do this with only Read (without Bash) and when it would be necessary
+            to add Bash. What is the risk of each approach?"
+          </p>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-blue-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">Bash is the most powerful tool — any system command — and requires the highest level of deliberation before being included.</span></div>
+<div><span class="text-blue-400 font-semibold">Why it matters:</span> <span class="text-neutral-300 text-sm">many tasks that seem to need Bash are solved with Read + Grep — check before adding it.</span></div>
+<div><span class="text-blue-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">Bash as a last-resort tool · allowedTools · granularity via prompt · read-only alternatives.</span></div>
+</div>
+</section>
+<!-- BLOCO: EXERCICIO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">🎯</span>
+<h2 class="text-2xl font-bold">Exercise</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+          Create the file <code class="text-blue-400 bg-dark-800 px-1 rounded">.claude/agents/log-analyzer.md</code>
+          for an agent that analyzes log files (<code>.log</code>, <code>.txt</code>) for critical errors
+          and generates a report with: the number of errors by level (ERROR, WARN, FATAL), the 5 most frequent errors,
+          and one recommendation. The agent <strong class="text-blue-400">cannot modify any files</strong>.
+        </p>
+<div class="bg-dark-800/50 rounded-lg p-5 mb-6">
+<h3 class="font-semibold text-blue-400 mb-3">Steps</h3>
+<ol class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start space-x-3"><span class="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xs">1</span><span>Define the field <code>tools</code> — list ONLY the tools needed to read and search text files.</span></li>
+<li class="flex items-start space-x-3"><span class="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xs">2</span><span>Write the field <code>description</code> with clear instructions on how to report the results (without reproducing full log lines).</span></li>
+<li class="flex items-start space-x-3"><span class="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xs">3</span><span>Check: Does the agent need Bash? Does it need Write? If not, remove them.</span></li>
+<li class="flex items-start space-x-3"><span class="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xs">4</span><span>Testing invocation: “use the log-analyzer agent to inspect the files in /tmp/logs”</span></li>
+</ol>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">Verification criteria — how to know you got it right</h4>
+<p class="text-neutral-300 text-sm mb-3">The agent is correct if it meets <strong>all</strong> the criteria below:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Minimum required:</strong> tools contain only Read, Grep, and Glob — no Write, Edit, Bash, or network tools.</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Precise description:</strong> the description field specifies the report's three items (count, top 5, recommendation).</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Without false security:</strong> there’s no instruction in the prompt prohibiting Write — Write simply isn’t in tools.</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Sensitive data:</strong> description instructs it not to reproduce full stack trace lines containing user data.</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span><strong>Testable:</strong> when you invoke the agent, it completes the task without requesting extra permissions and without trying to edit files.</span></li>
+</ul>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4">
+<h3 class="font-semibold text-blue-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">2.5 — Project x Global. When to put the agent in <code>.claude/agents/</code> from the project versus the user's global folder.</p>
+</div>
+</div>
+</section>
+<!-- RESUMO / NAVEGACAO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Module summary</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Least privilege</strong><span class="text-neutral-400"> — include only the tools the agent actually uses to fulfill its function.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Read-only by default</strong><span class="text-neutral-400"> — Read + Grep + Glob cover most analysis cases without risk of damage.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Allowlist, not denylist</strong><span class="text-neutral-400"> — the tools field only includes what's allowed; everything else is blocked automatically.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">MCP with intent</strong><span class="text-neutral-400"> — inherited by default, but you can — and should — restrict them for specialized agents.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">A tool beats a prompt</strong><span class="text-neutral-400"> — never use the prompt to prohibit what tools allows; remove the tool.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Sensitive data</strong><span class="text-neutral-400"> — Read grants access to .env and secrets; instruct the agent not to reproduce values in reports.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Bash is a last resort</strong><span class="text-neutral-400"> — check whether Read/Grep will do the job before adding Bash.</span></div></div>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="modulo-2-3.html">← Previous: 2.3</a>
+<a class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors" href="modulo-2-5.html">Next: 2.5 →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagents — 2026 · a course in the format
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Track 2 · In Practice · Module 2.4</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    // Toggle de topicos
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    function updateIcons() {
+      if (html.classList.contains('dark')) {
+        themeToggleDarkIcon.classList.add('hidden');
+        themeToggleLightIcon.classList.remove('hidden');
+      } else {
+        themeToggleDarkIcon.classList.remove('hidden');
+        themeToggleLightIcon.classList.add('hidden');
+      }
+    }
+
+    updateIcons();
+
+    themeToggle.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+      updateIcons();
+    });
+
+    // Restaurar preferencia salva
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      html.classList.remove('dark');
+      updateIcons();
+    } else if (savedTheme === 'dark') {
+      html.classList.add('dark');
+      updateIcons();
+    }
+  </script>
+</body>
+</html>

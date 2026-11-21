@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ruta 3 · Orquestación | Subagentes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.25s} .wf-a:nth-child(3){animation-delay:.5s}
+      .wf-a:nth-child(4){animation-delay:.75s} .wf-a:nth-child(5){animation-delay:1s}
+    }
+
+    /* ===== Light mode overrides - OBRIGATORIO ===== */
+    /* Parte 1 - Base */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-700\/50 { background-color: rgba(243,244,246,0.7); }
+    html:not(.dark) .bg-dark-700\/30 { background-color: rgba(243,244,246,0.5); }
+    html:not(.dark) .bg-dark-800\/50 { background-color: rgba(249,250,251,0.7); }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-200 { color: #1f2937; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Parte 2 - Cores de acento (trilha amber) */
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(146, 64, 14, 0.10); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(146, 64, 14, 0.07); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(146, 64, 14, 0.25); }
+    html:not(.dark) .border-amber-500\/20 { border-color: rgba(146, 64, 14, 0.18); }
+    html:not(.dark) .hover\:border-amber-500\/30:hover { border-color: rgba(146, 64, 14, 0.25); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .from-amber-900\/30 { --tw-gradient-from: rgba(120,53,15,0.10); }
+    html:not(.dark) .group:hover .group-hover\:text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-600 { background-color: #d97706; }
+    html:not(.dark) .hover\:bg-amber-500:hover { background-color: #f59e0b; }
+
+    /* Cores das outras trilhas (nav) */
+    html:not(.dark) .hover\:text-emerald-400:hover { color: #059669; }
+    html:not(.dark) .hover\:bg-emerald-500\/10:hover { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+
+    /* Parte 3 - Remove gradientes e cores especiais */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Parte 4 - Navbar */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Parte 5 - Bordas suavizadas no DARK mode (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* SVG: suavizar no tema claro */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha3/" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha3/" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha3/" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha3/" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="./" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagentes</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentos</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">En la práctica</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10" href="index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orquestación</span>
+</a>
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Avanzado</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- HEADER / HERO -->
+<header class="bg-gradient-to-b from-amber-900/30 to-dark-900 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<div class="flex items-center space-x-3 mb-3">
+<span class="px-3 py-1 text-xs font-semibold bg-amber-500/20 text-amber-400 rounded-full border border-amber-500/30">Ruta 3</span>
+<span class="text-neutral-500 text-sm">Curso Subagentes</span>
+</div>
+<h1 class="text-3xl sm:text-4xl font-bold mb-3">Modelo, costo y orquestación</h1>
+<p class="text-neutral-400 text-lg mb-6 max-w-2xl">Elige el modelo adecuado para cada tarea, controla el costo del sistema multiagente y domina los patrones de coordinación que permiten escalar a decenas de subagentes.</p>
+<!-- Hero SVG -->
+<div class="mb-8 rounded-xl overflow-hidden border border-amber-500/20">
+<svg aria-label="El orquestador amber elige el modelo según la tarea — Haiku, Sonnet u Opus — y coordina subagentes que convergen en un único resultado" class="w-full h-auto" role="img" viewbox="0 0 1000 240">
+<defs>
+<lineargradient id="t3h-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#fbbf24"></stop><stop offset="1" stop-color="#f59e0b"></stop>
+</lineargradient>
+<filter height="180%" id="t3h-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="t3h-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#f59e0b" opacity="0.12" r="1.3"></circle>
+</pattern>
+<marker id="t3h-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fbbf24"></path></marker>
+<marker id="t3h-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#t3h-grid)" height="240" width="1000" x="0" y="0"></rect>
+<!-- setas saindo do orquestrador -->
+<g fill="none" opacity="0.5" stroke="#fbbf24" stroke-width="1.8">
+<path d="M196,120 C300,120 320,38 452,38" marker-end="url(#t3h-ah)"></path>
+<path d="M196,120 C300,120 320,79 452,79" marker-end="url(#t3h-ah)"></path>
+<path d="M196,120 L452,120" marker-end="url(#t3h-ah)"></path>
+<path d="M196,120 C300,120 320,161 452,161" marker-end="url(#t3h-ah)"></path>
+<path d="M196,120 C300,120 320,202 452,202" marker-end="url(#t3h-ah)"></path>
+</g>
+<!-- setas convergindo ao resultado -->
+<g fill="none" opacity="0.5" stroke="#38bdf8" stroke-width="1.8">
+<path d="M588,38  C700,38  720,120 800,120" marker-end="url(#t3h-ahc)"></path>
+<path d="M588,79  C700,79  720,120 800,120" marker-end="url(#t3h-ahc)"></path>
+<path d="M588,120 L800,120" marker-end="url(#t3h-ahc)"></path>
+<path d="M588,161 C700,161 720,120 800,120" marker-end="url(#t3h-ahc)"></path>
+<path d="M588,202 C700,202 720,120 800,120" marker-end="url(#t3h-ahc)"></path>
+</g>
+<!-- caixa orquestrador -->
+<g filter="url(#t3h-glow)"><rect fill="#1f1604" height="64" rx="14" stroke="url(#t3h-grad)" stroke-width="2.5" width="156" x="40" y="88"></rect></g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="18" font-weight="700" text-anchor="middle" x="118" y="114">Orquestador</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="12" opacity="0.7" text-anchor="middle" x="118" y="134">elige el modelo</text>
+<!-- caixas de subagentes: modelo por tier -->
+<g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="22"></rect><text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="13" text-anchor="middle" x="520" y="43">Haiku · exploración</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="63"></rect><text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="13" text-anchor="middle" x="520" y="84">Haiku · lectura</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#fbbf24" stroke-width="2" width="136" x="452" y="104"></rect><text fill="#fbbf24" font-family="Inter,sans-serif" font-size="13" text-anchor="middle" x="520" y="125">Sonnet · revisión</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#fbbf24" stroke-width="2" width="136" x="452" y="145"></rect><text fill="#fbbf24" font-family="Inter,sans-serif" font-size="13" text-anchor="middle" x="520" y="166">Sonnet · código</text></g>
+<g class="wf-a"><rect fill="#1f1604" height="32" rx="9" stroke="#fbbf24" stroke-width="2.2" width="136" x="452" y="186"></rect><text fill="#fbbf24" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="520" y="207">Opus · decisión</text></g>
+</g>
+<!-- caixa resultado -->
+<g filter="url(#t3h-glow)"><rect fill="#1f1604" height="64" rx="14" stroke="url(#t3h-grad)" stroke-width="2.5" width="156" x="800" y="88"></rect></g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="16" font-weight="700" text-anchor="middle" x="878" y="114">Resultado</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="11" opacity="0.7" text-anchor="middle" x="878" y="133">costo controlado</text>
+</svg>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-4 gap-4 mt-2 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">6</div>
+<div class="text-xs text-neutral-400">Módulos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">36+</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">~3h</div>
+<div class="text-xs text-neutral-400">Duración</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Medio</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- MAPA DA TRILHA -->
+<section class="mb-12">
+<h2 class="text-2xl font-bold mb-6">Mapa de la ruta</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-1">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.1</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">🎯 Modelo por tarea</h3>
+<p class="text-xs text-neutral-400">Haiku, Sonnet u Opus — sin adivinar</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-2">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.2</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">💰 El ahorro real</h3>
+<p class="text-xs text-neutral-400">Jefe inteligente, flota económica</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-3">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.3</span>
+<span class="text-xs text-neutral-500">~35 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">🔗 Encadenar subagentes</h3>
+<p class="text-xs text-neutral-400">Maestro coordina, los agentes no se llaman entre sí</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-4">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.4</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">🔍 El revisor imparcial</h3>
+<p class="text-xs text-neutral-400">Contexto fresco, veredicto honesto</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-5">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.5</span>
+<span class="text-xs text-neutral-500">~25 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">⚡ Workflows dinámicos</h3>
+<p class="text-xs text-neutral-400">Decenas de agentes, costos bajo control</p>
+</a>
+<a class="group bg-dark-800 rounded-xl border border-dark-600 hover:border-amber-500/30 p-5 transition-all" href="#modulo-3-6">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold text-sm">3.6</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="font-semibold mb-1 group-hover:text-amber-400 transition-colors">🗺️ Patrones de orquestación</h3>
+<p class="text-xs text-neutral-400">¿Paralelismo, pipeline o fan-out?</p>
+</a>
+</div>
+</section>
+<!-- CONTEUDO DETALHADO -->
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+<!-- MÓDULO 3.1 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-1">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.1</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">🎯 Modelo por tarea</h3>
+<p class="text-neutral-400 text-sm">Haiku, Sonnet y Opus tienen costos y capacidades diferentes. Saber cuándo usar cada uno marca la diferencia entre un sistema económico y uno caro sin motivo.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🐦</span>
+<div><span class="font-medium">Haiku — el trabajador económico</span><span class="text-neutral-500 text-sm ml-2">- Revisión, búsqueda, resumen</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Haiku es el modelo más rápido y económico de la familia Claude. Ideal para tareas repetitivas que requieren poco razonamiento: leer archivos, buscar patrones, resumir fragmentos cortos y ejecutar comandos.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">La mayoría de los subagentes de una flota no necesita un razonamiento profundo. Usar Haiku con ellos reduce el costo total hasta 10×. Elegir Opus para hacer un barrido es un error de presupuesto, no de calidad.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Costo por token muy bajo; menor latencia; contexto propio (empieza desde cero); no hereda el razonamiento del maestro: recibe instrucciones explícitas.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">🎵</span>
+<div><span class="font-medium">Sonnet — el constructor equilibrado</span><span class="text-neutral-500 text-sm ml-2">- Revisar, construir, proponer</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Sonnet equilibra la capacidad de razonamiento y el costo. Es excelente para escribir código, revisar PRs, sintetizar resultados de otros subagentes y tomar decisiones intermedias.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Es el modelo predeterminado de Claude Code. En la mayoría de los workflows, Sonnet se ocupa del «medio»: recibe datos sin procesar de Haiku y entrega material refinado para que Opus lo evalúe.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Excelente para generar código y sintetizar; costo medio; se usa como maestro en pipelines medianos; sustituye a Opus en el 80% de los casos sin una pérdida perceptible.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">🎻</span>
+<div><span class="font-medium">Opus — el arquitecto caro</span><span class="text-neutral-500 text-sm ml-2">- Decisión final, seguridad, arquitectura</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Opus tiene el razonamiento más profundo. Reservado para: decisiones arquitectónicas, evaluación de seguridad, síntesis de larga duración y situaciones donde equivocarse cuesta caro.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Usar Opus en toda la flota multiplica el costo por 5–20×. Saber identificar los momentos en que solo Opus sirve (y aquellos en que no hace falta) es la habilidad central de esta ruta.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Costo alto; mayor latencia; mejor para razonamiento de varias etapas; úsalo como jefe de una flotaHaiku/Sonnet; nunca en el bucle interno de subagentes baratos.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🧩</span>
+<div><span class="font-medium">La trampa del contexto vacío</span><span class="text-neutral-500 text-sm ml-2">- El subagente empieza desde cero</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Todo subagente empieza con el contexto limpio. No sabe lo que acabas de discutir — necesita recibir instrucciones completas en su descripción y en los mensajes del maestro.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Un Haiku bien instruido supera a un Opus mal instruido. El modelo elegido solo importa después de que las instrucciones son correctas. La "trampa" es pagar más esperando que el modelo adivine el contexto.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Sin heredar el historial; el maestro pasa el contexto necesario mediante mensajes; CLAUDE_CODE_SUBAGENT_MODEL reemplaza el modelo predeterminado de la flota.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">📊</span>
+<div><span class="font-medium">Tabla de decisión Haiku × Sonnet × Opus</span><span class="text-neutral-500 text-sm ml-2">- Regla práctica para cada tarea</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Una heurística simple: Haiku para «leer e informar», Sonnet para «construir y revisar», Opus para «decidir y diseñar la arquitectura». Aplícala a las tareas antes de codificar el subagente.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Los errores al asignar modelos son invisibles: el resultado parece igual, pero el costo es 5–10× mayor. Tener la tabla interiorizada evita decisiones automáticas de «usar el modelo más capaz».</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Haiku: búsqueda, lectura, extracción y resumen. Sonnet: escritura, código, síntesis y revisión. Opus: arquitectura, seguridad, evaluación final y razonamiento profundo.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🔧</span>
+<div><span class="font-medium">Ejercicio: asignar el modelo a 6 tareas</span><span class="text-neutral-500 text-sm ml-2">- Práctica guiada</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Dado un pipeline hipotético con 6 tareas (revisar logs, escribir pruebas, revisar un PR, proponer una arquitectura, buscar documentación, evaluar la seguridad), asigna el modelo adecuado a cada una.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">La práctica de asignación consolida la heurística. Equivocarse en el ejercicio cuesta poco; equivocarse en un sistema real con 100 subagentes cuesta mucho.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Criterio de evaluación: costo estimado × calidad esperada. Hay una guía comentada en el módulo completo.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-1')">Ver en modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-1.html">Ver completo</a>
+</div>
+</div>
+<!-- MÓDULO 3.2 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-2">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.2</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">💰 El ahorro real</h3>
+<p class="text-neutral-400 text-sm">El sistema multiagente cuesta ~15× más que un chat simple. Entender por qué y cómo controlar ese costo es lo que diferencia los prototipos de los sistemas sostenibles.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">📈</span>
+<div><span class="font-medium">Por qué el sistema multiagente cuesta 15×</span><span class="text-neutral-500 text-sm ml-2">- El multiplicador de tokens</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Cada subagente tiene su propio contexto, prompt de sistema y comunicación de ida y vuelta con la API. Con 10 subagentes ejecutándose en paralelo, la cantidad de tokens consumidos se multiplica rápidamente.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Sin esta conciencia, es fácil crear workflows que cuestan decenas de dólares por ejecución. Conocer el multiplicador permite planificar con anticipación y saber cuándo el enfoque multiagente vale el precio.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Costo por ejecución = (tokens de entrada + salida) × precio × nº de subagentes; el prompt del sistema se repite por agente; el contexto que pasa el maestro también cuenta.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">👑</span>
+<div><span class="font-medium">Estándar jefe + flota</span><span class="text-neutral-500 text-sm ml-2">- Opus coordina, Haiku trabaja</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">El jefe (Opus o Sonnet) orquesta el trabajo: decide la estrategia, descompone las tareas y evalúa los resultados. La flota (Haiku) ejecuta en paralelo: lee, busca, extrae e informa.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Es el patrón con la mejor relación costo-beneficio: un solo agente costoso toma las decisiones inteligentes mientras muchos agentes económicos hacen el trabajo mecánico. La calidad aumenta y el costo promedio por resultado disminuye.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">1 jefe, N trabajadores; el jefe evalúa y consolida; los trabajadores informan; la decisión de "qué hacer" queda en el jefe, y el "cómo hacerlo" en la flota.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">⚙️</span>
+<div><span class="font-medium">CLAUDE_CODE_SUBAGENT_MODEL</span><span class="text-neutral-500 text-sm ml-2">- Forzar el modelo de la flota</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Variable de entorno que obliga a todos los subagentes a usar un modelo específico, independientemente del valor predeterminado del sistema. Útil para controlar el costo en lotes grandes.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Sin esta variable, los subagentes usan el modelo predeterminado, que puede ser Sonnet u Opus. Con ella, te aseguras de que toda la flota use Haiku sin cambiar el código de cada agente.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">`CLAUDE_CODE_SUBAGENT_MODEL=claude-haiku-4-5` en el entorno; sobrescribe solo los subagentes (el agente principal mantiene el modelo original); útil en workflows de alta escala.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🔄</span>
+<div><span class="font-medium">maxTurns — limitar turnos</span><span class="text-neutral-500 text-sm ml-2">- Evitar ciclos costosos</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Parámetro que limita cuántas rondas de ida y vuelta puede hacer un subagente. Cada turno consume tokens. Sin límite, un agente atrapado en un bucle puede gastar indefinidamente.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Los subagentes a veces entran en ciclos de ensayo y error. Con `maxTurns` definido, el costo máximo por ejecución es predecible, y el agente falla de forma controlada en vez de gastar recursos silenciosamente.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Configurado en el CLAUDE.md del subagente o mediante SDK; valor típico: 10–20 turnos; después del límite, el agente devuelve lo que tiene hasta ese momento.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">📉</span>
+<div><span class="font-medium">Cuándo vale la pena el costo de usar varios agentes</span><span class="text-neutral-500 text-sm ml-2">- ROI del paralelismo</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Criterios objetivos para decidir: tareas paralelas que llevarían 10+ min cada una si se hicieran secuencialmente; jobs con una "pared de output" que causarían truncamiento en un solo contexto; codebase con 10+ archivos interdependientes.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Usar varios agentes para tareas pequeñas es pagar 15× por un 0% de ganancia real. Un criterio claro evita ese desperdicio y justifica el costo cuando la tarea realmente lo requiere.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Señal positiva: paralelismo genuino, separación de contexto, mucho contenido de salida. Señal negativa: tarea secuencial breve, necesidad de contexto compartido, resultado simple.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🛠️</span>
+<div><span class="font-medium">Ejercicio: diseñar la división jefe/trabajador</span><span class="text-neutral-500 text-sm ml-2">- Modelar un trabajo real</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Dado un trabajo de análisis de repositorio (identificar code smells en 50 archivos), diseña la división: quién es el agente jefe, cuántos trabajadores hay, qué modelo usar para cada rol y cómo se consolida el resultado.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Diseñar antes de implementar evita rediseños costosos. El ejercicio obliga a pensar en la granularidad de las tareas, el costo estimado y los puntos de falla.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Entregable: diagrama sencillo (puede ser texto estructurado) con roles, modelos, flujo de datos y estimación del costo por ejecución.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-2')">Ver en modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-2.html">Ver completo</a>
+</div>
+</div>
+<!-- MÓDULO 3.3 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-3">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.3</span>
+<span class="text-xs text-neutral-500">~35 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">🔗 Encadenar subagentes</h3>
+<p class="text-neutral-400 text-sm">El maestro coordina A→B→C. Skills y agents se llaman mutuamente; sin embargo, los agents nunca llaman a otros agents. Entender esta regla evita arquitecturas que Claude no admite.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🎼</span>
+<div><span class="font-medium">El maestro: punto central de coordinación</span><span class="text-neutral-500 text-sm ml-2">- Solo él ve el panorama completo</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">El maestro es el agente principal que recibe la tarea del usuario, la divide en subtareas y asigna cada una a un subagente. Espera los resultados, los consolida y entrega la respuesta final.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Sin un maestro explícito, no hay coordinación: los subagentes no "conversan" entre sí. Reconocer al maestro como punto único de orquestación es la pieza central del diseño de workflows.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Topología en estrella: el maestro en el centro, los subagentes en los extremos; el maestro pasa contexto explícitamente a cada subagente; los resultados vuelven al maestro, nunca circulan entre subagentes.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">🚫</span>
+<div><span class="font-medium">Regla de oro: los agentes no llaman a otros agentes</span><span class="text-neutral-500 text-sm ml-2">- La flecha prohibida</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Un agente (CLAUDE.md) no puede invocar directamente a otro agente. La invocación ocurre mediante una skill (que puede llamar a agents) o a través del propio Claude Code cuando ejecuta un workflow de nivel superior.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Diseñar un agent que intenta llamar a otro agent provoca un error de ejecución o un comportamiento indefinido. Conocer este límite evita arquitecturas imposibles y sugiere el camino correcto (mediante una skill).</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">El agent llama a una skill; la skill llama a un agent; el agent no llama a otro agent. El ciclo de control siempre queda en el Claude Code principal o en una skill orquestadora.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">🔀</span>
+<div><span class="font-medium">Skills como orquestadoras</span><span class="text-neutral-500 text-sm ml-2">- El vínculo que conecta agents</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Una skill (archivo de instrucciones `.md`) puede contener lógica que activa varios agents en secuencia o en paralelo. Es el patrón correcto para crear pipelines complejos sin incumplir la regla de que los agents no llaman a otros agents.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Las skills son el «pegamento» del ecosistema. Entender cómo una skill activa agentes te permite construir workflows de N etapas sin necesitar un agente especial de orquestación.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Skill = instrucción para Claude Code; Claude Code ejecuta el agente invocado; la skill define la secuencia lógica; el estado intermedio se puede pasar mediante archivos o mensajes.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">➡️</span>
+<div><span class="font-medium">Cadena secuencial A → B → C</span><span class="text-neutral-500 text-sm ml-2">- Pipeline de etapas dependientes</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Cuando el resultado de A es necesario para que B empiece, y el resultado de B es necesario para que C empiece, tenemos una canalización secuencial. El maestro espera cada etapa antes de iniciar la siguiente.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Mezclar lo secuencial con lo paralelo sin darte cuenta genera condiciones de carrera o resultados incorrectos. Identificar las dependencias entre tareas es el primer paso para diseñar cualquier pipeline.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Dependencia de datos = secuencial; independencia = paralelo; el maestro decide el orden según las dependencias; pasar el output de A como input de B mediante un mensaje o un archivo.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🤝</span>
+<div><span class="font-medium">Relación 1 a 1: los subagentes no conversan</span><span class="text-neutral-500 text-sm ml-2">- Topología de estrella obligatoria</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Cada subagente se comunica solo con el maestro que lo invocó. No hay un canal lateral entre el subagente A y el subagente B. Para que A «le pase algo» a B, el maestro debe intervenir.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Los proyectos que suponen una comunicación directa entre subagentes no funcionan. Conocer este límite antes de diseñar evita arquitecturas que parecen elegantes en teoría, pero son imposibles en la práctica.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Maestro es el único punto de unión; las «conversaciones» entre subagentes son una ilusión: el maestro hace de intermediario; usa archivos compartidos cuando dos agentes necesitan el mismo dato.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">✏️</span>
+<div><span class="font-medium">Ejercicio: modelar una secuencia de 3 pasos</span><span class="text-neutral-500 text-sm ml-2">- Practicar el diseño de pipeline</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Diseña (en texto o en un diagrama) un pipeline de 3 etapas para el trabajo: «buscar issues abiertas → priorizar por impacto → redactar comentarios de clasificación». Identifica qué etapas son secuenciales y cuáles pueden ejecutarse en paralelo.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">La habilidad de descomponer un job en etapas con dependencias claras es la base de cualquier orquestación. Equivocarse aquí es el error más común de quienes empiezan con multiagentes.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Entregable: diagrama con flechas dirigidas, modelos elegidos, puntos de handoff y mecanismo para pasar datos (mensaje o archivo).</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-3')">Ver en modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-3.html">Ver completo</a>
+</div>
+</div>
+<!-- MÓDULO 3.4 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-4">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.4</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">🔍 El revisor imparcial</h3>
+<p class="text-neutral-400 text-sm">El contexto fresco = veredicto honesto. Quien construye el artefacto no debe ser quien lo valida: separar los roles de builder y reviewer es el estándar más eficaz de control de calidad en sistemas multiagente.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🧠</span>
+<div><span class="font-medium">Por qué un contexto limpio = un veredicto honesto</span><span class="text-neutral-500 text-sm ml-2">- El sesgo de quien lo construyó</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">El agente que construyó un artefacto lleva en su contexto todo el historial de decisiones que lo condujeron a ese resultado. Ese contexto induce un sesgo de confirmación: tiende a validar lo que ya decidió.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Un revisor con contexto limpio no tiene acceso al «porqué» de las decisiones: solo ve el resultado. Ese aislamiento genera críticas más objetivas e identifica problemas que el builder ignoró.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Contexto limpio = empieza desde cero; no hereda la "lógica interna" del builder; recibe solo el artefacto + los criterios de evaluación; produce comentarios sin anclarse en las decisiones originales.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">🏗️</span>
+<div><span class="font-medium">Separar builder de reviewer</span><span class="text-neutral-500 text-sm ml-2">- Dos agentes, roles distintos</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">El builder recibe la tarea y produce el artefacto (código, plan, investigación). El reviewer recibe el artefacto + los criterios y produce un informe de calidad. Son dos subagentes distintos, convocados en secuencia por el maestro.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">La separación de roles aumenta la calidad sin aumentar la complejidad de cada agente: cada uno hace una cosa y la hace bien. El maestro decide si los comentarios requieren una nueva iteración del builder.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Flujo: maestro → builder (produce) → maestro → reviewer (critica) → maestro (decide si iterar o publicar); el reviewer no tiene acceso al proceso interno del builder.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">📋</span>
+<div><span class="font-medium">Aplicar al código, al plan y a la investigación</span><span class="text-neutral-500 text-sm ml-2">- El patrón sirve en todos los dominios</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">El patrón builder-reviewer funciona con cualquier tipo de artefacto: código (el revisor verifica errores y estilo), plan (el revisor verifica la viabilidad y los riesgos), investigación (el revisor verifica las fuentes y la coherencia).</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Reconocer que el mismo patrón se aplica en distintos dominios permite reutilizar la misma arquitectura de orquestación: solo cambia el criterio que se le pasa al revisor, no el pipeline.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Criterios explícitos en el prompt del reviewer; específicos del dominio (código: corrección, estilo; plan: viabilidad, riesgo; investigación: fuentes, coherencia); el revisor entrega un informe estructurado.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">🌟</span>
+<div><span class="font-medium">plan-roaster y code-reviewer como ejemplos reales</span><span class="text-neutral-500 text-sm ml-2">- Subagentes revisores listos</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">`plan-roaster` y `code-reviewer` son subagentes disponibles en el ecosistema Claude Code que implementan el patrón de revisor. Son ejemplos concretos para estudiar y adaptar.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Estudiar un revisor existente revela cómo se transmite el criterio, cómo se estructura el output, qué modelo usar para la revisión y cómo el maestro utiliza el resultado. Es más rápido que diseñarlo desde cero.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">El revisor recibe: artefacto + criterios + alcance; produce: informe con hallazgos categorizados por severidad; el maestro decide qué hacer según el informe.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🔁</span>
+<div><span class="font-medium">Ciclo de iteración builder-reviewer</span><span class="text-neutral-500 text-sm ml-2">- Cuándo iterar y cuándo parar</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Después de que el revisor entregue el informe, el director decide: ¿los hallazgos son críticos (nueva iteración del builder) o aceptables (publicar)? Este ciclo puede repetirse 2–3 veces antes de llegar a un criterio de parada.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Sin un criterio de detención, el ciclo puede ejecutarse indefinidamente. Definir "cuándo es suficientemente bueno" antes de ejecutar es tan importante como diseñar los agentes.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Criterio de parada: cero hallazgos críticos, o alcanzar N iteraciones, o llegar al límite de costo; el maestro codifica el criterio; el revisor informa la severidad para facilitar la decisión.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🎯</span>
+<div><span class="font-medium">Ejercicio: ejecutar el revisor sobre el M3.3</span><span class="text-neutral-500 text-sm ml-2">- Práctica con un artefacto real</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Usa como artefacto el diagrama de pipeline que creaste en M3.3. Dáselo a un revisor (puedes ser tú mismo con «contexto limpio» o un subagente code-reviewer) con estos criterios: viabilidad, eficiencia y puntos de falla.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Revisar el propio trabajo con una mirada externa (aunque sea simulada) es la habilidad de metacalidad. El ejercicio cierra el ciclo M3.3 → M3.4: ya construiste y ahora evalúas.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Entregable: informe con hallazgos (al menos 1 mejora identificada); reflexiona sobre qué cambiarías en el diagrama de M3.3 después de la revisión.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-4')">Ver en modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-4.html">Ver completo</a>
+</div>
+</div>
+<!-- MÓDULO 3.5 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-5">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.5</span>
+<span class="text-xs text-neutral-500">~25 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">⚡ Workflows dinámicos</h3>
+<p class="text-neutral-400 text-sm">Con el activador `ultracode`, se pueden lanzar decenas o cientos de subagentes en una sola sesión. El poder es real, y el costo también. Saber cuándo activar esta palanca es el objetivo de este módulo.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">🚀</span>
+<div><span class="font-medium">El disparador ultracode</span><span class="text-neutral-500 text-sm ml-2">- El modo de alta escala</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">`ultracode` (anteriormente llamado "workflow") es el disparador que instruye a Claude Code para operar en modo de alta escala: descompone el job en decenas de tareas paralelas y activa subagentes para cada una.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Activar `ultracode` para trabajos pequeños desperdicia presupuesto. Saber qué hace el disparador internamente permite usarlo con precisión — solo cuando la escala lo justifica.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Modo de planificación automática + paralelización agresiva; Claude Code estima el número de subagentes antes de ejecutar; puedes confirmar o cancelar; costo estimado visible antes del commit.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">🔢</span>
+<div><span class="font-medium">El caso de los 41 subagentes</span><span class="text-neutral-500 text-sm ml-2">- Escala real documentada</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Caso real documentado en el que un solo job lanzó 41 subagentes en paralelo para refactorizar un repositorio grande. El resultado se entregó en una fracción del tiempo que habría tomado hacerlo de forma secuencial.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">El caso concreto sirve de ancla para el concepto: no es teoría. Muestra qué es posible, cuál fue el costo real y qué aciertos y problemas se encontraron en la ejecución a gran escala.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">41 subagentes Haiku; maestro Sonnet; tarea: refactorizar más de 80 archivos; costo estimado: ~$8 en la ejecución; tiempo total: ~6 min frente a ~2h secuenciales; cobertura de pruebas mantenida.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">💸</span>
+<div><span class="font-medium">Costo y límite de sesión</span><span class="text-neutral-500 text-sm ml-2">- Presupuesto antes de ejecutar</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Las sesiones con decenas de subagentes consumen tokens rápidamente. Los límites de tasa de la API (rate limits) y los límites de sesión de Claude Code pueden interrumpir un workflow a la mitad.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">No planificar el presupuesto antes de un ultracode lleva a trabajos incompletos y a un costo desperdiciado. Entender los límites permite dimensionar correctamente el trabajo o dividirlo en lotes más pequeños.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Límites de solicitudes por minuto y por día; límite de sesión de Claude Code (tokens por ventana); estrategia de batching: dividir en grupos de 10–20 subagentes para respetar los límites.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">✅</span>
+<div><span class="font-medium">Señales de que el trabajo requiere un workflow</span><span class="text-neutral-500 text-sm ml-2">- Lista de verificación de escala</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Lista de verificación práctica: más de 10 archivos por modificar, tareas genuinamente paralelas (sin dependencias entre sí), resultado esperado que causaría truncamiento en un único contexto, refactorización a gran escala, análisis en paralelo de varios módulos.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">La checklist evita decidir por intuición. Con ella, llegas a «sí/no para workflow» en 30 segundos, antes de ejecutar cualquier cosa.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Cualquier «sí» rotundo en la checklist apunta a workflow; señales de alerta: tarea pequeña, necesidad de compartir contexto, resultados interdependientes; si tienes dudas, no uses workflow.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">🛡️</span>
+<div><span class="font-medium">Recuperación de fallas parciales</span><span class="text-neutral-500 text-sm ml-2">- Cuando algunos subagentes fallan</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">En workflows de más de 40 subagentes, se esperan fallas parciales. El maestro debe detectar qué subtareas fallaron y decidir: volver a intentarlo, ignorarlas o abortar todo el job.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Los jobs sin una estrategia de recuperación fallan por completo cuando falla cualquier subagente. Diseñar el manejo de fallas antes de la ejecución reduce el costo de retrabajo y aumenta la robustez.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Registro de resultados por subagente; identificar los fallidos por id; estrategia «retry once, then skip»; el maestro consolida e indica incomplete donde sea necesario.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🧪</span>
+<div><span class="font-medium">Ejercicio: decidir sí/no para el workflow</span><span class="text-neutral-500 text-sm ml-2">- Aplicar la lista de verificación a 3 escenarios</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Dados 3 escenarios (A: refactorizar 1 archivo; B: analizar 100 PRs cerrados; C: escribir pruebas para 15 módulos), aplica la checklist y responde: ¿workflow o no? Justifica cada decisión.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">La práctica de tomar una decisión binaria con justificación es la habilidad clave del módulo. Las respuestas sin justificación no cuentan: el razonamiento es el entregable, no el sí o no.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Respuestas: A = no (un único archivo); B = sí (100 tareas paralelas independientes); C = sí (15 módulos separables); el módulo completo incluye un análisis detallado de cada caso.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-5')">Ver en modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-5.html">Ver completo</a>
+</div>
+</div>
+<!-- MÓDULO 3.6 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 mb-6" id="modulo-3-6">
+<div class="p-6 border-b border-dark-600">
+<div class="flex items-center justify-between mb-2">
+<span class="text-amber-400 font-bold">3.6</span>
+<span class="text-xs text-neutral-500">~30 min</span>
+</div>
+<h3 class="text-2xl font-bold mb-1">🗺️ Patrones de orquestación</h3>
+<p class="text-neutral-400 text-sm">¿Paralelismo independiente, pipeline secuencial o fan-out? Cada topología tiene casos de uso, ventajas y costos distintos. Este módulo cierra el recorrido con el mapa completo de las opciones.</p>
+</div>
+<div class="divide-y divide-dark-600">
+<!-- Tópico 1 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+<span class="text-lg">⬛</span>
+<div><span class="font-medium">Paralelismo independiente</span><span class="text-neutral-500 text-sm ml-2">- Sin dependencia entre agentes</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">N subagentes que se ejecutan al mismo tiempo, cada uno con su propia tarea aislada, sin dependencias entre sí. El maestro los inicia a todos y espera a que terminen para consolidar.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Es el patrón más eficiente para tareas uniformes a gran escala: analizar N archivos, buscar N documentos, generar N borradores. Identificar cuándo las tareas son realmente independientes es un requisito previo.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Independencia total: ningún subagente necesita el resultado de otro; el maestro sincroniza al final; costo = N × costo individual; speedup = N× (limitado por el rate limit).</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 2 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+<span class="text-lg">➡️</span>
+<div><span class="font-medium">Pipeline secuencial</span><span class="text-neutral-500 text-sm ml-2">- Cada etapa alimenta la siguiente</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Etapas A → B → C, donde el output de cada etapa es el input de la siguiente. El maestro ejecuta una a la vez, espera cada resultado antes de continuar.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Para tareas con dependencias de datos, el pipeline es el único patrón correcto. Forzar el paralelismo cuando hay dependencias genera errores o resultados inconsistentes: reconocer las dependencias es esencial.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Latencia total = suma de las latencias individuales; no hay aceleración por paralelismo; cada etapa puede usar un modelo diferente (ej.: Haiku recopila, Sonnet sintetiza, Opus decide).</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 3 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+<span class="text-lg">📡</span>
+<div><span class="font-medium">Fan-out con agregación</span><span class="text-neutral-500 text-sm ml-2">- Activa muchos, recopila uno</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">1 entrada → N subagentes en paralelo → 1 resultado agregado. El maestro inicia N workers con distintas partes del problema, espera a todos y pasa los N resultados a un agregador que sintetiza el resultado final.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Fan-out es el patrón de ultracode. Entender la estructura "dispatcher → workers → aggregator" te permite diseñar cualquier workflow de alta escala y entender lo que hace Claude Code por debajo cuando usas ultracode.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Dispatcher: maestro que divide la entrada; workers: Haiku/Sonnet en paralelo; aggregator: agente separado (Sonnet/Opus) que consolida; resultado final: único, coherente y completo.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 4 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">4</span>
+<span class="text-lg">💬</span>
+<div><span class="font-medium">Subagente × agent teams</span><span class="text-neutral-500 text-sm ml-2">- Cuando los agents conversan entre sí</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Los agent teams son configuraciones en las que varios agentes comparten contexto y se comunican directamente — a diferencia de los subagentes clásicos con topología de estrella. Cuestan más porque mantienen abiertos varios contextos.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Saber la diferencia evita confundir las dos arquitecturas. Los equipos de agentes son poco comunes en Claude Code y, por lo general, más costosos y complejos. Para la mayoría de los casos, los subagentes con un maestro central son más eficientes.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Subagentes: topología en estrella, maestro central, contextos aislados, menor costo. Agent teams: grafo de comunicación, contextos parcialmente compartidos, mayor costo, menos común.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 5 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">5</span>
+<span class="text-lg">📏</span>
+<div><span class="font-medium">Regla de «10+ archivos o una pared de output»</span><span class="text-neutral-500 text-sm ml-2">- Heurística rápida de topología</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Heurística práctica: si el trabajo implica más de 10 archivos separables O produciría un resultado que se truncaría en un solo contexto, usa fan-out o ejecución en paralelo. De lo contrario, usa un pipeline secuencial o un solo agente.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">Tener una heurística numérica evita el análisis detallado para cada job. "10 archivos" es el threshold práctico derivado de la experiencia real: por debajo de eso, el overhead del multiagente generalmente no compensa.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">10 archivos = ~umbral de overhead; «pared de output» = resultado que causaría &gt; 50% del contexto; ambos son indicadores, no reglas absolutas; el juicio final es del operador.</p></div>
+</div>
+</div>
+</div>
+<!-- Tópico 6 -->
+<div class="topic-item">
+<button class="w-full px-6 py-4 flex items-center space-x-3 hover:bg-dark-700/50 transition-colors text-left" onclick="toggleTopic(this)">
+<span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-sm font-bold flex items-center justify-center flex-shrink-0">6</span>
+<span class="text-lg">🏆</span>
+<div><span class="font-medium">Ejercicio: elegir la topología para 3 problemas</span><span class="text-neutral-500 text-sm ml-2">- Cerrar la ruta con práctica</span></div>
+</button>
+<div class="topic-explanation px-6 pb-4">
+<div class="bg-dark-700/50 rounded-lg p-4 space-y-3 ml-9">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm">Dados 3 problemas (A: traducir 30 archivos Markdown; B: generar notas de la versión a partir de 50 commits analizados en orden; C: revisar código + proponer una refactorización + implementarla), elige la topología y justifica tu elección.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm">El ejercicio cierra el recorrido: aplicas el vocabulario de topologías a problemas reales. Respuestas: A = paralelo independiente; B = fan-out + pipeline (recopilación en paralelo, síntesis secuencial); C = pipeline (3 etapas dependientes).</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm">Entregable: tabla problema × topología × justificación × modelos elegidos. El módulo completo incluye una implementación de referencia para cada caso.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-dark-700/30 flex justify-start space-x-3">
+<button class="px-4 py-2 text-sm bg-dark-600 hover:bg-dark-500 rounded-lg transition-colors" onclick="openModal('modal-3-6')">Ver en modal</button>
+<a class="px-4 py-2 text-sm bg-amber-600 hover:bg-amber-500 text-white rounded-lg transition-colors" href="modulo-3-6.html">Ver completo</a>
+</div>
+</div>
+</main>
+<!-- MODAIS (iframe) -->
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-1" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.1</span><span class="font-semibold">Modelo por tarea</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-1.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-2" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.2</span><span class="font-semibold">El ahorro real</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-2.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-3" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.3</span><span class="font-semibold">Encadenar subagentes</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-3.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-4" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.4</span><span class="font-semibold">El revisor imparcial</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-4.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-5" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.5</span><span class="font-semibold">Flujos de trabajo dinámicos</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-5.html"></iframe>
+</div>
+</div>
+<div class="modal hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80" id="modal-3-6" onclick="if(event.target === this) closeModal()">
+<div class="bg-dark-800 rounded-xl w-full max-w-6xl h-[95vh] flex flex-col border border-dark-600">
+<div class="p-4 border-b border-dark-600 flex justify-between items-center">
+<div class="flex items-center space-x-3"><span class="text-amber-400 font-bold">3.6</span><span class="font-semibold">Patrones de orquestación</span></div>
+<button class="text-neutral-400 hover:text-white text-2xl leading-none" onclick="closeModal()">×</button>
+</div>
+<iframe class="flex-1 w-full rounded-b-xl" src="modulo-3-6.html"></iframe>
+</div>
+</div>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-10 mt-8">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<p class="text-neutral-300 mb-2">Curso <strong>Subagentes</strong> · Ruta 3 · Orquestación · 2026</p>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
+      document.body.style.overflow = 'auto';
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

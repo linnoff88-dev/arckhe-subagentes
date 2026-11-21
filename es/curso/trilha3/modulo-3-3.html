@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Encadenar subagentes | Subagentes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode — base */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode — cores de acento (Amber) */
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(146, 64, 14, 0.10); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(146, 64, 14, 0.06); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(146, 64, 14, 0.22); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(146, 64, 14, 0.15); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(146, 64, 14, 0.06); }
+    html:not(.dark) .from-amber-900\/30 { --tw-gradient-from: rgba(120, 53, 15, 0.10); }
+
+    /* Light mode — cores secundárias */
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.07); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.22); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.07); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.22); }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(120, 53, 15, 0.07); }
+    html:not(.dark) .text-primary { color: #a16207; }
+
+    /* Light mode — remove gradientes */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode — especiais */
+    html:not(.dark) .text-yellow-300 { color: #a16207; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+
+    /* Light mode — nav */
+    html:not(.dark) nav { background-color: rgba(255,255,255,0.95) !important; border-bottom-color: #e5e7eb !important; }
+    html:not(.dark) nav .text-neutral-100 { color: #111827; }
+
+    /* Dark — bordas suavizadas (REGRA 1) */
+    .dark .border-dark-600 { border-color: #374151; }
+    /* Dark — bordas suavizadas (REGRA 2) */
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* SVG animação respeitosa */
+    @media (prefers-reduced-motion: no-preference) {
+      .svg-pulse { animation: pulse-amber 3s ease-in-out infinite; }
+      .svg-pulse-cyan { animation: pulse-cyan 3s ease-in-out infinite 1s; }
+      .svg-dash { animation: dash-flow 4s linear infinite; stroke-dasharray: 8 6; }
+      .svg-forbidden { animation: forbidden-blink 2s ease-in-out infinite; }
+    }
+    @keyframes pulse-amber {
+      0%, 100% { opacity: 0.9; filter: drop-shadow(0 0 6px #f59e0b88); }
+      50% { opacity: 1; filter: drop-shadow(0 0 14px #f59e0bcc); }
+    }
+    @keyframes pulse-cyan {
+      0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 5px #38bdf866); }
+      50% { opacity: 1; filter: drop-shadow(0 0 12px #38bdf8bb); }
+    }
+    @keyframes dash-flow {
+      from { stroke-dashoffset: 28; }
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes forbidden-blink {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha3/modulo-3-3.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha3/modulo-3-3.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha3/modulo-3-3.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-3.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha3/modulo-3-3.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-3-3.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- ═══════════════════════════════════ NAV ═══════════════════════════════════ -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagentes</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentos</span>
+</a>
+<!-- Trilha 2 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">En la práctica</span>
+</a>
+<!-- Trilha 3 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10" href="index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orquestación</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Avanzado</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- ═══════════════════════════════════ HEADER ═══════════════════════════════════ -->
+<div class="max-w-6xl mx-auto px-4 py-10">
+<div class="mb-3 flex flex-wrap gap-2">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30 tracking-wide uppercase">
+        MÓDULO 3.3 · Ruta 3 · Modelo, costo y orquestación
+      </span>
+</div>
+<h1 class="text-2xl font-bold text-neutral-100 mb-3">Encadenar subagentes</h1>
+<p class="text-neutral-400 text-base max-w-2xl mb-4">
+      El maestro no solo activa subagentes: los <em>encadena</em>: el resultado de A alimenta a B, que alimenta a C.
+      Este módulo enseña a diseñar, depurar y escalar pipelines secuenciales sin hacer que los agentes conversen entre sí.
+    </p>
+<div class="flex flex-wrap gap-3 text-sm text-neutral-500">
+<span class="flex items-center gap-1.5">⏱ ~25 min</span>
+<span class="flex items-center gap-1.5">🔗 7 temas</span>
+<span class="flex items-center gap-1.5">💡 Nivel intermedio</span>
+</div>
+</div>
+<!-- ═══════════════════════════════════ SVG FUTURISTA ═══════════════════════════════════ -->
+<div class="max-w-6xl mx-auto px-4 mb-10">
+<div class="bg-dark-800 rounded-2xl border border-dark-600 p-4 overflow-hidden">
+<svg aria-label="Cadena de subagentes A→B→C controlada por el maestro, con la flecha agent⇏agent prohibida" class="w-full h-auto" role="img" viewbox="0 0 1000 260">
+<defs>
+<!-- Grade de fundo -->
+<pattern height="30" id="cg-grid" patternunits="userSpaceOnUse" width="30" x="0" y="0">
+<path d="M 30 0 L 0 0 0 30" fill="none" opacity="0.15" stroke="#f59e0b" stroke-width="0.3"></path>
+</pattern>
+<!-- Gradiente amber -->
+<lineargradient id="cg-grad" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" stop-color="#f59e0b"></stop>
+<stop offset="100%" stop-color="#fbbf24"></stop>
+</lineargradient>
+<!-- Gradiente ciano -->
+<lineargradient id="cg-grad-c" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" stop-color="#38bdf8"></stop>
+<stop offset="100%" stop-color="#7dd3fc"></stop>
+</lineargradient>
+<!-- Glow amber -->
+<filter height="160%" id="cg-glow" width="160%" x="-30%" y="-30%">
+<fegaussianblur result="blur" stddeviation="5"></fegaussianblur>
+<fecomposite in="SourceGraphic" in2="blur" operator="over"></fecomposite>
+</filter>
+<!-- Glow vermelho (proibido) -->
+<filter height="160%" id="cg-glow-red" width="160%" x="-30%" y="-30%">
+<fegaussianblur result="blur" stddeviation="4"></fegaussianblur>
+<fecomposite in="SourceGraphic" in2="blur" operator="over"></fecomposite>
+</filter>
+<!-- Seta amber -->
+<marker id="cg-ah" markerheight="7" markerwidth="10" orient="auto" refx="9" refy="3.5">
+<polygon fill="#f59e0b" points="0 0, 10 3.5, 0 7"></polygon>
+</marker>
+<!-- Seta ciano -->
+<marker id="cg-ahc" markerheight="7" markerwidth="10" orient="auto" refx="9" refy="3.5">
+<polygon fill="#38bdf8" points="0 0, 10 3.5, 0 7"></polygon>
+</marker>
+<!-- Seta vermelha -->
+<marker id="cg-ahr" markerheight="7" markerwidth="10" orient="auto" refx="9" refy="3.5">
+<polygon fill="#f87171" points="0 0, 10 3.5, 0 7"></polygon>
+</marker>
+</defs>
+<!-- Fundo grade -->
+<rect fill="url(#cg-grid)" height="260" width="1000"></rect>
+<!-- Linha principal A→B→C (amber) -->
+<line class="svg-dash" marker-end="url(#cg-ah)" opacity="0.85" stroke="#f59e0b" stroke-dasharray="8 5" stroke-width="2.5" x1="198" x2="362" y1="100" y2="100"></line>
+<line class="svg-dash" marker-end="url(#cg-ah)" opacity="0.85" stroke="#f59e0b" stroke-dasharray="8 5" stroke-width="2.5" x1="498" x2="662" y1="100" y2="100"></line>
+<line marker-end="url(#cg-ahc)" opacity="0.7" stroke="#38bdf8" stroke-width="2" x1="798" x2="936" y1="100" y2="100"></line>
+<!-- Nó MAESTRO -->
+<g class="svg-pulse" filter="url(#cg-glow)">
+<rect fill="#1f1604" height="64" rx="14" stroke="url(#cg-grad)" stroke-width="2" width="182" x="16" y="68"></rect>
+</g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="13" font-weight="700" text-anchor="middle" x="107" y="95">🎼 MAESTRO</text>
+<text fill="#a3a3a3" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="107" y="115">coordina la cadena</text>
+<!-- Nó A -->
+<g class="svg-pulse" filter="url(#cg-glow)">
+<rect fill="#1f1604" height="64" rx="12" stroke="url(#cg-grad)" stroke-width="2" width="136" x="362" y="68"></rect>
+</g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="14" font-weight="700" text-anchor="middle" x="430" y="95">Agente A</text>
+<text fill="#a3a3a3" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="430" y="113">investigación</text>
+<!-- Nó B -->
+<g class="svg-pulse" filter="url(#cg-glow)">
+<rect fill="#1f1604" height="64" rx="12" stroke="url(#cg-grad)" stroke-width="2" width="136" x="498" y="68"></rect>
+</g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="14" font-weight="700" text-anchor="middle" x="566" y="95">Agente B</text>
+<text fill="#a3a3a3" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="566" y="113">borrador</text>
+<!-- Nó C -->
+<g class="svg-pulse" filter="url(#cg-glow)">
+<rect fill="#1f1604" height="64" rx="12" stroke="url(#cg-grad)" stroke-width="2" width="136" x="662" y="68"></rect>
+</g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="14" font-weight="700" text-anchor="middle" x="730" y="95">Agente C</text>
+<text fill="#a3a3a3" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="730" y="113">revisión</text>
+<!-- Resultado Final -->
+<g class="svg-pulse-cyan" filter="url(#cg-glow)">
+<rect fill="#061620" height="52" rx="10" stroke="url(#cg-grad-c)" stroke-width="2" width="50" x="938" y="74"></rect>
+</g>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="18" text-anchor="middle" x="963" y="97">✓</text>
+<text fill="#7dd3fc" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="963" y="113">output</text>
+<!-- Controle do maestro sobre B e C (linhas de coordenação ciano finas) -->
+<path d="M107,68 Q107,36 430,36 Q566,36 566,68" fill="none" opacity="0.35" stroke="#38bdf8" stroke-dasharray="5 4" stroke-width="1"></path>
+<path d="M107,68 Q107,22 430,22 Q730,22 730,68" fill="none" opacity="0.25" stroke="#38bdf8" stroke-dasharray="5 4" stroke-width="1"></path>
+<!-- ZONA PROIBIDA: Agente→Agente direto -->
+<g class="svg-forbidden">
+<path d="M430,182 L566,182" marker-end="url(#cg-ahr)" opacity="0.8" stroke="#f87171" stroke-width="2.5"></path>
+<line opacity="0.9" stroke="#f87171" stroke-width="3" x1="412" x2="584" y1="165" y2="199"></line>
+<line opacity="0.9" stroke="#f87171" stroke-width="3" x1="412" x2="584" y1="199" y2="165"></line>
+</g>
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="498" y="220">⛔ Un agente no llama a otro agente</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="498" y="236">siempre a través del maestro</text>
+<!-- Rótulo da cadeia -->
+<text fill="#6b7280" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="500" y="252">Maestro → subagente A → subagente B → subagente C → Resultado</text>
+</svg>
+</div>
+<p class="text-xs text-neutral-500 mt-2 text-center">
+      El maestro coordina toda la cadena. Los agentes no se comunican directamente: cada uno responde solo al maestro.
+    </p>
+</div>
+<!-- ═══════════════════════════════════ CONTEÚDO DETALHADO ═══════════════════════════════════ -->
+<div class="max-w-6xl mx-auto px-4 pb-4">
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+</div>
+<!-- ═══ TÓPICOS ═══ -->
+<div class="max-w-6xl mx-auto px-4 space-y-3 pb-8">
+<!-- ─── TÓPICO 1 ─── -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 hover:bg-dark-700 transition-all text-left" onclick="toggleTopic('t1')">
+<span class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm flex-shrink-0">1</span>
+<div>
+<span class="text-base font-semibold text-neutral-100">Maestro coordina A→B→C</span>
+<p class="text-sm text-neutral-400 mt-0.5">La arquitectura de la cadena secuencial</p>
+</div>
+<svg class="w-5 h-5 text-neutral-500 ml-auto flex-shrink-0 transition-transform" fill="none" id="icon-t1" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="topic-explanation" id="t1">
+<div class="px-5 pb-6 space-y-5">
+<!-- O que é -->
+<div class="bg-gradient-to-r from-amber-900/30 to-dark-800 rounded-xl p-4 border border-amber-500/20">
+<h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">Qué es</h3>
+<p class="text-neutral-300 text-sm leading-relaxed">
+              Encadenar subagentes significa que el <strong>output de A</strong> se convierte en el <strong>input de B</strong>,
+              que a su vez alimenta a C — y el maestro orquesta cada paso. No existe una conversación directa entre
+              los agentes: la cadena vive por completo en el contexto del maestro.
+            </p>
+</div>
+<!-- Por que aprender -->
+<div class="bg-dark-700 rounded-xl p-4">
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Por qué aprender</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="flex items-start gap-2">
+<span class="text-amber-400 mt-0.5 flex-shrink-0">✦</span>
+<span class="text-sm text-neutral-300">Separa las responsabilidades en etapas claras</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-amber-400 mt-0.5 flex-shrink-0">✦</span>
+<span class="text-sm text-neutral-300">Cada agente opera en un contexto limpio y enfocado</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-amber-400 mt-0.5 flex-shrink-0">✦</span>
+<span class="text-sm text-neutral-300">Facilita la depuración: falló en B, no en A ni en C</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-amber-400 mt-0.5 flex-shrink-0">✦</span>
+<span class="text-sm text-neutral-300">Permite reutilizar etapas en otras cadenas</span>
+</div>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="space-y-2">
+<div class="flex items-start gap-3 p-3 bg-dark-700 rounded-lg">
+<span class="text-amber-400 font-bold text-sm mt-0.5 flex-shrink-0">→</span>
+<div>
+<span class="text-sm font-medium text-neutral-200">Input bridge</span>
+<p class="text-xs text-neutral-400 mt-0.5">El maestro extrae el resultado de A y lo incorpora como contexto en el prompt de B.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 bg-dark-700 rounded-lg">
+<span class="text-amber-400 font-bold text-sm mt-0.5 flex-shrink-0">→</span>
+<div>
+<span class="text-sm font-medium text-neutral-200">Cadena determinista</span>
+<p class="text-xs text-neutral-400 mt-0.5">A→B→C siempre en ese orden; el director no se salta etapas sin revisar el resultado anterior.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 bg-dark-700 rounded-lg">
+<span class="text-amber-400 font-bold text-sm mt-0.5 flex-shrink-0">→</span>
+<div>
+<span class="text-sm font-medium text-neutral-200">Punto de control</span>
+<p class="text-xs text-neutral-400 mt-0.5">Entre cada etapa, el maestro puede validar, transformar o abortar antes de continuar.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ─── TÓPICO 2 ─── -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 hover:bg-dark-700 transition-all text-left" onclick="toggleTopic('t2')">
+<span class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm flex-shrink-0">2</span>
+<div>
+<span class="text-base font-semibold text-neutral-100">Skills ↔ Agents: funciones distintas</span>
+<p class="text-sm text-neutral-400 mt-0.5">Qué hace una skill que un agent no hace, y viceversa</p>
+</div>
+<svg class="w-5 h-5 text-neutral-500 ml-auto flex-shrink-0 transition-transform" fill="none" id="icon-t2" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="topic-explanation" id="t2">
+<div class="px-5 pb-6 space-y-5">
+<div class="bg-gradient-to-r from-amber-900/30 to-dark-800 rounded-xl p-4 border border-amber-500/20">
+<h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">Qué es</h3>
+<p class="text-neutral-300 text-sm leading-relaxed">
+<strong>Skills</strong> son instrucciones cargadas en el contexto del maestro; ellas <em>guían</em> el comportamiento.
+              <strong>Agents</strong> son subprocesos con su propia ventana; ellos <em>ejecutan</em> trabajo aislado.
+              En una cadena, la skill define el flujo; los agents realizan las etapas.
+            </p>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<!-- Grid Fazer / Evitar -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="bg-dark-700 rounded-xl p-4 border border-emerald-500/20">
+<p class="text-xs font-semibold text-emerald-400 uppercase mb-3">✓ Skill: sirve para</p>
+<ul class="space-y-1.5 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> Definir las etapas de la cadena</li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> Reutilizar la lógica entre proyectos</li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> Activar varios subagentes</li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> Mantén corto el contexto del maestro</li>
+</ul>
+</div>
+<div class="bg-dark-700 rounded-xl p-4 border border-blue-500/20">
+<p class="text-xs font-semibold text-blue-400 uppercase mb-3">◎ Agent: bueno para</p>
+<ul class="space-y-1.5 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">◎</span> Lectura intensiva de archivos</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">◎</span> Investigación web en profundidad</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">◎</span> Generación de un artefacto aislado</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">◎</span> Tarea con herramientas propias</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-4">
+<p class="text-xs font-semibold text-amber-400 uppercase mb-1">💡 Consejo práctico</p>
+<p class="text-sm text-neutral-300">
+              Usa la skill como el <em>maestro de la cadena</em> — contiene el prompt que inicia cada agent en secuencia
+              e indica al maestro que haga el traspaso de outputs entre ellos.
+            </p>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Por qué aprender</h3>
+<p class="text-sm text-neutral-400">
+              Confundir skill con agent es el error más común al diseñar cadenas. Entender la distinción evita
+              sobrecargar el contexto del maestro con trabajo que debería estar en una ventana separada.
+            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- ─── TÓPICO 3 ─── -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 hover:bg-dark-700 transition-all text-left" onclick="toggleTopic('t3')">
+<span class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm flex-shrink-0">3</span>
+<div>
+<span class="text-base font-semibold text-neutral-100">Los agents no llaman a otros agents</span>
+<p class="text-sm text-neutral-400 mt-0.5">La regla de oro de la arquitectura con subagentes</p>
+</div>
+<svg class="w-5 h-5 text-neutral-500 ml-auto flex-shrink-0 transition-transform" fill="none" id="icon-t3" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="topic-explanation" id="t3">
+<div class="px-5 pb-6 space-y-5">
+<div class="bg-gradient-to-r from-amber-900/30 to-dark-800 rounded-xl p-4 border border-amber-500/20">
+<h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">Qué es</h3>
+<p class="text-neutral-300 text-sm leading-relaxed">
+              En Claude Code, un subagente no tiene permiso para lanzar otro subagente directamente. Toda delegación
+              pasa por el maestro. Esto no es una limitación: es un diseño intencional para garantizar la trazabilidad,
+              el control de costos y la visibilidad del flujo.
+            </p>
+</div>
+<div class="bg-red-900/20 border border-red-500/30 rounded-xl p-4">
+<p class="text-xs font-semibold text-red-400 uppercase mb-2">⛔ Patrón prohibido</p>
+<pre class="text-xs text-red-300 font-mono leading-relaxed overflow-x-auto"><code># ❌ NÃO funciona assim
+Agent A → lança Agent B internamente
+Agent B → lança Agent C internamente
+
+# ✓ Como funciona de fato
+Maestro → Agent A → retorna resultado
+Maestro → Agent B (com output de A) → retorna resultado
+Maestro → Agent C (com output de B) → retorna resultado</code></pre>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Por qué aprender</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="bg-dark-700 rounded-xl p-4 border border-red-500/20">
+<p class="text-xs font-semibold text-red-400 uppercase mb-2">✗ Riesgo de ignorarlo</p>
+<ul class="space-y-1 text-sm text-neutral-400">
+<li>• Ciclos infinitos de delegación</li>
+<li>• Costos de API sin límite</li>
+<li>• Trazabilidad nula</li>
+<li>• Difícil de depurar</li>
+</ul>
+</div>
+<div class="bg-dark-700 rounded-xl p-4 border border-amber-500/20">
+<p class="text-xs font-semibold text-amber-400 uppercase mb-2">✓ Beneficio del modelo</p>
+<ul class="space-y-1 text-sm text-neutral-300">
+<li>• El maestro ve todo</li>
+<li>• Costo predecible por etapa</li>
+<li>• Puede abortarse en cualquier punto</li>
+<li>• Registros claros por agente</li>
+</ul>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<p class="text-sm text-neutral-400">
+              La arquitectura es <strong>estrella</strong> (maestro en el centro), no <strong>malla</strong> (todos conectados).
+              Cada subagente es una hoja del árbol — nunca un nodo intermedio con hijos propios.
+            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- ─── TÓPICO 4 ─── -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 hover:bg-dark-700 transition-all text-left" onclick="toggleTopic('t4')">
+<span class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm flex-shrink-0">4</span>
+<div>
+<span class="text-base font-semibold text-neutral-100">Relación 1 a 1 con el maestro</span>
+<p class="text-sm text-neutral-400 mt-0.5">Los subagentes no conversan: solo informan</p>
+</div>
+<svg class="w-5 h-5 text-neutral-500 ml-auto flex-shrink-0 transition-transform" fill="none" id="icon-t4" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="topic-explanation" id="t4">
+<div class="px-5 pb-6 space-y-5">
+<div class="bg-gradient-to-r from-amber-900/30 to-dark-800 rounded-xl p-4 border border-amber-500/20">
+<h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">Qué es</h3>
+<p class="text-neutral-300 text-sm leading-relaxed">
+              Cada subagente tiene exactamente una relación: con el maestro que lo creó. No conoce a otros
+              subagentes, no tiene acceso a su contexto y no puede influir en ellos. Es un especialista
+              contratado para una única misión: entrega el informe y termina.
+            </p>
+</div>
+<!-- Timeline do ciclo de vida -->
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Conceptos clave: ciclo de vida</h3>
+<div class="relative pl-8 space-y-0">
+<div class="absolute left-3 top-4 bottom-4 w-0.5 bg-amber-500/30"></div>
+<div class="relative pb-4">
+<div class="absolute left-[-20px] w-4 h-4 rounded-full bg-amber-500/40 border border-amber-500/60 flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+</div>
+<p class="text-sm font-medium text-neutral-200">Maestro arma el prompt</p>
+<p class="text-xs text-neutral-500 mt-0.5">Incluye el contexto necesario + la salida de la etapa anterior</p>
+</div>
+<div class="relative pb-4">
+<div class="absolute left-[-20px] w-4 h-4 rounded-full bg-amber-500/40 border border-amber-500/60 flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+</div>
+<p class="text-sm font-medium text-neutral-200">El subagente abre una ventana propia</p>
+<p class="text-xs text-neutral-500 mt-0.5">Contexto vacío: solo ve lo que envió el maestro</p>
+</div>
+<div class="relative pb-4">
+<div class="absolute left-[-20px] w-4 h-4 rounded-full bg-amber-500/40 border border-amber-500/60 flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+</div>
+<p class="text-sm font-medium text-neutral-200">Ejecuta la tarea</p>
+<p class="text-xs text-neutral-500 mt-0.5">Puede usar herramientas, leer archivos y llamar APIs</p>
+</div>
+<div class="relative pb-4">
+<div class="absolute left-[-20px] w-4 h-4 rounded-full bg-amber-500/40 border border-amber-500/60 flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+</div>
+<p class="text-sm font-medium text-neutral-200">Devuelve el resultado al maestro</p>
+<p class="text-xs text-neutral-500 mt-0.5">Texto limpio — informe único, sin conversación</p>
+</div>
+<div class="relative">
+<div class="absolute left-[-20px] w-4 h-4 rounded-full bg-amber-400 flex items-center justify-center">
+<div class="w-1.5 h-1.5 rounded-full bg-dark-900"></div>
+</div>
+<p class="text-sm font-medium text-amber-400">La ventana se cierra: se libera el contexto</p>
+<p class="text-xs text-neutral-500 mt-0.5">No existe un "después" para el subagente</p>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-2">Por qué aprender</h3>
+<p class="text-sm text-neutral-400">
+              Entender la relación 1 a 1 evita intentar "hacer que los agentes colaboren directamente", lo que
+              falla silenciosamente, sin un error explícito.
+            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- ─── TÓPICO 5 ─── -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 hover:bg-dark-700 transition-all text-left" onclick="toggleTopic('t5')">
+<span class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm flex-shrink-0">5</span>
+<div>
+<span class="text-base font-semibold text-neutral-100">¿Necesita una secuencia? Maestro decide</span>
+<p class="text-sm text-neutral-400 mt-0.5">Cuándo encadenar y cuándo paralelizar</p>
+</div>
+<svg class="w-5 h-5 text-neutral-500 ml-auto flex-shrink-0 transition-transform" fill="none" id="icon-t5" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="topic-explanation" id="t5">
+<div class="px-5 pb-6 space-y-5">
+<div class="bg-gradient-to-r from-amber-900/30 to-dark-800 rounded-xl p-4 border border-amber-500/20">
+<h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">Qué es</h3>
+<p class="text-neutral-300 text-sm leading-relaxed">
+              La decisión de secuenciar es del maestro, no de los agentes. El maestro evalúa: «¿B depende del output
+              de A?» Si es así, es una cadena. Si no, puede ser en paralelo. Esta decisión determina la latencia vs. el costo.
+            </p>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="bg-dark-700 rounded-xl p-4 border border-amber-500/20">
+<p class="text-xs font-semibold text-amber-400 uppercase mb-2">🔗 Encadena cuando:</p>
+<ul class="space-y-1.5 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-amber-400">→</span> B usa el resultado de A</li>
+<li class="flex items-start gap-2"><span class="text-amber-400">→</span> El orden importa para la calidad</li>
+<li class="flex items-start gap-2"><span class="text-amber-400">→</span> Precisión &gt; velocidad</li>
+<li class="flex items-start gap-2"><span class="text-amber-400">→</span> Revisión incremental del resultado</li>
+</ul>
+</div>
+<div class="bg-dark-700 rounded-xl p-4 border border-blue-500/20">
+<p class="text-xs font-semibold text-blue-400 uppercase mb-2">⚡ Paraleliza cuando:</p>
+<ul class="space-y-1.5 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400">→</span> Las tareas son independientes</li>
+<li class="flex items-start gap-2"><span class="text-blue-400">→</span> Velocidad &gt; precisión</li>
+<li class="flex items-start gap-2"><span class="text-blue-400">→</span> Fan-out para recopilar datos</li>
+<li class="flex items-start gap-2"><span class="text-blue-400">→</span> N versiones para comparar después</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-4">
+<p class="text-xs font-semibold text-amber-400 uppercase mb-1">💡 Regla general</p>
+<p class="text-sm text-neutral-300">
+              Si puedes describir la tarea como "investiga <em>y después</em> redacta <em>y después</em> revise",
+              es una cadena. Si es "investigue <em>y al mismo tiempo</em> recopilar ejemplos", es paralelo.
+            </p>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-2">Por qué aprender</h3>
+<p class="text-sm text-neutral-400">
+              Encadenar cuando podrías paralelizar desperdicia latencia. Paralelizar cuando hay dependencias
+              produce resultados incorrectos. Saber distinguirlo es la habilidad central de la orquestación.
+            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- ─── TÓPICO 6 ─── -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 hover:bg-dark-700 transition-all text-left" onclick="toggleTopic('t6')">
+<span class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm flex-shrink-0">6</span>
+<div>
+<span class="text-base font-semibold text-neutral-100">Skill que activa subagentes</span>
+<p class="text-sm text-neutral-400 mt-0.5">El patrón "skill como maestro de la cadena"</p>
+</div>
+<svg class="w-5 h-5 text-neutral-500 ml-auto flex-shrink-0 transition-transform" fill="none" id="icon-t6" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="topic-explanation" id="t6">
+<div class="px-5 pb-6 space-y-5">
+<div class="bg-gradient-to-r from-amber-900/30 to-dark-800 rounded-xl p-4 border border-amber-500/20">
+<h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">Qué es</h3>
+<p class="text-neutral-300 text-sm leading-relaxed">
+              Una skill puede contener instrucciones que guían al maestro para lanzar subagentes en secuencia.
+              La skill no ejecuta nada: se carga en el contexto del maestro y guía cada llamada a
+              <code class="text-amber-300 text-xs bg-dark-700 px-1 rounded">Agent</code> tool.
+            </p>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Conceptos clave</h3>
+<div class="space-y-2">
+<div class="flex items-start gap-3 p-3 bg-dark-700 rounded-lg">
+<span class="text-amber-400 font-bold text-sm mt-0.5 flex-shrink-0">1</span>
+<div>
+<span class="text-sm font-medium text-neutral-200">La skill define el guion</span>
+<p class="text-xs text-neutral-400 mt-0.5">Enumera las etapas, lo que recibe cada agente y lo que debe devolver.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 bg-dark-700 rounded-lg">
+<span class="text-amber-400 font-bold text-sm mt-0.5 flex-shrink-0">2</span>
+<div>
+<span class="text-sm font-medium text-neutral-200">Maestro ejecuta el guion</span>
+<p class="text-xs text-neutral-400 mt-0.5">Lanza el Agent A, captura el output, prepara el prompt para el Agent B, y así sucesivamente.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 bg-dark-700 rounded-lg">
+<span class="text-amber-400 font-bold text-sm mt-0.5 flex-shrink-0">3</span>
+<div>
+<span class="text-sm font-medium text-neutral-200">La skill es reutilizable</span>
+<p class="text-xs text-neutral-400 mt-0.5">El mismo flujo puede invocarse en cualquier proyecto sin reescribirlo.</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-2">Por qué aprender</h3>
+<p class="text-sm text-neutral-400">
+              Poner la lógica de la cadena en una skill hace que el proyecto sea auditable, versionable y portable.
+              Sin este patrón, la orquestación queda dispersa en prompts ad hoc imposibles de mantener.
+            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- ─── TÓPICO 7 ─── -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 overflow-hidden">
+<button class="w-full flex items-center justify-start gap-4 p-5 hover:bg-dark-700 transition-all text-left" onclick="toggleTopic('t7')">
+<span class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm flex-shrink-0">7</span>
+<div>
+<span class="text-base font-semibold text-neutral-100">Escala → workflow</span>
+<p class="text-sm text-neutral-400 mt-0.5">Cuando la cadena crece más de lo que el maestro puede manejar</p>
+</div>
+<svg class="w-5 h-5 text-neutral-500 ml-auto flex-shrink-0 transition-transform" fill="none" id="icon-t7" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="topic-explanation" id="t7">
+<div class="px-5 pb-6 space-y-5">
+<div class="bg-gradient-to-r from-amber-900/30 to-dark-800 rounded-xl p-4 border border-amber-500/20">
+<h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">Qué es</h3>
+<p class="text-neutral-300 text-sm leading-relaxed">
+              Una cadena de 3-5 agentes funciona bien con un maestro humano. Por encima de eso, los outputs acumulados
+              inflan el contexto y aumentan el costo de cada etapa. El siguiente paso natural es migrar a un
+              <strong>workflow</strong>: herramientas como n8n, LangGraph o scripts de Python que coordinan
+              las llamadas a agentes fuera del contexto del LLM.
+            </p>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Conceptos clave: señales de que es hora de escalar</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="bg-dark-700 rounded-xl p-4 border border-red-500/20">
+<p class="text-xs font-semibold text-red-400 uppercase mb-2">⚠ Señales de alerta</p>
+<ul class="space-y-1.5 text-sm text-neutral-400">
+<li class="flex items-start gap-2"><span class="text-red-400">!</span> Cadena con &gt;6 etapas</li>
+<li class="flex items-start gap-2"><span class="text-red-400">!</span> El output de A apenas cabe en el prompt de B</li>
+<li class="flex items-start gap-2"><span class="text-red-400">!</span> Necesita reintentos por etapa</li>
+<li class="flex items-start gap-2"><span class="text-red-400">!</span> Costo total imprevisible</li>
+</ul>
+</div>
+<div class="bg-dark-700 rounded-xl p-4 border border-amber-500/20">
+<p class="text-xs font-semibold text-amber-400 uppercase mb-2">✓ Solución: workflow</p>
+<ul class="space-y-1.5 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-amber-400">→</span> n8n coordina mediante JSON/HTTP</li>
+<li class="flex items-start gap-2"><span class="text-amber-400">→</span> El estado persiste entre etapas</li>
+<li class="flex items-start gap-2"><span class="text-amber-400">→</span> Reintento sin volver a ejecutar todo</li>
+<li class="flex items-start gap-2"><span class="text-amber-400">→</span> Logs por nodo, no por token</li>
+</ul>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-2">Por qué aprender</h3>
+<p class="text-sm text-neutral-400">
+              Saber <em>cuándo parar</em> de usar el maestro conversacional y migrar a un workflow es la
+              diferencia entre un pipeline que funciona en producción y uno que colapsa en la tercera semana.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</div><!-- fim tópicos -->
+<!-- ═══════════════════════════════════ EXEMPLO REAL ═══════════════════════════════════ -->
+<div class="max-w-6xl mx-auto px-4 py-8">
+<div class="bg-dark-800 rounded-2xl border border-dark-600 p-6">
+<h2 class="text-xl font-bold text-neutral-100 mb-1">Ejemplo real</h2>
+<p class="text-sm text-neutral-500 mb-5">Skill que orquesta subagentes en cadena: investigación → borrador → revisión</p>
+<div class="bg-dark-900 rounded-xl p-4 border border-dark-600 font-mono text-xs overflow-x-auto">
+<div class="flex items-center gap-2 mb-3 pb-2 border-b border-dark-700">
+<span class="w-3 h-3 rounded-full bg-red-500/60"></span>
+<span class="w-3 h-3 rounded-full bg-amber-500/60"></span>
+<span class="w-3 h-3 rounded-full bg-emerald-500/60"></span>
+<span class="text-neutral-500 text-xs ml-2">.claude/skills/pipeline-pesquisa.md</span>
+</div>
+<pre class="text-neutral-300 leading-relaxed whitespace-pre overflow-x-auto"><code># pipeline-pesquisa
+
+Orquestra 3 subagentes em cadeia para produzir um artigo pesquisado e revisado.
+
+## Quando usar
+Quando o usuário pedir "pesquise X e escreva um artigo" com qualidade alta.
+
+## Etapas
+
+### ETAPA 1 — Pesquisa (web-research-assistant)
+Lançar um subagente `web-research-assistant` com o prompt:
+
+```
+Pesquise profundamente sobre: {TEMA}
+Retorne:
+- 5 fatos verificados com fonte
+- 3 perspectivas contraditórias
+- 1 dado quantitativo recente
+Formato: markdown estruturado, máx. 400 palavras.
+```
+
+Capture o output como `PESQUISA`.
+
+### ETAPA 2 — Rascunho (general-purpose)
+Com `PESQUISA` em mãos, lançar `general-purpose`:
+
+```
+Com base nas pesquisas abaixo, escreva um artigo de 600 palavras sobre {TEMA}.
+Tom: educativo, direto, sem jargão.
+Use os fatos como base; cite as perspectivas contraditórias.
+
+--- PESQUISA ---
+{PESQUISA}
+```
+
+Capture como `RASCUNHO`.
+
+### ETAPA 3 — Revisão (general-purpose)
+Lançar `general-purpose` com o rascunho:
+
+```
+Revise o artigo abaixo para:
+1. Precisão factual (corrija erros vs. pesquisa fornecida)
+2. Clareza e fluidez
+3. Tamanho: mantenha 500-650 palavras
+Retorne APENAS o artigo final, sem comentários.
+
+--- RASCUNHO ---
+{RASCUNHO}
+--- PESQUISA ORIGINAL ---
+{PESQUISA}
+```
+
+## Output
+Retorne ao usuário o artigo revisado com o cabeçalho:
+`## Artigo: {TEMA} (pesquisado + revisado)`
+
+## Regras
+- Maestro NÃO encurta as etapas
+- Se ETAPA 1 falhar, abortar com mensagem clara
+- Agentes não se comunicam diretamente
+</code></pre>
+</div>
+<div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div class="bg-amber-900/20 border border-amber-500/20 rounded-lg p-3">
+<p class="text-xs font-semibold text-amber-400 mb-1">Etapa 1</p>
+<p class="text-xs text-neutral-400">web-research-assistant recopila hechos con fuentes</p>
+</div>
+<div class="bg-amber-900/20 border border-amber-500/20 rounded-lg p-3">
+<p class="text-xs font-semibold text-amber-400 mb-1">Etapa 2</p>
+<p class="text-xs text-neutral-400">general-purpose transforma la investigación en un borrador</p>
+</div>
+<div class="bg-amber-900/20 border border-amber-500/20 rounded-lg p-3">
+<p class="text-xs font-semibold text-amber-400 mb-1">Etapa 3</p>
+<p class="text-xs text-neutral-400">general-purpose revisa y entrega el artículo final</p>
+</div>
+</div>
+</div>
+</div>
+<!-- ═══════════════════════════════════ PROMPTS PRONTOS ═══════════════════════════════════ -->
+<div class="max-w-6xl mx-auto px-4 py-4 pb-8">
+<div class="bg-dark-800 rounded-2xl border border-dark-600 p-6">
+<h2 class="text-xl font-bold text-neutral-100 mb-1">Prompts listos</h2>
+<p class="text-sm text-neutral-500 mb-5">Copia y adapta: cada prompt activa una cadena de subagentes</p>
+<div class="space-y-4">
+<div class="bg-dark-900 rounded-xl border border-dark-600 overflow-hidden">
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700 border-b border-dark-600">
+<span class="text-xs font-semibold text-amber-400">Cadena: investigación → borrador → revisión</span>
+</div>
+<pre class="p-4 text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Use a skill pipeline-pesquisa. Tema: "impacto dos LLMs no mercado de trabalho".
+Encadeie: [1] web-research-assistant para coletar 5 fatos recentes com fonte,
+[2] general-purpose para rascunhar artigo de 600 palavras,
+[3] general-purpose para revisar precisão e fluência.
+Retorne apenas o artigo final.</code></pre>
+</div>
+<div class="bg-dark-900 rounded-xl border border-dark-600 overflow-hidden">
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700 border-b border-dark-600">
+<span class="text-xs font-semibold text-amber-400">Cadena: análisis de código → refactorización → prueba</span>
+</div>
+<pre class="p-4 text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Encadeie 3 subagentes:
+1. Explore para mapear todos os arquivos em src/ e listar funções com mais de 50 linhas
+2. general-purpose para refatorar as 3 maiores funções encontradas (recebe output do 1)
+3. general-purpose para escrever testes unitários das funções refatoradas (recebe output do 2)
+Cada agente recebe apenas o output do anterior — não o contexto todo.</code></pre>
+</div>
+<div class="bg-dark-900 rounded-xl border border-dark-600 overflow-hidden">
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700 border-b border-dark-600">
+<span class="text-xs font-semibold text-amber-400">Cadena: recopilación → síntesis → publicación</span>
+</div>
+<pre class="p-4 text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Monte uma cadeia de 3 subagentes para processar o relatório em /docs/relatorio.pdf:
+[A] web-research-assistant: pesquise o contexto de mercado do tema do relatório
+[B] general-purpose: sintetize relatório + pesquisa num resumo executivo de 1 página
+[C] general-purpose: formate o resumo em HTML compatível com o design system INEMA
+Passe o output de cada etapa como contexto para a próxima.</code></pre>
+</div>
+</div>
+</div>
+</div>
+<!-- ═══════════════════════════════════ TELA SIMULADA ═══════════════════════════════════ -->
+<div class="max-w-6xl mx-auto px-4 py-4 pb-8">
+<div class="bg-dark-800 rounded-2xl border border-dark-600 p-6">
+<h2 class="text-xl font-bold text-neutral-100 mb-1">Pantalla simulada</h2>
+<p class="text-sm text-neutral-500 mb-5">Maestro orquestando una cadena de 3 subagentes en la terminal</p>
+<svg aria-label="Terminal mostrando al maestro lanzando 3 subagentes en una cadena secuencial" class="w-full h-auto rounded-xl" role="img" viewbox="0 0 860 400">
+<defs>
+<lineargradient id="mon-bg" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#1c1917"></stop>
+<stop offset="100%" stop-color="#111827"></stop>
+</lineargradient>
+</defs>
+<!-- Monitor -->
+<rect fill="url(#mon-bg)" height="400" rx="16" stroke="#374151" stroke-width="1.5" width="860" x="0" y="0"></rect>
+<!-- Barra superior -->
+<rect fill="#1f2937" height="38" rx="16" width="860" x="0" y="0"></rect>
+<rect fill="#1f2937" height="16" width="860" x="0" y="22"></rect>
+<circle cx="22" cy="19" fill="#ef4444" opacity="0.8" r="6"></circle>
+<circle cx="42" cy="19" fill="#f59e0b" opacity="0.8" r="6"></circle>
+<circle cx="62" cy="19" fill="#22c55e" opacity="0.8" r="6"></circle>
+<text fill="#6b7280" font-family="Inter,monospace" font-size="11" text-anchor="middle" x="430" y="24">claude — pipeline-pesquisa</text>
+<!-- Conteúdo terminal -->
+<text fill="#f59e0b" font-family="monospace" font-size="11" x="24" y="62">$</text>
+<text fill="#e5e7eb" font-family="monospace" font-size="11" x="36" y="62">/pipeline-pesquisa "impacto de los LLM en el mercado"</text>
+<!-- Etapa 1 -->
+<rect fill="#292524" height="72" rx="6" stroke="#f59e0b" stroke-opacity="0.3" stroke-width="1" width="828" x="16" y="72"></rect>
+<text fill="#f59e0b" font-family="monospace" font-size="10" x="24" y="91">▶ Etapa 1 — web-research-assistant</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="108">  prompt: "Investiga a fondo: impacto de los LLM..."</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="124">  subagent_type: web-research-assistant | context: aislado</text>
+<text fill="#22c55e" font-family="monospace" font-size="10" x="680" y="108">✓ completado</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="680" y="124">→ 412 tokens de salida</text>
+<!-- Seta -->
+<text fill="#f59e0b" font-family="monospace" font-size="10" x="24" y="158">  └─ output capturado → inyectado en Etapa 2</text>
+<!-- Etapa 2 -->
+<rect fill="#292524" height="72" rx="6" stroke="#f59e0b" stroke-opacity="0.3" stroke-width="1" width="828" x="16" y="164"></rect>
+<text fill="#f59e0b" font-family="monospace" font-size="10" x="24" y="183">▶ Etapa 2 — general-purpose (borrador)</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="200">  prompt: "Con base en las investigaciones a continuación, escribe..."</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="216">  contexto: output de la Etapa 1 incluido | ventana propia</text>
+<text fill="#22c55e" font-family="monospace" font-size="10" x="680" y="200">✓ completado</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="680" y="216">→ 638 palabras</text>
+<!-- Seta -->
+<text fill="#f59e0b" font-family="monospace" font-size="10" x="24" y="250">  └─ borrador capturado → inyectado en Etapa 3</text>
+<!-- Etapa 3 -->
+<rect fill="#292524" height="72" rx="6" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="1" width="828" x="16" y="256"></rect>
+<text fill="#38bdf8" font-family="monospace" font-size="10" x="24" y="275">▶ Etapa 3 — general-purpose (revisión)</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="292">  prompt: "Revisa la precisión factual y la claridad..."</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="308">  contexto: borrador + investigación original | ventana propia</text>
+<text fill="#22c55e" font-family="monospace" font-size="10" x="680" y="292">✓ completado</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="680" y="308">→ 601 palabras</text>
+<!-- Output final -->
+<text fill="#22c55e" font-family="monospace" font-size="10" x="24" y="348">✓ Pipeline completado: 3 etapas | ~2.8k tokens en total</text>
+<text fill="#e5e7eb" font-family="monospace" font-size="10" x="24" y="365">## Artículo: impacto de los LLM en el mercado laboral (investigado + revisado)</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="382">  Los grandes modelos de lenguaje están redefiniendo...</text>
+<!-- cursor -->
+<rect fill="#f59e0b" height="12" opacity="0.8" width="8" x="460" y="374">
+<animate attributename="opacity" dur="1.2s" repeatcount="indefinite" values="0.8;0;0.8"></animate>
+</rect>
+</svg>
+</div>
+</div>
+<!-- ═══════════════════════════════════ EXERCÍCIO ═══════════════════════════════════ -->
+<div class="max-w-6xl mx-auto px-4 py-4 pb-10">
+<div class="bg-dark-800 rounded-2xl border border-amber-500/20 p-6">
+<div class="flex items-start gap-4 mb-5">
+<span class="text-3xl">🎯</span>
+<div>
+<h2 class="text-xl font-bold text-neutral-100">Ejercicio</h2>
+<p class="text-sm text-neutral-500 mt-0.5">Diseña una cadena de 3 etapas para un problema real tuyo</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="bg-dark-700 rounded-xl p-4">
+<h3 class="text-sm font-semibold text-amber-400 mb-2">Tarea</h3>
+<ol class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-amber-400 font-bold flex-shrink-0">1.</span>
+              Elige un problema real de tu trabajo que implique 3 etapas distintas (p. ej., recopilar datos → analizar → redactar un informe).
+            </li>
+<li class="flex items-start gap-2"><span class="text-amber-400 font-bold flex-shrink-0">2.</span>
+              Para cada etapa, define: <strong>nombre del subagente</strong>, <strong>input</strong> (lo que recibe del maestro) y <strong>output</strong> (quien lo devuelve).
+            </li>
+<li class="flex items-start gap-2"><span class="text-amber-400 font-bold flex-shrink-0">3.</span>
+              Escribe el "punto de control" del maestro entre cada etapa: ¿qué valida antes de avanzar?
+            </li>
+<li class="flex items-start gap-2"><span class="text-amber-400 font-bold flex-shrink-0">4.</span>
+              Justifica: ¿por qué cada etapa debe ser secuencial y no paralela?
+            </li>
+</ol>
+</div>
+<div class="bg-dark-700 rounded-xl p-4">
+<h3 class="text-sm font-semibold text-neutral-300 mb-3">Criterio de verificación</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div>
+<p class="text-xs font-semibold text-emerald-400 uppercase mb-2">✓ Cadena bien modelada</p>
+<ul class="space-y-1 text-xs text-neutral-300">
+<li class="flex items-start gap-1.5"><span class="text-emerald-400">✓</span> Cada agente recibe solo lo necesario</li>
+<li class="flex items-start gap-1.5"><span class="text-emerald-400">✓</span> Ningún agente llama a otro directamente</li>
+<li class="flex items-start gap-1.5"><span class="text-emerald-400">✓</span> Maestro tiene un punto de control explícito</li>
+<li class="flex items-start gap-1.5"><span class="text-emerald-400">✓</span> Justificación de una secuencia clara</li>
+</ul>
+</div>
+<div>
+<p class="text-xs font-semibold text-red-400 uppercase mb-2">✗ Señales de problemas</p>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li class="flex items-start gap-1.5"><span class="text-red-400">✗</span> "Agente A le pregunta al Agente B"</li>
+<li class="flex items-start gap-1.5"><span class="text-red-400">✗</span> El input de B no usa el output de A</li>
+<li class="flex items-start gap-1.5"><span class="text-red-400">✗</span> Maestro no valida entre etapas</li>
+<li class="flex items-start gap-1.5"><span class="text-red-400">✗</span> Las etapas podrían ejecutarse en paralelo</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-4">
+<p class="text-xs font-semibold text-amber-400 mb-1">💡 Consejo de autoevaluación</p>
+<p class="text-sm text-neutral-300">
+            Pon a prueba tu modelo con el "¿y si A falla?": si el director puede detectarlo y abortar antes
+            de iniciar B, la cadena está bien diseñada. Si no, falta un punto de control.
+          </p>
+</div>
+</div>
+</div>
+</div>
+<!-- ═══════════════════════════════════ NAV INFERIOR ═══════════════════════════════════ -->
+<div class="max-w-6xl mx-auto px-4 py-6 border-t border-dark-700">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<a class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-dark-800 border border-dark-600 text-sm font-medium text-neutral-300 hover:text-neutral-100 hover:bg-dark-700 transition-all" href="modulo-3-2.html">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+        Anterior: Módulo 3.2
+      </a>
+<div class="text-center">
+<a class="text-sky-400 text-sm hover:underline" href="https://inema.club" target="_blank">
+          INEMA.CLUB
+        </a>
+</div>
+<a class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/20 border border-amber-500/30 text-sm font-medium text-amber-400 hover:bg-amber-500/30 transition-all" href="modulo-3-4.html">
+        Próximo: Módulo 3.4
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+</div>
+</div>
+<!-- ═══════════════════════════════════ JAVASCRIPT ═══════════════════════════════════ -->
+<script>
+    // ─── Theme Toggle ───
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      html.classList.toggle('dark', !isDark);
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+      updateThemeIcons(!isDark);
+    }
+
+    function updateThemeIcons(isDark) {
+      const darkIcon = document.getElementById('theme-toggle-dark-icon');
+      const lightIcon = document.getElementById('theme-toggle-light-icon');
+      if (isDark) {
+        darkIcon.classList.remove('hidden');
+        lightIcon.classList.add('hidden');
+      } else {
+        darkIcon.classList.add('hidden');
+        lightIcon.classList.remove('hidden');
+      }
+    }
+
+    // Inicializar tema
+    (function() {
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = saved ? saved === 'dark' : prefersDark;
+      document.documentElement.classList.toggle('dark', isDark);
+      updateThemeIcons(isDark);
+    })();
+
+    // ─── Topic Toggle ───
+    function toggleTopic(id) {
+      const el = document.getElementById(id);
+      const icon = document.getElementById('icon-' + id);
+      const isActive = el.classList.contains('active');
+
+      // Fechar todos
+      document.querySelectorAll('.topic-explanation').forEach(function(e) {
+        e.classList.remove('active');
+      });
+      document.querySelectorAll('[id^="icon-"]').forEach(function(i) {
+        i.style.transform = '';
+      });
+
+      // Abrir o clicado (se estava fechado)
+      if (!isActive) {
+        el.classList.add('active');
+        icon.style.transform = 'rotate(180deg)';
+      }
+    }
+  </script>
+</body>
+</html>

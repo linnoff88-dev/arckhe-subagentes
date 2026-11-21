@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>El revisor imparcial | Subagentes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha amber T3) */
+    html:not(.dark) .text-amber-400 { color: #92400e; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(146, 64, 14, 0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(146, 64, 14, 0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(146, 64, 14, 0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(146, 64, 14, 0.18); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #92400e; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(146, 64, 14, 0.08); }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(146, 64, 14, 0.08); }
+    html:not(.dark) .bg-amber-900\/30 { background-color: rgba(146, 64, 14, 0.10); }
+    html:not(.dark) .from-amber-900\/30 { --tw-gradient-from: rgba(146, 64, 14, 0.10); }
+
+    /* Light mode - cores de apoio usadas nos boxes (blue dados / red erros / sky) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .border-sky-500\/30 { border-color: rgba(3, 105, 161, 0.25); }
+    html:not(.dark) .bg-sky-900\/20 { background-color: rgba(3, 105, 161, 0.08); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - diagramas SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Animações dos diagramas */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes wf-bar { from { transform: translateX(-6%); } to { transform: translateX(0); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.2s} .wf-a:nth-child(3){animation-delay:.4s}
+      .wf-a:nth-child(4){animation-delay:.6s} .wf-a:nth-child(5){animation-delay:.8s}
+      .barfill { animation: wf-bar 3s ease-in-out infinite alternate; }
+      .barfill.b2{animation-delay:.5s} .barfill.b3{animation-delay:1s}
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha3/modulo-3-4.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha3/modulo-3-4.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha3/modulo-3-4.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-4.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha3/modulo-3-4.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-3-4.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagentes</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentos</span>
+</a>
+<!-- Trilha 2 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">En la práctica</span>
+</a>
+<!-- Trilha 3 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10" href="index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orquestación</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Avanzado</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-amber-400" href="../../index.html">Inicio</a>
+<span>/</span>
+<a class="hover:text-amber-400" href="index.html">Ruta 3</a>
+<span>/</span>
+<span class="text-amber-400">Módulo 3.4</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full mb-4">
+        MÓDULO 3.4 · Ruta 3 · Modelo, costo y orquestación
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">🔍 El revisor imparcial</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        Un subagente que nunca construyó el resultado <strong class="text-amber-400">no tiene sesgo de autoría</strong>.
+        Juzga el producto por lo que es, no por el esfuerzo que costó. Separar a quien construye de quien valida
+        es el <strong class="text-amber-400">el mayor salto de calidad</strong> en sistemas con subagentes.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">7</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">~30</div>
+<div class="text-xs text-neutral-400">Minutos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Medio</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Estándar</div>
+<div class="text-xs text-neutral-400">Tipo</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- ABERTURA + SVG BUILDER × REVIEWER -->
+<section class="mb-12">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Imagina pedirle al mismo ingeniero que escribió el código que lo revise. Él <strong class="text-amber-400">sabe lo que
+        quisiste decir</strong>, entonces lee lo que imaginó escribir, no lo que escribió realmente. Lo mismo ocurre con un LLM:
+        si construyó el resultado en una sesión, carga el razonamiento de esa sesión. Un segundo agente,
+        con <strong class="text-amber-400">contexto fresco</strong>, ve lo que el primero normalizó o ignoró.
+        Ese es el principio del revisor imparcial.
+      </p>
+<!-- SVG: Builder × Reviewer (caixa branca) -->
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 mb-2 overflow-hidden">
+<svg aria-label="El builder construye el resultado en un espacio propio con contexto acumulado. El resultado pasa al reviewer, que empieza con contexto nuevo, evalúa de forma independiente y emite un veredicto." class="w-full h-auto" role="img" viewbox="0 0 1000 260">
+<defs>
+<lineargradient id="m34-grad-amber" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#fbbf24"></stop><stop offset="1" stop-color="#f59e0b"></stop>
+</lineargradient>
+<lineargradient id="m34-grad-cyan" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#38bdf8"></stop><stop offset="1" stop-color="#0ea5e9"></stop>
+</lineargradient>
+<filter height="180%" id="m34-glow-a" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="2.2"></fegaussianblur>
+<femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<filter height="180%" id="m34-glow-c" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="2.2"></fegaussianblur>
+<femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m34-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#fbbf24" opacity="0.10" r="1.3"></circle>
+</pattern>
+<marker id="m34-ah-a" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5">
+<path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fbbf24"></path>
+</marker>
+<marker id="m34-ah-c" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5">
+<path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path>
+</marker>
+<marker id="m34-ah-g" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5">
+<path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#9ca3af"></path>
+</marker>
+</defs>
+<rect fill="url(#m34-grid)" height="260" width="1000" x="0" y="0"></rect>
+<!-- Caixa BUILDER (esquerda) -->
+<g filter="url(#m34-glow-a)">
+<rect fill="#1f1604" height="150" rx="16" stroke="url(#m34-grad-amber)" stroke-width="2" width="280" x="40" y="60"></rect>
+</g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="17" font-weight="700" text-anchor="middle" x="180" y="95">🏗️ Builder</text>
+<text fill="#fde68a" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="180" y="117">contexto acumulado</text>
+<!-- mini-logs dentro do builder -->
+<rect fill="#fbbf24" height="14" opacity="0.12" rx="4" width="232" x="64" y="128"></rect>
+<rect fill="#fbbf24" height="14" opacity="0.10" rx="4" width="186" x="64" y="148"></rect>
+<rect fill="#fbbf24" height="14" opacity="0.08" rx="4" width="210" x="64" y="168"></rect>
+<text fill="#78350f" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="180" y="205">razonamiento acumulado</text>
+<!-- RESULTADO (caixa central) -->
+<rect fill="#26201a" height="60" rx="12" stroke="#9ca3af" stroke-width="1.8" width="220" x="390" y="105"></rect>
+<text fill="#e5e7eb" font-family="Inter,sans-serif" font-size="14" font-weight="600" text-anchor="middle" x="500" y="132">Resultado</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="500" y="151">código / plan / investigación</text>
+<!-- Caixa REVIEWER (direita) -->
+<g filter="url(#m34-glow-c)">
+<rect fill="#0e1b26" height="150" rx="16" stroke="url(#m34-grad-cyan)" stroke-width="2" width="280" x="680" y="60"></rect>
+</g>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="17" font-weight="700" text-anchor="middle" x="820" y="95">🔍 Reviewer</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="820" y="117">contexto fresco</text>
+<!-- badge fresh -->
+<rect fill="#38bdf8" height="22" opacity="0.15" rx="8" width="108" x="766" y="128"></rect>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="820" y="143">sin sesgo de autoría</text>
+<text fill="#0ea5e9" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="820" y="175">↓ veredicto objetivo</text>
+<!-- Seta builder → resultado -->
+<path d="M320,135 L390,135" fill="none" marker-end="url(#m34-ah-a)" opacity="0.6" stroke="#fbbf24" stroke-width="2"></path>
+<!-- Seta resultado → reviewer -->
+<path d="M610,135 L680,135" fill="none" marker-end="url(#m34-ah-c)" opacity="0.6" stroke="#38bdf8" stroke-width="2"></path>
+<!-- Labels de contexto -->
+<text fill="#92400e" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="180" y="240">sesgo: "funciona, sé cómo"</text>
+<text fill="#0369a1" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="820" y="240">visión: "¿esto realmente funciona?"</text>
+</svg>
+</div>
+<p class="text-xs text-neutral-500 mb-0">↑ Builder acumula contexto (y sesgo). Reviewer empieza desde cero: evalúa el producto, no el esfuerzo.</p>
+</section>
+<!-- DIVISOR -->
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+<!-- TÓPICO 1 — Contexto fresco = sem viés -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">🧠 Contexto fresco = sin sesgo</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Un agente que construyó algo <strong class="text-amber-400">internalizó el razonamiento</strong> que llevó al resultado.
+        Cuando le pedimos que lo revise, no lee el resultado con ojos nuevos: lo lee con los ojos de quien ya conoce
+        la intención. Las brechas quedan invisibles porque fueron <strong class="text-amber-400">completados mentalmente</strong> durante la
+        construcción. Un segundo agente no tiene ese contexto: solo ve el artefacto final.
+      </p>
+<!-- Box conceito principal -->
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-4 flex items-center">
+<span class="mr-2">💡</span> El efecto del "conocimiento maldito"
+        </h3>
+<p class="text-neutral-300 mb-4">
+          En psicología cognitiva, el <em>curse of knowledge</em> es la dificultad de imaginar que no sabes algo que tú
+          ya sabes. Un builder con mucha información acumulada sufre precisamente eso: ya no puede ver
+          el resultado como lo vería alguien ajeno. El revisor, que empieza desde cero, es esa persona ajena.
+        </p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>Builder</strong> — conoce el camino; puede que no vea que la llegada es confusa.</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>Reviewer</strong> — solo ve la llegada; informa lo que falta sin excusas.</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>Contexto fresco</strong> — la propiedad más valiosa del revisor. No intentes pasarle contexto extra antes.</span></li>
+</ul>
+</div>
+<!-- Grid ✓/✗ -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-amber-900/20 rounded-xl border border-amber-500/30 p-6">
+<h4 class="font-bold text-amber-400 mb-4">✓ Revisor eficaz</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-amber-400">✓</span><span>Recibe solo el artefacto final</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400">✓</span><span>No sabe cómo llegó el builder a ese resultado</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400">✓</span><span>Aplica criterios explícitos de calidad</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400">✓</span><span>Reporta las fallas sin "dar el beneficio de la duda"</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Antipatrón</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Pedirle al builder que "vuelva a leer lo que hizo"</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Darle al revisor todo el historial de la conversación</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Pedir una revisión en el mismo turno que la construcción</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Indicar al revisor que «entienda el contexto primero»</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm inline"> La propiedad de iniciar una evaluación sin el razonamiento que produjo el artefacto evaluado, eliminando el sesgo de autoría.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm inline"> Sin entender este principio, el desarrollador intenta ahorrar llamadas usando el mismo agente para construir y revisar, y obtiene lo peor de ambos mundos.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm inline"> sesgo de autoría · curse of knowledge · contexto como activo (y como pasivo) · separación de funciones.</p></div>
+</div>
+</section>
+<!-- TÓPICO 2 — Julga o resultado, não o processo -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">⚖️ Juzga el resultado, no el proceso</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El revisor no sabe — y <strong class="text-amber-400">no necesita saber</strong> — cuántas iteraciones hizo el builder,
+        qué alternativas consideró o qué presión de tiempo había. Recibe el artefacto y aplica criterios objetivos:
+        <em>¿el código compila? ¿Pasan las pruebas? ¿El plan tiene premisas verificables?</em> Esto elimina el
+        <strong class="text-amber-400">efecto esfuerzo</strong>: la tendencia a juzgar un resultado como bueno porque el proceso
+        fue laborioso.
+      </p>
+<!-- Timeline: fluxo correto -->
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold text-sm">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">Builder entrega el artefacto</h4>
+<p class="text-sm text-neutral-400">Código, plan, resumen de investigación: cualquier salida que pueda evaluarse.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold text-sm">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">El revisor recibe solo el artefacto + los criterios</h4>
+<p class="text-sm text-neutral-400">Sin historial ni "contexto del porqué". Solo: "evalúa esto con estos criterios".</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold text-sm">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">Veredicto separado del esfuerzo</h4>
+<p class="text-sm text-neutral-400">El revisor no sabe si el builder sufrió. Eso es una <strong class="text-amber-400">feature</strong>, no un bug.</p>
+</div>
+</div>
+</div>
+<!-- Box dados -->
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> El efecto práctico</h3>
+<p class="text-neutral-300 mb-3">En las revisiones de código humanas, los estudios muestran que quienes saben "cuántas horas" se dedicaron tienden a aprobar código con más errores: el esfuerzo percibido infla la evaluación. Separar al builder del reviewer elimina esa variable.</p>
+<p class="text-neutral-300 text-sm">Para los LLM, el efecto es aún más directo: un modelo que construyó algo en 50 turnos de razonamiento tiene un sesgo de consistencia interna: tiende a validar lo que produjo.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm inline"> La regla de oro del revisor: evaluar el artefacto por sus méritos, independientemente del proceso que lo generó.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm inline"> Sin esta claridad, los criterios de revisión se mezclan con la historia de cómo se hizo y el veredicto pierde objetividad.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm inline"> efecto esfuerzo · criterios explícitos · veredicto orientado al artefacto · separación entre proceso y producto.</p></div>
+</div>
+</section>
+<!-- TÓPICO 3 — Quem constrói escreve, quem valida verifica -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">✍️ Quien construye escribe, quien valida verifica</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Este es el principio de los <strong class="text-amber-400">cuatro ojos</strong> trasladado a subagentes. El builder tiene
+        permiso para escribir, crear y modificar. El revisor tiene permiso para leer, analizar e informar —
+        <strong class="text-amber-400">nunca editar directamente</strong>. Esa separación de herramientas en el frontmatter
+        del agente es lo que garantiza que el revisor no "corrija mientras revisa" y oculte los problemas encontrados.
+      </p>
+<!-- 4 mini-cards de ferramentas -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center">
+<div class="text-xl mb-1">🏗️</div>
+<div class="text-sm font-semibold text-amber-400">Builder</div>
+<div class="text-xs text-neutral-400 mt-1">Read · Edit · Write · Bash</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center">
+<div class="text-xl mb-1">🔍</div>
+<div class="text-sm font-semibold text-sky-400">Reviewer</div>
+<div class="text-xs text-neutral-400 mt-1">Read · Grep · Glob</div>
+</div>
+<div class="bg-red-900/20 rounded-lg p-4 border border-red-500/30 text-center">
+<div class="text-xl mb-1">🚫</div>
+<div class="text-sm font-semibold text-red-400">No mezcles</div>
+<div class="text-xs text-neutral-400 mt-1">Edit en el revisor</div>
+</div>
+<div class="bg-amber-900/20 rounded-lg p-4 border border-amber-500/30 text-center">
+<div class="text-xl mb-1">📋</div>
+<div class="text-sm font-semibold text-amber-400">Salida</div>
+<div class="text-xs text-neutral-400 mt-1">informe, nunca un diff</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Por qué bloquear Edit en el revisor</h3>
+<p class="text-neutral-300">Si el revisor puede editar, tiende a "resolver mientras revisa": el problema desaparece del informe final, pero nadie revisó la solución introducida. La separación tools=Read obliga al revisor a informar; quien decide si corregir y cómo hacerlo es el orquestador.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm inline"> La división formal de permisos de herramientas entre el agente que produce y el agente que evalúa.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm inline"> Las herramientas del frontmatter son la única barrera confiable; no lo son las instrucciones de texto, que el modelo puede ignorar bajo presión.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm inline"> principio de los cuatro ojos · tools=Read · informe vs. diff · separación de permisos.</p></div>
+</div>
+</section>
+<!-- TÓPICO 4 — Aplicar a código -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">💻 Aplicar al código</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        O <strong class="text-amber-400">code-reviewer</strong> es el caso más claro. El agente builder escribe el diff;
+        el code-reviewer recibe el diff y aplica criterios de corrección, seguridad y cobertura de pruebas,
+        sin saber cuántas versiones descartó el builder. La salida es un <strong class="text-amber-400">informe de hallazgos</strong>,
+        no una reescritura.
+      </p>
+<!-- Box dica prática -->
+<div class="bg-amber-900/20 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">⚡</span> Qué revisa el code-reviewer</h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="bg-dark-800/60 rounded-lg p-4">
+<div class="text-sm font-semibold text-amber-400 mb-2">Corrección</div>
+<ul class="text-xs text-neutral-400 space-y-1">
+<li>• errores lógicos</li>
+<li>• casos límite ignorados</li>
+<li>• falta el manejo de errores</li>
+</ul>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-4">
+<div class="text-sm font-semibold text-amber-400 mb-2">Seguridad</div>
+<ul class="text-xs text-neutral-400 space-y-1">
+<li>• entradas sin sanitizar</li>
+<li>• secrets en el código</li>
+<li>• Inyección SQL/de comandos</li>
+</ul>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-4">
+<div class="text-sm font-semibold text-amber-400 mb-2">Pruebas</div>
+<ul class="text-xs text-neutral-400 space-y-1">
+<li>• cobertura del happy path</li>
+<li>• pruebas de casos negativos</li>
+<li>• mocks ausentes</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm inline"> Usar un agente revisor especializado para evaluar código producido por otro agente, con criterios de calidad explícitos.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm inline"> El código generado por LLM tiene patrones de error específicos (manejo silencioso de excepciones, mocks que nunca fallan) que el mismo modelo tiende a repetir y no detectar en su propia producción.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm inline"> code-reviewer · diff como entrada · informe de hallazgos · criterios de corrección / seguridad / pruebas.</p></div>
+</div>
+</section>
+<!-- TÓPICO 5 — Aplicar a plano (plan-roaster) -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">📋 Aplicar a un plan: el plan-roaster</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Un plan de implementación tiene un problema distinto al del código: es <strong class="text-amber-400">internamente coherente
+        por construcción</strong>. Quien planificó eliminó las contradicciones del proceso, pero puede haber introducido premisas falsas
+        o dejado preguntas sin respuesta. El <strong class="text-amber-400">plan-roaster</strong> es un revisor que recibe el plan
+        y hace exactamente las preguntas incómodas que el autor no quiso hacerse.
+      </p>
+<!-- Grid de perguntas do plan-roaster -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-lg mb-2">🎯</div>
+<h4 class="font-semibold text-amber-400 mb-2">¿Supuestos explícitos?</h4>
+<p class="text-neutral-300 text-sm">"Este plan supone que X está disponible. Si no lo está, la fase 2 falla."</p>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-lg mb-2">⏱️</div>
+<h4 class="font-semibold text-amber-400 mb-2">¿Estimaciones verificables?</h4>
+<p class="text-neutral-300 text-sm">"'2 días' para migrar la base de datos: ¿con base en qué? ¿Tamaño de la tabla? ¿Tiempo de inactividad tolerado?"</p>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-lg mb-2">🚨</div>
+<h4 class="font-semibold text-amber-400 mb-2">¿Riesgos sin mitigación?</h4>
+<p class="text-neutral-300 text-sm">"La task 3 depende de la task 7, pero la task 7 tiene una dependencia externa no controlada."</p>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-dark-600">
+<div class="text-lg mb-2">🔄</div>
+<h4 class="font-semibold text-amber-400 mb-2">¿Rollback definido?</h4>
+<p class="text-neutral-300 text-sm">"Si la fase 2 falla a la mitad, ¿hay forma de revertirlo sin afectar producción?"</p>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm inline"> Un agente revisor especializado en cuestionar planes, no en aprobarlos — su función es encontrar lagunas antes de que se conviertan en problemas de ejecución.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm inline"> Los planes generados por LLM son fluidos y coherentes en la forma, lo que oculta supuestos. Un revisor externo obliga a explicitar esos supuestos.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm inline"> plan-roaster · premisas ocultas · preguntas incómodas · coherencia interna vs. corrección externa.</p></div>
+</div>
+</section>
+<!-- TÓPICO 6 — Aplicar a pesquisa -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">🔬 Aplicar la investigación</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        La investigación hecha por un subagente presenta <strong class="text-amber-400">sesgo de confirmación acelerado</strong>: el agente
+        busca fuentes y, a medida que acumula evidencia, tiende a reforzar la hipótesis que surgió al principio. Un revisor de investigación
+        no cuestiona si el texto es bonito; cuestiona si las <strong class="text-amber-400">las afirmaciones son verificables</strong>
+        y si hay contradicciones en las fuentes que el builder pudo haber minimizado.
+      </p>
+<!-- 3 critérios de revisão de pesquisa -->
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-sm">A</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">¿Las afirmaciones tienen fuentes?</h4>
+<p class="text-sm text-neutral-400">Cada afirmación debe poder rastrearse. «Los LLM alcanzan un 95% de precisión» — ¿en qué benchmark y en qué fecha?</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-sm">B</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">¿Se suprimieron las contradicciones?</h4>
+<p class="text-sm text-neutral-400">¿Hay fuentes que contradigan la conclusión? ¿El resumen las menciona o las ignoró?</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-sm">C</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-5 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">¿El alcance es correcto?</h4>
+<p class="text-sm text-neutral-400">¿La investigación responde a la pregunta original o deriva hacia un tema relacionado, pero diferente?</p>
+</div>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm inline"> Revisión de investigación centrada en la verificabilidad, la cobertura de contradicciones y la adecuación al alcance; no en el estilo ni la fluidez.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm inline"> La investigación de un subagente resulta persuasiva por la calidad del texto; solo un revisor con criterios objetivos detecta cuándo la persuasión está encubriendo lagunas factuales.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm inline"> sesgo de confirmación · verificabilidad de las afirmaciones · contradicciones suprimidas · adherencia al alcance.</p></div>
+</div>
+</section>
+<!-- TÓPICO 7 — O maior unlock de qualidade -->
+<section class="mb-16" id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">7</span>
+<h2 class="text-2xl font-bold">🚀 El mayor impulso de calidad</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Agregar un revisor imparcial al final de cualquier pipeline de subagentes es la <strong class="text-amber-400">cambio de mayor
+        impacto por menor costo</strong>. Un agente Haiku como revisor, que cuesta una fracción de lo que cuesta el builder, puede detectar errores que
+        el modelo más caro no detectaría en sí mismo. La asimetría es enorme: revisar cuesta menos que construir,
+        pero tiene <strong class="text-amber-400">valor de seguro sobre todo el trabajo anterior</strong>.
+      </p>
+<!-- Box alerta/destaque -->
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center"><span class="mr-2">⚡</span> La ecuación del revisor</h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+<div class="bg-dark-800/60 rounded-lg p-4">
+<div class="text-2xl font-bold text-amber-400 mb-1">10%</div>
+<div class="text-xs text-neutral-400">del costo del builder</div>
+</div>
+<div class="flex items-center justify-center text-amber-400 text-2xl">→</div>
+<div class="bg-dark-800/60 rounded-lg p-4">
+<div class="text-2xl font-bold text-sky-400 mb-1">100%</div>
+<div class="text-xs text-neutral-400">del resultado revisado</div>
+</div>
+</div>
+<p class="text-neutral-300 text-sm mt-4">Un revisor Haiku sobre un pipeline Opus revisa todo por unos centavos. Si detecta un solo bug crítico o una premisa falsa en un plan, ya pagó todo el curso.</p>
+</div>
+<!-- Grid de quando usar revisor -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-amber-900/20 rounded-xl border border-amber-500/30 p-6">
+<h4 class="font-bold text-amber-400 mb-4">✓ Revisa siempre cuando</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-amber-400">✓</span><span>El resultado pasa a producción</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400">✓</span><span>El plan implica decisiones irreversibles</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400">✓</span><span>La investigación servirá de base para una decisión estratégica</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400">✓</span><span>El pipeline tiene más de 2 subagentes</span></li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-bold text-neutral-400 mb-4">○ Opcional cuando</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-neutral-400">○</span><span>Es un borrador desechable</span></li>
+<li class="flex items-start space-x-2"><span class="text-neutral-400">○</span><span>De todos modos, lo revisarás manualmente</span></li>
+<li class="flex items-start space-x-2"><span class="text-neutral-400">○</span><span>La salida es solo para referencia interna</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span><p class="text-neutral-300 text-sm inline"> El patrón de añadir sistemáticamente un revisor de bajo costo al final de los pipelines para detectar fallas antes de la entrega.</p></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span><p class="text-neutral-300 text-sm inline"> Es el cambio con mayor ROI en cualquier sistema de subagentes: detecta errores que quien lo construyó nunca encontraría por su cuenta, por una fracción del costo.</p></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span><p class="text-neutral-300 text-sm inline"> asimetría costo/valor · revisor de bajo costo · valor del seguro · estándar de calidad sistémica.</p></div>
+</div>
+</section>
+<!-- BLOCO: EXEMPLO REAL (.md comentado) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">📄</span>
+<h2 class="text-2xl font-bold">Ejemplo real: code-reviewer y plan-roaster</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Dos archivos <code class="text-amber-400">.md</code> que implementan el patrón del revisor imparcial.
+        Observa cómo ambos usan <strong class="text-amber-400">tools: Read, Grep, Glob</strong> — sin permiso de escritura —
+        e instruyen explícitamente a <strong class="text-amber-400">informar, no corregir</strong>.
+      </p>
+<div class="space-y-6">
+<!-- code-reviewer.md -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/code-reviewer.md</span>
+<span class="text-xs text-amber-400">revisor de código</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">---</span>
+<span class="text-amber-400">name</span>: code-reviewer
+<span class="text-amber-400">description</span>: Revisa o diff atual em busca de bugs,
+  falhas de segurança e testes ausentes. Use após
+  qualquer mudança de código — especialmente antes
+  de commitar.
+<span class="text-amber-400">tools</span>: Read, Grep, Glob     <span class="text-neutral-500"># apenas leitura</span>
+<span class="text-amber-400">model</span>: haiku               <span class="text-neutral-500"># custo baixo, revisão precisa</span>
+<span class="text-neutral-500">---</span>
+
+You are an impartial senior code reviewer.
+You have no knowledge of how this code was written.
+
+<span class="text-amber-400">Steps:</span>
+1. Run <span class="text-amber-400">git diff HEAD</span> to see the current changes.
+2. Read each changed file completely.
+3. Check for: correctness bugs, security issues,
+   missing tests, and unhandled edge cases.
+
+<span class="text-amber-400">Output:</span> A numbered list of findings, severity
+(critical/major/minor), and the exact line.
+
+<span class="text-amber-400">Rules:</span>
+- Do NOT edit, fix, or rewrite anything.
+- Report only — the orchestrator decides what to fix.
+- If nothing is wrong, say so explicitly.</code></pre>
+</div>
+<!-- plan-roaster.md -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/plan-roaster.md</span>
+<span class="text-xs text-sky-400">revisor de planes</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">---</span>
+<span class="text-sky-400">name</span>: plan-roaster
+<span class="text-sky-400">description</span>: Questiona planos de implementação com
+  ceticismo construtivo. Use SEMPRE antes de aprovar
+  qualquer plano técnico ou de produto.
+<span class="text-sky-400">tools</span>: Read                 <span class="text-neutral-500"># só lê o plano</span>
+<span class="text-sky-400">model</span>: sonnet              <span class="text-neutral-500"># precisa raciocinar sobre premissas</span>
+<span class="text-neutral-500">---</span>
+
+You are a skeptical senior engineer who has seen
+many plans fail. You know nothing about how this
+plan was created.
+
+<span class="text-sky-400">For each plan section, ask:</span>
+1. What hidden assumptions does this make?
+2. What is the single most likely failure point?
+3. Is there a missing dependency or external risk?
+4. Is the rollback defined if this fails mid-way?
+
+<span class="text-sky-400">Output:</span> A structured critique. For each issue,
+state: what is assumed, why it might not hold,
+and what question the author should answer.
+
+<span class="text-sky-400">Rules:</span>
+- Do NOT rewrite or "improve" the plan.
+- Be adversarial but constructive.
+- Prioritize: what will actually fail first?</code></pre>
+</div>
+</div>
+</section>
+<!-- BLOCO: PROMPTS PRONTOS -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">⌨️</span>
+<h2 class="text-2xl font-bold">Prompts listos (copia y pega)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Tres prompts para activar el patrón del revisor imparcial en tu trabajo real.
+        El segundo es el más poderoso: pide explícitamente la perspectiva de un <strong class="text-amber-400">ingeniero externo</strong>.
+      </p>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 1 — revisar el código después del build</span>
+<span class="text-xs text-neutral-500">activa code-reviewer</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Use o code-reviewer para revisar o que acabei de fazer.
+Não quero que ele edite nada — só um relatório de
+achados com severidade (crítico / maior / menor).</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 2 — revisión adversarial</span>
+<span class="text-xs text-neutral-500">el más poderoso</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Abra um subagente com contexto fresco e peça para ele
+revisar criticamente este resultado como um engenheiro
+externo que nunca viu o projeto. Ele deve apontar o
+que parece errado, incompleto ou arriscado — sem levar
+em conta o esforço que custou.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 3 — crítica del plan</span>
+<span class="text-xs text-neutral-500">antes de aprobar cualquier plan</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Use o plan-roaster neste plano. Quero as 3 premissas
+mais perigosas que estão implícitas e a pergunta
+que eu precisaria responder antes de aprovar cada fase.</code></pre>
+</div>
+</div>
+</section>
+<!-- BLOCO: TELA SIMULADA (terminal revisor) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">🖥️</span>
+<h2 class="text-2xl font-bold">Pantalla simulada: builder + revisor en secuencia</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Así es como aparece el patrón en la terminal: el builder termina y devuelve un diff; enseguida, el code-reviewer
+        entra con <strong class="text-amber-400">contexto cero</strong>, lee el diff y emite el informe.
+        Ten en cuenta que el contexto del maestro permanece reducido durante todo el proceso.
+      </p>
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<!-- barra de título -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700/60 border-b border-dark-600">
+<div class="flex items-center space-x-2">
+<span class="w-3 h-3 rounded-full bg-red-400/70"></span>
+<span class="w-3 h-3 rounded-full bg-amber-400/70"></span>
+<span class="w-3 h-3 rounded-full bg-emerald-400/70"></span>
+</div>
+<span class="text-xs text-neutral-400 font-mono">claude code · pipeline builder → revisor</span>
+<span class="text-xs text-amber-400 font-mono">⏱ 01:12</span>
+</div>
+<!-- logs do terminal -->
+<div class="p-4 space-y-2 font-mono text-xs">
+<div class="text-neutral-500">▶ fase 1 — builder</div>
+<div class="flex items-center gap-3">
+<span class="text-amber-400 w-36 shrink-0">● builder (Opus)</span>
+<div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill h-full bg-amber-500/70" style="width:100%"></div></div>
+<span class="text-neutral-400 w-20 text-right shrink-0">✓ listo</span>
+</div>
+<div class="text-neutral-500 text-xs pl-2">  → generó 243 líneas de código, 2 archivos modificados</div>
+<div class="mt-3 text-neutral-500">▶ fase 2 — revisor (contexto fresco)</div>
+<div class="flex items-center gap-3">
+<span class="text-sky-400 w-36 shrink-0">● code-reviewer (Haiku)</span>
+<div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b2 h-full bg-sky-500/70" style="width:68%"></div></div>
+<span class="text-neutral-400 w-20 text-right shrink-0">ejecutando…</span>
+</div>
+<div class="text-neutral-500 text-xs pl-2">  → leyendo el diff · verificando casos límite · comprobando inyección</div>
+<div class="mt-3 border-t border-dark-700 pt-3 text-sky-400">▶ informe de hallazgos (vista previa)</div>
+<div class="text-neutral-300 text-xs pl-2">[CRÍTICO] línea 47 — entrada no sanitizada antes de la consulta SQL</div>
+<div class="text-neutral-300 text-xs pl-2">[MAYOR]   línea 88 — excepción silenciosa: catch vacío sin registro</div>
+<div class="text-neutral-300 text-xs pl-2">[MENOR]   línea 112 — variable `tmp` usada pero no inicializada en la rama else</div>
+<div class="text-neutral-500 pt-1">builder no detectó ninguno de estos · el revisor encontró los 3</div>
+</div>
+<!-- status line -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-800 border-t border-dark-600 font-mono text-xs">
+<span class="text-neutral-400">maestro · Sonnet</span>
+<div class="flex items-center gap-2">
+<span class="text-neutral-500">tu contexto</span>
+<div class="w-28 h-2 rounded bg-dark-700 overflow-hidden">
+<div class="h-full bg-amber-500/70" style="width:9%"></div>
+</div>
+<span class="text-amber-400">9%</span>
+</div>
+</div>
+</div>
+<p class="text-xs text-neutral-500">↑ Recreación ilustrativa de la terminal. El builder trabajó en un contexto separado; el revisor empezó desde cero. Maestro usó solo el 9% del contexto.</p>
+</section>
+<!-- BLOCO: EXERCÍCIO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">🎯</span>
+<h2 class="text-2xl font-bold">Ejercicio</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+          Elección <strong class="text-amber-400">un trabajo tuyo reciente</strong> — un fragmento de código, un plan o un resumen —
+          y ejecútalo con un revisor imparcial. Usa el Prompt 2 de esta página. Luego compara: ¿el revisor encontró algo que
+          no habías notado?
+        </p>
+<div class="bg-dark-800/60 rounded-lg p-5 mb-6">
+<h4 class="font-semibold text-amber-400 mb-3">Cómo hacerlo</h4>
+<ol class="space-y-2 text-neutral-300 text-sm list-decimal list-inside">
+<li>Abre Claude Code en una sesión nueva.</li>
+<li>Pega el artefacto (código, plan o resumen) o indica la ruta del archivo.</li>
+<li>Usa el Prompt 2: pide una revisión con contexto fresco y la perspectiva de un ingeniero externo.</li>
+<li>Lee el informe y anota: ¿cuántos hallazgos son cosas que «sabías, pero no escribiste»?</li>
+</ol>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">✅ Criterio de verificación — cómo saber si acertaste</h4>
+<p class="text-neutral-300 text-sm mb-3">El ejercicio salió bien si puedes marcar al menos una de las siguientes opciones:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>El revisor encontró algo nuevo</strong> — algo que no habías detectado en tu propia lectura.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>El revisor señaló una premisa implícita</strong> — algo que sabías, pero no habías escrito en el artefacto.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>El revisor no encontró nada crítico</strong> — y puedes explicar por qué (buena señal de la calidad del artefacto).</span></li>
+</ul>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5">
+<h4 class="font-semibold text-amber-400 mb-3">Variación avanzada</h4>
+<p class="text-neutral-300 text-sm">Si ya tienes el <code class="text-amber-400">code-reviewer.md</code> o el <code class="text-amber-400">plan-roaster.md</code> creados, indica al maestro que use el agente nombrado. Compara: ¿el revisor encuentra cosas más precisas cuando se lo invoca por nombre que con un prompt ad hoc?</p>
+</div>
+</div>
+</section>
+<!-- RESUMO / NAVEGAÇÃO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Contexto fresco = sin sesgo</strong><span class="text-neutral-400"> — un revisor que no creó el resultado no arrastra el razonamiento que lo generó; ve el artefacto tal como es.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Juzga el resultado, no el proceso</strong><span class="text-neutral-400"> — el revisor no conoce el esfuerzo; aplica criterios objetivos al artefacto final.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Separación de herramientas</strong><span class="text-neutral-400"> — el builder tiene Write/Edit; el revisor solo tiene Read/Grep: el frontmatter es la garantía.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Aplicar al código</strong><span class="text-neutral-400"> — code-reviewer detecta errores, fallas de seguridad y brechas de cobertura que el builder normalizó.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Aplicar a los planes</strong><span class="text-neutral-400"> — plan-roaster cuestiona las premisas ocultas y los puntos de falla que la coherencia interna del plan ocultaba.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Aplicar a la investigación</strong><span class="text-neutral-400"> — verifica la verificabilidad de las afirmaciones, las contradicciones suprimidas y la adherencia al alcance.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Mayor desbloqueo de calidad</strong><span class="text-neutral-400"> — 10% del costo del builder, 100% del resultado revisado; el ROI más alto de cualquier adición a un pipeline.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-amber-400 mb-2">Próximo módulo:</h3>
+<p class="text-neutral-300">3.5 — Flujos de trabajo dinámicos. Cuando el orquestador decide en tiempo de ejecución qué subagentes activar — y cómo construir ese enrutamiento.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="modulo-3-3.html">← Módulo anterior</a>
+<a class="flex-1 text-center px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-500 transition-colors" href="modulo-3-5.html">Próximo módulo →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagentes — 2026 · un curso en formato
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Ruta 3 · Modelo, costo y orquestación · Módulo 3.4</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

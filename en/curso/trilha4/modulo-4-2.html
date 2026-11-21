@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Subagents in Codex and other environments | Subagents</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha purple T4) */
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124, 58, 237, 0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124, 58, 237, 0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124, 58, 237, 0.18); }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+
+    /* Light mode - cores de apoio usadas nos boxes (blue dados / red erros) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - diagramas SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Pulso dos agentes nos diagramas (apenas se o usuario permitir movimento) */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes wf-bar { from { transform: translateX(-6%); } to { transform: translateX(0); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.2s} .wf-a:nth-child(3){animation-delay:.4s}
+      .wf-a:nth-child(4){animation-delay:.6s} .wf-a:nth-child(5){animation-delay:.8s}
+      .barfill { animation: wf-bar 3s ease-in-out infinite alternate; }
+      .barfill.b2{animation-delay:.5s} .barfill.b3{animation-delay:1s} .barfill.b4{animation-delay:1.4s} .barfill.b5{animation-delay:1.8s}
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha4/modulo-4-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha4/modulo-4-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha4/modulo-4-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha4/modulo-4-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-4-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha4/modulo-4-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagents</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentals</span>
+</a>
+<!-- Trilha 2 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">In practice</span>
+</a>
+<!-- Trilha 3 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orchestration</span>
+</a>
+<!-- Trilha 4 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Advanced</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-purple-400" href="../../index.html">Start</a>
+<span>/</span>
+<a class="hover:text-purple-400" href="index.html">Track 4</a>
+<span>/</span>
+<span class="text-purple-400">Module 4.2</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full mb-4">
+        MODULE 4.2 · Track 4 · Advanced &amp; cross-environment
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">🌐 Subagents in Codex and other environments</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        The subagent isn’t a Claude Code trick—it’s a <strong class="text-purple-400">idea</strong>: delegate work to a
+        <strong class="text-purple-400">isolated context</strong> and receive only the report. This idea works elsewhere. In this module
+        you’ll write <strong class="text-purple-400">one source <code>.md</code></strong> that works in more than one environment — Claude Code <em>e</em> OpenAI's Codex CLI.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">6</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">~30</div>
+<div class="text-xs text-neutral-400">Minutes</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">Advanced</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-purple-400">Portable</div>
+<div class="text-xs text-neutral-400">Type</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- ABERTURA + SVG: uma .md -> 2 runtimes -->
+<section class="mb-12">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Think of a <strong class="text-purple-400">power outlet</strong>. The device is the same; the adapter changes depending on the country.
+        The <strong class="text-purple-400">principle</strong> (110/220 V, one plug) doesn't change — what changes is the <strong class="text-purple-400">fit</strong>.
+        A subagent is the same: the principle—“delegate to an isolated context, receive a summary”—is universal. What changes from one environment to another
+        is the <strong class="text-purple-400">fit</strong>: where the file lives, what the frontmatter is called, the tool names.
+        The goal of this module is to write <strong class="text-purple-400">a single <code>.md</code></strong> and plug it into two runtimes.
+      </p>
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-2 overflow-hidden">
+<svg aria-label="A single point-md source, at the center, feeds two runtimes at the same time: Claude Code at the top right and Codex CLI at the bottom right. Each runtime applies its own adapter and produces a running agent or skill." class="w-full h-auto" role="img" viewbox="0 0 1000 250">
+<defs>
+<lineargradient id="m42-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#c084fc"></stop><stop offset="1" stop-color="#a855f7"></stop>
+</lineargradient>
+<filter height="180%" id="m42-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m42-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#a855f7" opacity="0.12" r="1.3"></circle>
+</pattern>
+<marker id="m42-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"></path></marker>
+<marker id="m42-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m42-grid)" height="250" width="1000" x="0" y="0"></rect>
+<!-- fonte unica -> adaptadores -->
+<g fill="none" opacity="0.55" stroke="#c084fc" stroke-width="1.8">
+<path d="M236,125 C320,125 340,66 432,66" marker-end="url(#m42-ah)"></path>
+<path d="M236,125 C320,125 340,184 432,184" marker-end="url(#m42-ah)"></path>
+</g>
+<!-- adaptadores -> runtime rodando -->
+<g fill="none" opacity="0.55" stroke="#38bdf8" stroke-width="1.8">
+<path d="M612,66 L760,66" marker-end="url(#m42-ahc)"></path>
+<path d="M612,184 L760,184" marker-end="url(#m42-ahc)"></path>
+</g>
+<!-- fonte .md (caixa-foco) -->
+<g filter="url(#m42-glow)"><rect fill="#1a1230" height="66" rx="14" stroke="url(#m42-grad)" stroke-width="2" width="196" x="40" y="92"></rect></g>
+<text fill="#c084fc" font-family="Inter,sans-serif" font-size="18" font-weight="600" text-anchor="middle" x="138" y="120">SKILL.md</text>
+<text fill="#dcc6ff" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="138" y="140">a portable source</text>
+<!-- adaptadores -->
+<g font-family="Inter,sans-serif" font-size="13" font-weight="600">
+<g class="wf-a"><rect fill="#0e1b26" height="44" rx="10" stroke="#38bdf8" stroke-width="2" width="180" x="432" y="44"></rect><text fill="#bfe6ff" text-anchor="middle" x="522" y="64">adapter</text><text fill="#9ad6ff" font-size="11" text-anchor="middle" x="522" y="80">.claude/agents</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="44" rx="10" stroke="#38bdf8" stroke-width="2" width="180" x="432" y="162"></rect><text fill="#bfe6ff" text-anchor="middle" x="522" y="182">adapter</text><text fill="#9ad6ff" font-size="11" text-anchor="middle" x="522" y="198">~/.codex/prompts</text></g>
+</g>
+<!-- runtimes rodando -->
+<g font-family="Inter,sans-serif" font-size="14" font-weight="600">
+<rect fill="#1a1230" height="48" rx="11" stroke="#c084fc" stroke-width="2" width="200" x="760" y="42"></rect><text fill="#c084fc" text-anchor="middle" x="860" y="63">Claude Code</text><text fill="#dcc6ff" font-size="11" text-anchor="middle" x="860" y="80">agent / skill running</text>
+<rect fill="#1a1230" height="48" rx="11" stroke="#c084fc" stroke-width="2" width="200" x="760" y="160"></rect><text fill="#c084fc" text-anchor="middle" x="860" y="181">Codex CLI</text><text fill="#dcc6ff" font-size="11" text-anchor="middle" x="860" y="198">prompt / running agent</text>
+</g>
+</svg>
+</div>
+<p class="text-xs text-neutral-500 mb-0">↑ One source <code>.md</code>; each runtime applies its own adapter. The idea is the same — the fit changes.</p>
+</section>
+<!-- DIVISOR -->
+<h2 class="text-2xl font-bold mb-6">Detailed content</h2>
+<!-- TÓPICO 1 — A ideia maior que a ferramenta -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">🧩 The idea is bigger than the tool</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Everything you’ve learned so far — a maestro who delegates, a dedicated context window, a clean report — describes a
+        <strong class="text-purple-400">default</strong>, not a product. The pattern is: <em>"a large task becomes a subprocess with its own
+        context; only the conclusion comes back"</em>. Every serious agent tool needs something like this, because the problem (context filling up, work repeating) is universal. That's why the concept transfers.
+      </p>
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-purple-400 mb-4 flex items-center">
+<span class="mr-2">🔌</span> Principle × fit
+        </h3>
+<p class="text-neutral-300 mb-4">
+          Separate two things in your mind. The <strong>principle</strong> is what you delegate and why. The <strong>fit</strong> is the
+          local paperwork—folder, field name, syntax. Switching environments only changes the fit:
+        </p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Principle (unchanged):</strong> isolate context · one role per agent · return a summary, not the conversation.</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Fit (changes):</strong> where the file lives · what the frontmatter is called · tool names · who invokes it.</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-1">•</span><span><strong>Consequence:</strong> 80% of yours <code>.md</code> is reusable; only the shell needs adapting.</span></li>
+</ul>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div>
+<span class="text-purple-400 font-semibold">What it is:</span>
+<p class="text-neutral-300 text-sm">The realization that a "subagent" is an architectural pattern (delegating to an isolated context), not a feature exclusive to one app.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Why learn:</span>
+<p class="text-neutral-300 text-sm">Frees you from relying on a single tool. Knowledge of the entire workflow becomes useful in any agent runtime, now or in the future.</p>
+</div>
+<div>
+<span class="text-purple-400 font-semibold">Key concepts:</span>
+<p class="text-neutral-300 text-sm">Standard × product · principle (stable) × fit (local) · concept portability.</p>
+</div>
+</div>
+</section>
+<!-- TÓPICO 2 — Codex CLI: as equivalências -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">🟢 Codex CLI: the same thing, under another name</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        O <strong class="text-purple-400">Codex CLI</strong> (OpenAI’s terminal agent) has the same components, just with different
+        terminology. Where Claude Code says “subagent” and “skill,” Codex talks about <strong class="text-purple-400">prompts</strong> e
+        <strong class="text-purple-400">agents</strong> Markdown that you save in a folder and invoke. The structure is the same: an instruction file + a trigger + a set of permitted tools.
+      </p>
+<div class="overflow-x-auto mb-6">
+<table class="w-full text-sm border border-dark-600 rounded-lg overflow-hidden">
+<thead>
+<tr class="bg-dark-700/60 text-left">
+<th class="px-4 py-3 font-semibold text-purple-400">Concept</th>
+<th class="px-4 py-3 font-semibold text-purple-400">Claude Code</th>
+<th class="px-4 py-3 font-semibold text-purple-400">Codex CLI (equivalent)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-dark-600">
+<tr><td class="px-4 py-3 text-neutral-400">Delegated unit of work</td><td class="px-4 py-3 text-neutral-300">subagent (<code>.md</code>)</td><td class="px-4 py-3 text-neutral-300">Markdown prompt/agent</td></tr>
+<tr><td class="px-4 py-3 text-neutral-400">Reusable skill</td><td class="px-4 py-3 text-neutral-300">skill (<code>SKILL.md</code>)</td><td class="px-4 py-3 text-neutral-300">saved prompt + <code>AGENTS.md</code></td></tr>
+<tr><td class="px-4 py-3 text-neutral-400">Where it lives (project)</td><td class="px-4 py-3 text-neutral-300"><code>.claude/agents/</code></td><td class="px-4 py-3 text-neutral-300"><code>.codex/prompts/</code></td></tr>
+<tr><td class="px-4 py-3 text-neutral-400">Where it lives (global)</td><td class="px-4 py-3 text-neutral-300"><code>~/.claude/agents/</code></td><td class="px-4 py-3 text-neutral-300"><code>~/.codex/prompts/</code></td></tr>
+<tr><td class="px-4 py-3 text-neutral-400">Project memory</td><td class="px-4 py-3 text-neutral-300"><code>CLAUDE.md</code></td><td class="px-4 py-3 text-neutral-300"><code>AGENTS.md</code></td></tr>
+<tr><td class="px-4 py-3 text-neutral-400">How to invoke it</td><td class="px-4 py-3 text-neutral-300">automatic through the <code>description</code> or <code>@nome</code></td><td class="px-4 py-3 text-neutral-300">explicit by prompt name (e.g., <code>/nome</code>)</td></tr>
+</tbody>
+</table>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> The most important difference</h3>
+<p class="text-neutral-300">Claude Code <strong>auto-routes</strong>: the conductor reads the <code>description</code> and decides on its own when to delegate.
+        Codex tends to be more <strong>explicit</strong> — you call the prompt by name. Same piece, different trigger: there, the
+        <code>description</code> is an automatic magnet; here it becomes another label for you to choose.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-purple-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the name-by-name map between Claude Code components and Codex CLI components.</span></div>
+<div><span class="text-purple-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">with the map, “porting” stops being a translation from scratch and becomes filling in a table of equivalents.</span></div>
+<div><span class="text-purple-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">Codex prompt/agent · <code>AGENTS.md</code> × <code>CLAUDE.md</code> · auto-routing × explicit invocation.</span></div>
+</div>
+</section>
+<!-- TÓPICO 3 — Cross-runtime: uma fonte, vários alvos (polyskill) -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">♻️ Cross-runtime: the idea behind "polyskill"</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Instead of maintaining two copies (one for Claude, one for Codex) that drift apart over time, you write
+        <strong class="text-purple-400">one source only</strong> and “emits” each runtime's version from it. That's the idea behind a
+        <strong class="text-purple-400">polyskill</strong>: one <code>.md</code> portable is the <strong>template</strong>, and each environment is a
+        <strong>build</strong> of that mold. One truth, multiple destinations — the opposite of copy and paste.
+      </p>
+<!-- SVG #2: aninhamento / fonte -> builds -->
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="A large box labeled portable source contains the skill’s core: role, steps, and output. Builds for Claude Code and Codex come from it, with each build adding only the runtime-specific wrapper." class="w-full h-auto" role="img" viewbox="0 0 1000 230">
+<defs>
+<filter height="180%" id="m42b-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+<marker id="m42b-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<!-- caixa grande: fonte portavel (foco) -->
+<g filter="url(#m42b-glow)"><rect fill="#160e28" height="150" rx="16" stroke="#c084fc" stroke-width="2" width="430" x="36" y="40"></rect></g>
+<text fill="#c084fc" font-family="Inter,sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="251" y="66">portable source (the template)</text>
+<!-- miolo: 3 caixas ciano dentro -->
+<g font-family="Inter,sans-serif" font-size="12" font-weight="600">
+<rect fill="#0e1b26" height="76" rx="9" stroke="#38bdf8" stroke-width="2" width="120" x="60" y="92"></rect><text fill="#bfe6ff" text-anchor="middle" x="120" y="126">role</text><text fill="#9ad6ff" font-size="10.5" text-anchor="middle" x="120" y="144">who is</text>
+<rect fill="#0e1b26" height="76" rx="9" stroke="#38bdf8" stroke-width="2" width="120" x="190" y="92"></rect><text fill="#bfe6ff" text-anchor="middle" x="250" y="126">steps</text><text fill="#9ad6ff" font-size="10.5" text-anchor="middle" x="250" y="144">what it does</text>
+<rect fill="#0e1b26" height="76" rx="9" stroke="#38bdf8" stroke-width="2" width="120" x="320" y="92"></rect><text fill="#bfe6ff" text-anchor="middle" x="380" y="126">output</text><text fill="#9ad6ff" font-size="10.5" text-anchor="middle" x="380" y="144">what comes back</text>
+</g>
+<!-- builds -->
+<g fill="none" opacity="0.55" stroke="#38bdf8" stroke-width="1.8">
+<path d="M466,90 C560,90 580,72 660,72" marker-end="url(#m42b-ahc)"></path>
+<path d="M466,140 C560,140 580,158 660,158" marker-end="url(#m42b-ahc)"></path>
+</g>
+<g font-family="Inter,sans-serif" font-size="13" font-weight="600">
+<rect fill="#1a1230" height="46" rx="11" stroke="#c084fc" stroke-width="2" width="300" x="660" y="50"></rect><text fill="#c084fc" text-anchor="middle" x="810" y="71">build → Claude Code</text><text fill="#dcc6ff" font-size="10.5" text-anchor="middle" x="810" y="87">+ shell: name, description, tools</text>
+<rect fill="#1a1230" height="46" rx="11" stroke="#c084fc" stroke-width="2" width="300" x="660" y="136"></rect><text fill="#c084fc" text-anchor="middle" x="810" y="157">build → Codex CLI</text><text fill="#dcc6ff" font-size="10.5" text-anchor="middle" x="810" y="173">+ shell: prompt, AGENTS.md</text>
+</g>
+</svg>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Why it’s worth having a single source</h3>
+<p class="text-neutral-300">Two copies drift apart: you fix a bug in one, forget the other, and within a month they contradict each other. With
+        <strong>one source → multiple builds</strong>, the fix goes in once, and both environments inherit it. That’s exactly the “clean context” idea from Track 1 applied to your skills repository: less duplication, less drift.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-purple-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">a single <code>.md</code> portable template that serves as a pattern; each runtime is generated (built) from it.</span></div>
+<div><span class="text-purple-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">maintains a single source of truth—correct it in one place, and it applies everywhere—instead of copies that diverge.</span></div>
+<div><span class="text-purple-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">polyskill · template × build · portable core (role/steps/output) × runtime-specific shell.</span></div>
+</div>
+</section>
+<!-- TÓPICO 4 — Equivalência de ferramentas -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">🛠️ Tool equivalence</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The tools have different names, but the <strong class="text-purple-400">capabilities</strong> are the same: read a file, search
+        text, list paths, edit, run shell commands. Instead of naming the exact tool in the body of your <code>.md</code>, describe the
+        <strong class="text-purple-400">capability</strong> ("read the files", "search by default") — that way, the same text works in both,
+        because each runtime resolves which specific tool to use.
+      </p>
+<div class="overflow-x-auto mb-6">
+<table class="w-full text-sm border border-dark-600 rounded-lg overflow-hidden">
+<thead>
+<tr class="bg-dark-700/60 text-left">
+<th class="px-4 py-3 font-semibold text-purple-400">Capability</th>
+<th class="px-4 py-3 font-semibold text-purple-400">Claude Code</th>
+<th class="px-4 py-3 font-semibold text-purple-400">Codex / shell</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-dark-600">
+<tr><td class="px-4 py-3 text-neutral-400">Read a file</td><td class="px-4 py-3 text-neutral-300"><code>Read</code></td><td class="px-4 py-3 text-neutral-300"><code>cat</code> / file reading</td></tr>
+<tr><td class="px-4 py-3 text-neutral-400">Search text</td><td class="px-4 py-3 text-neutral-300"><code>Grep</code></td><td class="px-4 py-3 text-neutral-300"><code>rg</code> / <code>grep</code></td></tr>
+<tr><td class="px-4 py-3 text-neutral-400">List paths by default</td><td class="px-4 py-3 text-neutral-300"><code>Glob</code></td><td class="px-4 py-3 text-neutral-300"><code>find</code> / <code>ls</code></td></tr>
+<tr><td class="px-4 py-3 text-neutral-400">Edit file</td><td class="px-4 py-3 text-neutral-300"><code>Edit</code> / <code>Write</code></td><td class="px-4 py-3 text-neutral-300">patch / shell write</td></tr>
+<tr><td class="px-4 py-3 text-neutral-400">Run command</td><td class="px-4 py-3 text-neutral-300"><code>Bash</code></td><td class="px-4 py-3 text-neutral-300">native shell execution</td></tr>
+<tr><td class="px-4 py-3 text-neutral-400">Search the web</td><td class="px-4 py-3 text-neutral-300"><code>WebFetch</code> / <code>WebSearch</code></td><td class="px-4 py-3 text-neutral-300">web tool (if enabled)</td></tr>
+</tbody>
+</table>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Write the body like this (portable)</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>"Read the changed files and understand the intent."</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>"Search the code for unsafe calls."</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>"Do not modify anything—just report."</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Avoid tying it to a tool</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>"Use the tool <code>Grep</code> with a flag <code>-n</code>…" (Claude only)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>"Call <code>WebFetch</code> in…" (some in Codex)</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Mentioning exact names in the body limits portability.</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-purple-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the mapping between named Claude Code tools (Read/Grep/Glob…) and their shell/Codex equivalents.</span></div>
+<div><span class="text-purple-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">describing the capability instead of the tool name makes the body of the <code>.md</code> run the same in both runtimes.</span></div>
+<div><span class="text-purple-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">capability × named tool · Read↔cat, Grep↔rg, Glob↔find · tool-agnostic body.</span></div>
+</div>
+</section>
+<!-- TÓPICO 5 — O que muda × o que não muda -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">⚖️ What changes × what doesn't change</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Before porting, define the boundary. The <strong class="text-purple-400">principle</strong> — delegate to an isolated context, one role per
+        agent, return a summary — it works intact across any environment. What changes is the <strong class="text-purple-400">shell</strong>: field names,
+        folder, invocation syntax, available tools. Knowing what stays stable keeps you from rewriting what was already right.
+      </p>
+<!-- GRID ✓/✗ -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ What doesn’t change (the principle)</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Delegate to one <strong>isolated context</strong></span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Return <strong>report</strong>, not the whole conversation</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>One <strong>role per agent</strong> (without a do-it-all agent)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>The core: role + steps + output + limits</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ What changes (the wrapper)</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Frontmatter field names</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Folder where the file lives</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>What the agent is like <strong>invoked</strong></span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Names of the specific tools</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> The most common portability mistake</h3>
+<p class="text-neutral-300">Rewrite the <strong>core</strong> thinking that each runtime needs a different brain. It doesn't: the
+        brain (role, steps, output, limits) is the same. A good port only changes the <strong>shell</strong> and leave the core untouched — that way
+        both builds behave the same.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-purple-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the line separating the invariant (principle/core) from the variable (wrapper/fit) when switching environments.</span></div>
+<div><span class="text-purple-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">porting is fast when you only touch the shell and never rewrite what already worked.</span></div>
+<div><span class="text-purple-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">invariant × variable · core intact · shell adaptable · behavioral parity.</span></div>
+</div>
+</section>
+<!-- TÓPICO 6 — Portar uma skill (timeline) + limites -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">🚚 Port a skill — and where the limits are</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Porting is a three-step process: <strong class="text-purple-400">extract the core</strong>, <strong class="text-purple-400">swap
+        the shell</strong>, <strong class="text-purple-400">test parity</strong>. But portability has limits: not everything crosses the boundary. Things
+        tightly coupled to a runtime — an exclusive MCP, a specific tool name, a model from just one provider — don't travel and become a
+        <strong class="text-purple-400">adaptation note</strong>.
+      </p>
+<!-- TIMELINE -->
+<div class="space-y-6 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Extract the core</h4>
+<p class="text-sm text-neutral-400 mb-3">What’s the same in both.</p>
+<p class="text-neutral-300 text-sm">Separate role + steps + output + limits from everything else. Rewrite any “use tool X” as a capability (“read,” “search”). This text becomes the portable source.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Change the wrapper</h4>
+<p class="text-sm text-neutral-400 mb-3">The fit for each runtime.</p>
+<p class="text-neutral-300 text-sm">Build the target's frontmatter (Claude: <code>name/description/tools</code>; Codex: prompt + <code>AGENTS.md</code>) and put the file in the right folder for the environment.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center"><span class="text-purple-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Test parity</h4>
+<p class="text-sm text-neutral-400 mb-3">Same input, same output?</p>
+<p class="text-neutral-300 text-sm">Run the same task in both and compare. If Codex doesn't trigger on its own, remember that invocation there is usually explicit—that's a wrapper, not a bug.</p>
+</div>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">🚧</span> The boundaries (what doesn't cross)</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>Exclusive tool/MCP</strong> of a runtime: leave a note "in Codex, replace with the equivalent shell command".</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>Single-provider model</strong> (e.g., an Opus): in the other environment, choose the corresponding role model.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>Auto-routing</strong>: a <code>description</code> that triggers automatically in Claude may require an explicit call in Codex.</span></li>
+</ul>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-purple-400 font-semibold">What it is:</span> <span class="text-neutral-300 text-sm">the extract → swap the shell → test parity procedure, plus the list of what isn’t portable.</span></div>
+<div><span class="text-purple-400 font-semibold">Why learn:</span> <span class="text-neutral-300 text-sm">provides a repeatable step-by-step process and builds the habit of recording the adaptation note where portability ends.</span></div>
+<div><span class="text-purple-400 font-semibold">Key concepts:</span> <span class="text-neutral-300 text-sm">extract the core · swap the shell · parity test · adaptation note · limitations (MCP, model, routing).</span></div>
+</div>
+</section>
+<!-- BLOCO: EXEMPLO REAL — skill/agente portável + nota de adaptação -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">📄</span>
+<h2 class="text-2xl font-bold">Real example: a portable agent (Claude → Codex)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Here's a <code class="text-purple-400">doc-summarizer.md</code> written to be portable: the frontmatter is the <strong class="text-purple-400">shell</strong>
+        from Claude Code, and the body is the <strong class="text-purple-400">core</strong> tool-agnostic. Right after that, the <strong class="text-purple-400">adaptation
+        note</strong> shows what to change to run the same file in Codex CLI.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/doc-summarizer.md</span>
+<span class="text-xs text-blue-400">Markdown + YAML</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">--- # CASCA (Claude Code) — troca por runtime</span>
+<span class="text-blue-400">name</span>: doc-summarizer
+<span class="text-blue-400">description</span>: Lê documentos longos e devolve um resumo
+  curto com os pontos-chave. Use para condensar
+  arquivos grandes sem encher o contexto.
+<span class="text-blue-400">tools</span>: Read, Grep, Glob   <span class="text-neutral-500"># só leitura</span>
+<span class="text-blue-400">model</span>: haiku             <span class="text-neutral-500"># barato p/ escanear</span>
+<span class="text-neutral-500">---</span>
+
+<span class="text-neutral-500"># MIOLO (portável) — NÃO cita ferramenta por nome</span>
+You are a precise document summarizer.
+
+<span class="text-purple-400">When invoked:</span>
+1. Read the target documents and grasp the intent.
+2. Search for the key claims, numbers and decisions.
+3. Write a summary: 5 bullets, then the source paths.
+
+<span class="text-purple-400">Output:</span> only the summary. Do <span class="text-purple-400">not</span> paste raw
+content. Do <span class="text-purple-400">not</span> modify any file.</code></pre>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">📝</span> Adaptation note — run in Codex CLI</h3>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-primary mt-0.5">1.</span><span><strong>Folder:</strong> move the file from <code>.claude/agents/</code> for <code>.codex/prompts/</code> (or the global <code>~/.codex/prompts/</code>).</span></li>
+<li class="flex items-start space-x-2"><span class="text-primary mt-0.5">2.</span><span><strong>Frontmatter:</strong> Codex doesn't use <code>tools:</code>/<code>model:</code> that way — record the role and rules in the <code>AGENTS.md</code> from the project; the body (main text) stays the same.</span></li>
+<li class="flex items-start space-x-2"><span class="text-primary mt-0.5">3.</span><span><strong>Tools:</strong> "Read/Grep/Glob" turn into <code>cat</code>/<code>rg</code>/<code>find</code> in the shell — the body already says "read/search," so nothing needs to change there.</span></li>
+<li class="flex items-start space-x-2"><span class="text-primary mt-0.5">4.</span><span><strong>Invocation:</strong> instead of auto-triggering via <code>description</code>, call the prompt by name (<code>/doc-summarizer</code>).</span></li>
+</ul>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-purple-400 mb-3">🧠 The core (travels intact)</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-purple-400">Role</strong> — "a precise document summarizer".</li>
+<li><strong class="text-purple-400">Steps</strong> — read, search, summarize (no tool name).</li>
+<li><strong class="text-purple-400">Output</strong> — 5 bullets + paths.</li>
+<li><strong class="text-purple-400">Limits</strong> — don't paste it raw or edit it.</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-purple-400 mb-3">🔌 The shell (switch by runtime)</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-purple-400">Folder</strong> — <code>.claude/agents</code> ↔ <code>.codex/prompts</code>.</li>
+<li><strong class="text-purple-400">Config</strong> — frontmatter ↔ <code>AGENTS.md</code>.</li>
+<li><strong class="text-purple-400">Tools</strong> — named ↔ shell.</li>
+<li><strong class="text-purple-400">Trigger</strong> — auto ↔ called by name.</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- BLOCO: PROMPTS PRONTOS -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">⌨️</span>
+<h2 class="text-2xl font-bold">Ready-made prompts (copy and paste)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Three prompts to port and cross-run. The pattern is always the same: ask it to preserve the <strong class="text-purple-400">core</strong>,
+        adapt <strong class="text-purple-400">shell</strong>, and leave a <strong class="text-purple-400">note</strong> where portability ends.
+      </p>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-purple-400">Prompt 1 — adapt a subagent for Codex</span>
+<span class="text-xs text-neutral-500">shell swap</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Pegue este subagente do Claude Code e adapte para o
+Codex CLI. Mantenha o corpo (papel/passos/saída) intacto,
+troque só a casca: pasta, frontmatter e invocação. No fim,
+liste uma "nota de adaptação" com o que não é portável.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-purple-400">Prompt 2 — make a skill portable (polyskill)</span>
+<span class="text-xs text-neutral-500">one source → multiple builds</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Reescreva esta skill como fonte portável: remova nomes
+de ferramenta específicos do corpo e descreva a capacidade
+("leia", "busque"). Depois emita dois builds — um para
+Claude Code, um para Codex — a partir da mesma fonte.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-purple-400">Prompt 3 — map tools across runtimes</span>
+<span class="text-xs text-neutral-500">tool equivalence</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Liste as ferramentas que este .md usa no Claude Code
+(Read, Grep, Glob, Bash…) e me dê o equivalente de shell
+para o Codex. Aponte quais não têm equivalente direto e
+precisam virar nota de adaptação.</code></pre>
+</div>
+</div>
+</section>
+<!-- BLOCO: TELA SIMULADA (monitor-mock: build/emit para 2 runtimes) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">🖥️</span>
+<h2 class="text-2xl font-bold">Simulated screen: emitting the source for 2 runtimes</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        This is how a cross-runtime build appears in the terminal: you run the emitter once on the <strong class="text-purple-400">portable
+        source</strong>, and it generates the files for each environment—adapting the shell while keeping the core. Notice the two destinations branching from
+        the same <code>SKILL.md</code>.
+      </p>
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<!-- barra de título -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700/60 border-b border-dark-600">
+<div class="flex items-center space-x-2"><span class="w-3 h-3 rounded-full bg-red-400/70"></span><span class="w-3 h-3 rounded-full bg-amber-400/70"></span><span class="w-3 h-3 rounded-full bg-emerald-400/70"></span></div>
+<span class="text-xs text-neutral-400 font-mono">polyskill build · doc-summarizer · 2 runtimes</span>
+<span class="text-xs text-purple-400 font-mono">⏱ 00:06</span>
+</div>
+<!-- corpo do terminal -->
+<div class="p-4 space-y-1.5 font-mono text-xs">
+<div class="text-neutral-400">$ polyskill build doc-summarizer.md --all</div>
+<div class="text-neutral-500">→ portable source loaded · core: role + steps + output</div>
+<div class="flex items-center gap-3"><span class="text-purple-400 w-44 shrink-0">● build claude-code</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill h-full bg-purple-500/70" style="width:100%"></div></div><span class="text-emerald-400 w-16 text-right shrink-0">okay</span></div>
+<div class="text-neutral-500 pl-4">→ .claude/agents/doc-summarizer.md (frontmatter: name, description, tools, model)</div>
+<div class="flex items-center gap-3"><span class="text-purple-400 w-44 shrink-0">● build codex</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b2 h-full bg-purple-500/70" style="width:100%"></div></div><span class="text-emerald-400 w-16 text-right shrink-0">okay</span></div>
+<div class="text-neutral-500 pl-4">→ .codex/prompts/doc-summarizer.md  +  note → AGENTS.md</div>
+<div class="text-amber-400">! 1 adaptation note: named tools → shell (cat/rg/find)</div>
+<div class="text-neutral-300 pt-1">✓ 2 runtimes emitted from 1 source · identical core</div>
+</div>
+<!-- rodape -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-800 border-t border-dark-600 font-mono text-xs">
+<span class="text-neutral-400">single source · doc-summarizer.md</span>
+<div class="flex items-center gap-2">
+<span class="text-neutral-500">core parity</span>
+<div class="w-28 h-2 rounded bg-dark-700 overflow-hidden"><div class="h-full bg-purple-500/70" style="width:100%"></div></div>
+<span class="text-purple-400">100%</span>
+</div>
+</div>
+</div>
+<p class="text-xs text-neutral-500">↑ Illustrative recreation of the terminal (not a real screenshot). One source goes in; two builds come out with the same core and different shells.</p>
+</section>
+<!-- BLOCO: EXERCÍCIO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">🎯</span>
+<h2 class="text-2xl font-bold">Exercise</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+          Take <strong class="text-purple-400">one of your subagents</strong> (or the <code>doc-summarizer.md</code> above) and <strong class="text-purple-400">port it
+          to Codex CLI</strong>. Deliver two items: the adapted file and a <strong class="text-purple-400">adaptation note</strong> with what
+          changed and what isn’t portable.
+        </p>
+<div class="bg-dark-800/60 rounded-lg p-5 mb-6">
+<h4 class="font-semibold text-purple-400 mb-3">How to do it</h4>
+<ol class="space-y-2 text-neutral-300 text-sm list-decimal list-inside">
+<li><strong>Extract the core:</strong> separate role + steps + output + limits; rewrite any tool name as a capability.</li>
+<li><strong>Change the wrapper:</strong> point to the new folder (<code>.codex/prompts/</code>), where the config goes (<code>AGENTS.md</code>) and how to invoke it.</li>
+<li><strong>List the limits:</strong> point out at least one thing that <em>no</em> crosses (MCP, provider model, auto-routing) and what to do instead.</li>
+</ol>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">✅ Verification criteria — how to know you got it right</h4>
+<p class="text-neutral-300 text-sm mb-3">Your deliverable passes if it meets the <strong>four</strong> signals:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>O <strong>core remained intact</strong> — identical role/steps/output for both.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>A <strong>shell changed</strong> — correct folder, config, and invocation for Codex.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>The body <strong>doesn't mention a tool by name</strong> — says "read/search," not <code>Grep</code>.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>Exists <strong>at least one adaptation note</strong> naming a real limitation.</span></li>
+</ul>
+<p class="text-neutral-300 text-sm mt-3">If you had to <strong>rewrite the core</strong> for Codex, something from the shell probably leaked into the body — go back and isolate it.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5">
+<h4 class="font-semibold text-purple-400 mb-3">Solved example (one line of each)</h4>
+<p class="text-neutral-300 text-sm"><strong>Core (same):</strong> "you are a precise document summarizer · read → search → 5 bullets + paths". <strong>Shell (swapped):</strong> file in <code>.codex/prompts/</code>, rules in the <code>AGENTS.md</code>, called by <code>/doc-summarizer</code>. <strong class="text-purple-400">Note:</strong> "<code>model: haiku</code> doesn't exist in Codex — use the provider's equivalent low-cost/fast model".</p>
+</div>
+</div>
+</section>
+<!-- RESUMO / NAVEGAÇÃO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Module summary</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Idea &gt; tool</strong><span class="text-neutral-400"> — a subagent is a pattern (delegating to isolated context), not a feature of just one app.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Codex CLI</strong><span class="text-neutral-400"> — same components with another name: prompt/agent, <code>AGENTS.md</code> instead of <code>CLAUDE.md</code>, explicit invocation.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Polyskill</strong><span class="text-neutral-400"> — one source <code>.md</code> portable → multiple builds; fix it in one place, and it applies everywhere.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Tool equivalence</strong><span class="text-neutral-400"> — Read↔cat, Grep↔rg, Glob↔find; describe the capability, not the name.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Changes × doesn't change</strong><span class="text-neutral-400"> — the principle/core stays firm; the shell (folder, fields, trigger, tools) is what adapts.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-purple-400 mt-1">✓</span><div><strong class="text-white">Port + limits</strong><span class="text-neutral-400"> — extract → swap the shell → test parity; anything that doesn't carry over becomes an adaptation note.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-purple-400 mb-2">Next module:</h3>
+<p class="text-neutral-300">4.3 — Comparing models by role. Opus/Sonnet/Haiku × GPT/Codex × other providers: which model for each role in the fleet.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="modulo-4-1.html">← Previous module</a>
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="index.html">Track index</a>
+<a class="flex-1 text-center px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-500 transition-colors" href="modulo-4-3.html">Next module →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagents — 2026 · a course in the format
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Track 4 · Advanced &amp; cross-environment · Module 4.2</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    // Toggle de tópicos (compatível com o padrão; expansíveis ficam abertos por padrão nesta página de módulo)
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

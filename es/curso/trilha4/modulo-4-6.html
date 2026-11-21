@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Configurando tu sistema | Subagentes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - base */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha 4 - purple) */
+    html:not(.dark) .text-purple-400 { color: #7c3aed; }
+    html:not(.dark) .bg-purple-500\/20 { background-color: rgba(124, 58, 237, 0.12); }
+    html:not(.dark) .bg-purple-500\/10 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .border-purple-500\/30 { border-color: rgba(124, 58, 237, 0.25); }
+    html:not(.dark) .hover\:bg-purple-500\/30:hover { background-color: rgba(124, 58, 237, 0.18); }
+    html:not(.dark) .hover\:text-purple-400:hover { color: #7c3aed; }
+    html:not(.dark) .hover\:bg-purple-500\/10:hover { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .bg-purple-900\/20 { background-color: rgba(124, 58, 237, 0.08); }
+    html:not(.dark) .bg-purple-900\/30 { background-color: rgba(124, 58, 237, 0.10); }
+    html:not(.dark) .from-purple-900\/30 { --tw-gradient-from: rgba(124,58,237,0.10); }
+
+    /* Light mode - cores de apoio */
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+    html:not(.dark) .text-amber-400 { color: #b45309; }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(180, 83, 9, 0.08); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(180, 83, 9, 0.25); }
+
+    /* Light mode - especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(250, 204, 21, 0.10); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(250, 204, 21, 0.25); }
+
+    /* Light mode - nav */
+    html:not(.dark) nav { background-color: rgba(255,255,255,0.95) !important; border-bottom-color: #e5e7eb !important; }
+    html:not(.dark) nav .text-neutral-100 { color: #111827; }
+
+    /* Light mode - remove gradientes */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Dark mode - bordas suavizadas (2 regras obrigatorias) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* SVG light mode */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Animação SVG */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2) { animation-delay: .25s; }
+      .wf-a:nth-child(3) { animation-delay: .5s; }
+      .wf-a:nth-child(4) { animation-delay: .75s; }
+      .wf-a:nth-child(5) { animation-delay: 1s; }
+    }
+
+    /* Code box */
+    .code-box { background-color: #0d1117; border: 1px solid #30363d; border-radius: 0.75rem; overflow-x: auto; }
+    html:not(.dark) .code-box { background-color: #f6f8fa; border-color: #d0d7de; }
+    .code-box pre { font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace; font-size: 0.82rem; line-height: 1.6; padding: 1.25rem 1.5rem; white-space: pre-wrap; word-break: break-word; color: #e6edf3; }
+    html:not(.dark) .code-box pre { color: #24292f; }
+
+    /* Timeline */
+    .timeline-line { position: relative; padding-left: 2rem; border-left: 2px solid; }
+    .timeline-dot { position: absolute; left: -0.45rem; top: 0.35rem; width: 0.75rem; height: 0.75rem; border-radius: 50%; }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha4/modulo-4-6.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha4/modulo-4-6.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha4/modulo-4-6.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha4/modulo-4-6.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha4/modulo-4-6.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-4-6.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAV COMPLETO -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagentes</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentos</span>
+</a>
+<!-- Trilha 2 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">En la práctica</span>
+</a>
+<!-- Trilha 3 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orquestación</span>
+</a>
+<!-- Trilha 4 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-purple-400 bg-purple-500/10" href="index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Avanzado</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-purple-900/30 via-dark-900 to-dark-900 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="mb-4">
+<span class="inline-block px-3 py-1 text-xs font-bold tracking-wide uppercase rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
+          MÓDULO 4.6 · Ruta 4 · Avanzado y entre entornos
+        </span>
+</div>
+<h1 class="text-2xl font-bold text-neutral-100 mb-3">🏭 Armando tu sistema</h1>
+<p class="text-neutral-400 text-lg max-w-2xl mb-6">
+        Todo lo que aprendiste se convierte en una fábrica real: biblioteca de especialistas, paquete inicial, templates listos, checklist de producción — y un gran repaso de todo el curso.
+      </p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+<div class="bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="text-purple-400 font-bold text-xl">10</div>
+<div class="text-neutral-500 text-sm">Bloques</div>
+</div>
+<div class="bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="text-purple-400 font-bold text-xl">7</div>
+<div class="text-neutral-500 text-sm">Temas</div>
+</div>
+<div class="bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="text-purple-400 font-bold text-xl">~35 min</div>
+<div class="text-neutral-500 text-sm">Duración</div>
+</div>
+<div class="bg-dark-800 rounded-xl p-4 border border-dark-600">
+<div class="text-purple-400 font-bold text-xl">Finale</div>
+<div class="text-neutral-500 text-sm">Módulo final</div>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<!-- ABERTURA + SVG -->
+<section class="mb-16">
+<p class="text-neutral-300 text-lg leading-relaxed mb-8">
+        Llegaste al final de la ruta y del curso. Ahora no es momento de aprender más conceptos: es momento de <strong>armar tu sistema</strong>. En este módulo vas a construir tu biblioteca personal de subagentes, partir de un paquete inicial listo, aprender las plantillas que ahorran horas y revisar en <em>una pantalla</em> todo lo que enseñó el curso. Al final, un proyecto final: crear tu propia suite de agentes desde cero.
+      </p>
+<!-- SVG FUTURISTA — Fábrica de Especialistas (fan-out purple + ciano) -->
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/40 p-3 sm:p-4 mb-8 overflow-hidden">
+<svg aria-label="Diagrama de una fábrica de especialistas: un orquestador central despacha tareas a cinco agentes especializados, que devuelven resultados" class="w-full h-auto" role="img" viewbox="0 0 700 340">
+<defs>
+<lineargradient id="m46-grad-p" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#c084fc"></stop><stop offset="1" stop-color="#a855f7"></stop>
+</lineargradient>
+<lineargradient id="m46-grad-c" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#38bdf8"></stop><stop offset="1" stop-color="#0ea5e9"></stop>
+</lineargradient>
+<filter height="180%" id="m46-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur>
+<femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m46-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#a855f7" opacity="0.12" r="1.3"></circle>
+</pattern>
+<marker id="m46-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5">
+<path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#c084fc"></path>
+</marker>
+<marker id="m46-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5">
+<path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path>
+</marker>
+</defs>
+<!-- Grade de pontos de fundo -->
+<rect fill="url(#m46-grid)" height="340" opacity="0.7" width="700"></rect>
+<!-- Caixa orquestrador central (com glow) -->
+<rect fill="#1a1230" filter="url(#m46-glow)" height="80" rx="12" stroke="url(#m46-grad-p)" stroke-width="2" width="170" x="265" y="130"></rect>
+<text fill="#c084fc" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="350" y="163">🤖 ORQUESTADOR</text>
+<text fill="#d8b4fe" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="350" y="181">tu sesión principal</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="350" y="196">delega → recopila → sintetiza</text>
+<!-- 5 agentes especialistas (ciano) -->
+<!-- Agente 1: security-auditor -->
+<rect class="wf-a" fill="#0e1b26" height="60" rx="10" stroke="#38bdf8" stroke-width="2" width="130" x="20" y="30"></rect>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="85" y="56">🔒 security-auditor</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="8.5" text-anchor="middle" x="85" y="72">analiza vulnerabilidades</text>
+<!-- Agente 2: test-runner -->
+<rect class="wf-a" fill="#0e1b26" height="60" rx="10" stroke="#38bdf8" stroke-width="2" width="130" x="20" y="120"></rect>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="85" y="146">🧪 test-runner</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="8.5" text-anchor="middle" x="85" y="162">ejecuta e interpreta pruebas</text>
+<!-- Agente 3: doc-writer (centro-esq) -->
+<rect class="wf-a" fill="#0e1b26" height="60" rx="10" stroke="#38bdf8" stroke-width="2" width="130" x="20" y="210"></rect>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="85" y="236">📝 doc-writer</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="8.5" text-anchor="middle" x="85" y="252">documenta código y APIs</text>
+<!-- Agente 4: db-expert -->
+<rect class="wf-a" fill="#0e1b26" height="60" rx="10" stroke="#38bdf8" stroke-width="2" width="130" x="550" y="75"></rect>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="615" y="101">🗄️ db-expert</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="8.5" text-anchor="middle" x="615" y="117">optimiza las consultas y el esquema</text>
+<!-- Agente 5: plan-roaster -->
+<rect class="wf-a" fill="#0e1b26" height="60" rx="10" stroke="#38bdf8" stroke-width="2" width="130" x="550" y="185"></rect>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="615" y="211">🔥 plan-roaster</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="8.5" text-anchor="middle" x="615" y="227">critica planes y decisiones</text>
+<!-- Setas orquestrador → agentes (ida, purple) -->
+<line marker-end="url(#m46-ah)" stroke="#c084fc" stroke-opacity="0.5" stroke-width="1.8" x1="265" x2="152" y1="155" y2="62"></line>
+<line marker-end="url(#m46-ah)" stroke="#c084fc" stroke-opacity="0.5" stroke-width="1.8" x1="265" x2="152" y1="165" y2="152"></line>
+<line marker-end="url(#m46-ah)" stroke="#c084fc" stroke-opacity="0.5" stroke-width="1.8" x1="265" x2="152" y1="180" y2="238"></line>
+<line marker-end="url(#m46-ah)" stroke="#c084fc" stroke-opacity="0.5" stroke-width="1.8" x1="435" x2="548" y1="155" y2="108"></line>
+<line marker-end="url(#m46-ah)" stroke="#c084fc" stroke-opacity="0.5" stroke-width="1.8" x1="435" x2="548" y1="175" y2="213"></line>
+<!-- Setas agentes → resultado (ciano, retorno) -->
+<rect fill="#1a1230" height="55" rx="10" stroke="url(#m46-grad-p)" stroke-width="2" width="180" x="260" y="260"></rect>
+<text fill="#e9d5ff" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="350" y="283">✅ Resultado integrado</text>
+<text fill="#9ca3af" font-family="Inter,sans-serif" font-size="8.5" text-anchor="middle" x="350" y="299">informe unificado + acciones</text>
+<line marker-end="url(#m46-ahc)" stroke="#38bdf8" stroke-dasharray="5,3" stroke-opacity="0.6" stroke-width="2" x1="350" x2="350" y1="210" y2="258"></line>
+<!-- Labels laterais -->
+<text fill="#6b7280" font-family="Inter,sans-serif" font-size="8" text-anchor="middle" x="350" y="322">Tu fábrica de especialistas — cada agente es un .md en tu biblioteca</text>
+</svg>
+</div>
+</section>
+<!-- DIVISOR -->
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+<!-- TÓPICO 1: Sua biblioteca de especialistas -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-start space-x-4 mb-6">
+<span class="w-12 h-12 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-lg flex-shrink-0">1</span>
+<div>
+<h2 class="text-2xl font-bold text-neutral-100">🗄️ Tu biblioteca de especialistas</h2>
+<p class="text-neutral-400 mt-1">Los agentes son archivos. Los archivos se organizan. La organización se convierte en poder.</p>
+</div>
+</div>
+<!-- O que é -->
+<div class="bg-gradient-to-br from-purple-900/20 to-dark-800 rounded-xl p-6 border border-purple-500/30 mb-4">
+<h3 class="text-purple-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed">
+          Una biblioteca de especialistas es un conjunto de archivos <code class="bg-dark-700 px-1.5 py-0.5 rounded text-purple-400 text-sm">.md</code> con definiciones de subagentes que mantienes y haces evolucionar. Cada archivo es un «empleado» con nombre, alcance, herramientas y restricciones bien definidos. La biblioteca está en dos lugares: <strong>~/.claude/agents/</strong> (disponible en todos los proyectos) y <strong>.claude/agents/</strong> dentro de cada proyecto (específica del repositorio).
+        </p>
+</div>
+<!-- Por que aprender -->
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600 mb-4">
+<h3 class="text-neutral-300 font-semibold mb-3">Por qué crear tu biblioteca</h3>
+<ul class="space-y-2 text-neutral-400">
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-0.5">▸</span><span>Evita reescribir el mismo system prompt cada vez: llama al agente por su nombre</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-0.5">▸</span><span>Los agentes bien definidos cometen menos errores de alcance — saben lo que no deben hacer</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-0.5">▸</span><span>Evoluciona con el tiempo: corrige un agente deficiente una vez y todos los proyectos se benefician</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-0.5">▸</span><span>Los equipos pueden compartir la biblioteca mediante git: un estándar organizacional emergente</span></li>
+</ul>
+</div>
+<!-- Conceitos-chave -->
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h3 class="text-neutral-300 font-semibold mb-4">Conceptos clave</h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold text-sm mb-1">Global (~/.claude/)</div>
+<div class="text-neutral-400 text-sm">Disponible en cualquier proyecto. Ideal para especialistas universales (security, docs, test).</div>
+</div>
+<div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold text-sm mb-1">Local (.claude/ del proyecto)</div>
+<div class="text-neutral-400 text-sm">Especialistas del dominio: db-expert de tu stack, reviewer de tu guía de estilo.</div>
+</div>
+<div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold text-sm mb-1">Versionado (git)</div>
+<div class="text-neutral-400 text-sm">Haz commit de .claude/agents/ junto con el código. Un cambio en el agente = un PR como cualquier otro.</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 2: Pacote inicial -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-start space-x-4 mb-6">
+<span class="w-12 h-12 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-lg flex-shrink-0">2</span>
+<div>
+<h2 class="text-2xl font-bold text-neutral-100">📦 Paquete inicial — 5 agentes para empezar hoy</h2>
+<p class="text-neutral-400 mt-1">security-auditor · test-runner · doc-writer · db-expert · plan-roaster</p>
+</div>
+</div>
+<div class="bg-gradient-to-br from-purple-900/20 to-dark-800 rounded-xl p-6 border border-purple-500/30 mb-4">
+<h3 class="text-purple-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed">
+          Un conjunto de cinco agentes que cubre los casos de uso más comunes en el desarrollo de software. Son lo bastante genéricos para cualquier stack, pero lo bastante específicos para ser útiles sin personalización. Cópialos, ajusta los detalles de tu proyecto (nombres de bases de datos, frameworks, convenciones de pruebas) y tendrás una suite funcional en minutos.
+        </p>
+</div>
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600 mb-4">
+<h3 class="text-neutral-300 font-semibold mb-3">Por qué estos cinco</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="flex items-start space-x-3 bg-dark-700 rounded-lg p-3 border border-dark-600">
+<span class="text-2xl">🔒</span>
+<div>
+<div class="font-semibold text-sm text-neutral-200">security-auditor</div>
+<div class="text-neutral-500 text-xs">Vulnerabilidades, secrets expuestos, SQL injection, XSS: lee código, nunca lo ejecuta.</div>
+</div>
+</div>
+<div class="flex items-start space-x-3 bg-dark-700 rounded-lg p-3 border border-dark-600">
+<span class="text-2xl">🧪</span>
+<div>
+<div class="font-semibold text-sm text-neutral-200">test-runner</div>
+<div class="text-neutral-500 text-xs">Ejecuta pruebas, interpreta fallas y sugiere correcciones sin tocar el código de producción.</div>
+</div>
+</div>
+<div class="flex items-start space-x-3 bg-dark-700 rounded-lg p-3 border border-dark-600">
+<span class="text-2xl">📝</span>
+<div>
+<div class="font-semibold text-sm text-neutral-200">doc-writer</div>
+<div class="text-neutral-500 text-xs">JSDoc, docstrings, README, changelog: escribe, nunca refactoriza el código.</div>
+</div>
+</div>
+<div class="flex items-start space-x-3 bg-dark-700 rounded-lg p-3 border border-dark-600">
+<span class="text-2xl">🗄️</span>
+<div>
+<div class="font-semibold text-sm text-neutral-200">db-expert</div>
+<div class="text-neutral-500 text-xs">Explica consultas, sugiere índices, revisa migraciones — nunca ejecuta DDL/DML.</div>
+</div>
+</div>
+<div class="flex items-start space-x-3 bg-dark-700 rounded-lg p-3 border border-dark-600 sm:col-span-2">
+<span class="text-2xl">🔥</span>
+<div>
+<div class="font-semibold text-sm text-neutral-200">plan-roaster</div>
+<div class="text-neutral-500 text-xs">Critica planes de implementación, señala riesgos, hace de abogado del diablo — sin modificar código.</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h3 class="text-neutral-300 font-semibold mb-3">Conceptos clave</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<div class="text-emerald-400 font-semibold text-sm mb-2">✓ Principios del paquete inicial</div>
+<ul class="space-y-1 text-neutral-400 text-sm">
+<li class="flex items-center space-x-2"><span class="text-emerald-400">✓</span><span>Herramientas mínimas (solo las necesarias)</span></li>
+<li class="flex items-center space-x-2"><span class="text-emerald-400">✓</span><span>Restricciones explícitas ("nunca ejecuta X")</span></li>
+<li class="flex items-center space-x-2"><span class="text-emerald-400">✓</span><span>Alcance bien delimitado por agente</span></li>
+<li class="flex items-center space-x-2"><span class="text-emerald-400">✓</span><span>Formato de salida especificado</span></li>
+</ul>
+</div>
+<div>
+<div class="text-red-400 font-semibold text-sm mb-2">✗ Evita esto en este primer paquete</div>
+<ul class="space-y-1 text-neutral-400 text-sm">
+<li class="flex items-center space-x-2"><span class="text-red-400">✗</span><span>Agentes que hacen de todo (sin enfoque)</span></li>
+<li class="flex items-center space-x-2"><span class="text-red-400">✗</span><span>Permisos de escritura sin motivo</span></li>
+<li class="flex items-center space-x-2"><span class="text-red-400">✗</span><span>System prompts de más de 200 líneas</span></li>
+<li class="flex items-center space-x-2"><span class="text-red-400">✗</span><span>Dependencias circulares entre agentes</span></li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 3: Templates prontos -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-start space-x-4 mb-6">
+<span class="w-12 h-12 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-lg flex-shrink-0">3</span>
+<div>
+<h2 class="text-2xl font-bold text-neutral-100">📐 Plantillas listas para tu suite</h2>
+<p class="text-neutral-400 mt-1">Frontmatter + cuerpo en minutos, no horas.</p>
+</div>
+</div>
+<div class="bg-gradient-to-br from-purple-900/20 to-dark-800 rounded-xl p-6 border border-purple-500/30 mb-4">
+<h3 class="text-purple-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed">
+          Un template de agente tiene tres partes: el <strong>frontmatter YAML</strong> (metadatos que Claude Code lee), el <strong>system prompt</strong> (cómo debe comportarse el agente) y los <strong>ejemplos de uso</strong> (opcionales, pero muy útiles). Una buena plantilla es un atajo para crear agentes nuevos: completas las partes variables y tienes un agente funcional en 5 minutos.
+        </p>
+</div>
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600 mb-4">
+<h3 class="text-neutral-300 font-semibold mb-3">Por qué usar plantillas</h3>
+<ul class="space-y-2 text-neutral-400">
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-0.5">▸</span><span>Consistencia: todos los agentes de la suite tienen la misma estructura de salida</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-0.5">▸</span><span>Velocidad: un nuevo agente en 5 min sin pensar en la estructura</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-0.5">▸</span><span>Onboarding: el nuevo colaborador entiende la convención sin documentación adicional</span></li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h3 class="text-neutral-300 font-semibold mb-4">Conceptos clave: anatomía de la plantilla</h3>
+<div class="space-y-3">
+<div class="flex items-start space-x-3 border-l-2 border-purple-500/50 pl-4">
+<div>
+<div class="text-purple-400 font-semibold text-sm">Frontmatter YAML</div>
+<div class="text-neutral-400 text-sm">name, description, tools, model (opcional), disallowedTools</div>
+</div>
+</div>
+<div class="flex items-start space-x-3 border-l-2 border-sky-500/50 pl-4">
+<div>
+<div class="text-sky-400 font-semibold text-sm">System Prompt (# Sección)</div>
+<div class="text-neutral-400 text-sm">Rol, objetivo, restricciones obligatorias, formato de salida esperado</div>
+</div>
+</div>
+<div class="flex items-start space-x-3 border-l-2 border-emerald-500/50 pl-4">
+<div>
+<div class="text-emerald-400 font-semibold text-sm">Ejemplos de uso</div>
+<div class="text-neutral-400 text-sm">Cuándo usarlo, cuándo NO usarlo, casos límite: ahorra mucho tiempo</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 4: Checklist de produção -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-start space-x-4 mb-6">
+<span class="w-12 h-12 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-lg flex-shrink-0">4</span>
+<div>
+<h2 class="text-2xl font-bold text-neutral-100">✅ Lista de verificación de producción</h2>
+<p class="text-neutral-400 mt-1">Antes de poner un agente en uso real, revisa esta lista.</p>
+</div>
+</div>
+<div class="bg-gradient-to-br from-purple-900/20 to-dark-800 rounded-xl p-6 border border-purple-500/30 mb-4">
+<h3 class="text-purple-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed">
+          Un checklist es el último filtro antes de que un agente pase a formar parte de tu biblioteca permanente. Abarca seguridad (herramientas mínimas, sin permisos innecesarios), calidad (system prompt claro, formato de salida definido) y operación (quién lo llama, cuándo, qué ocurre si falla).
+        </p>
+</div>
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600 mb-4">
+<h3 class="text-neutral-300 font-semibold mb-4">Por qué usar una lista de verificación</h3>
+<!-- Timeline -->
+<div class="space-y-4">
+<div class="timeline-line border-purple-500/40">
+<div class="timeline-dot bg-purple-500"></div>
+<div class="mb-4">
+<div class="text-purple-400 font-semibold text-sm">1. La seguridad primero</div>
+<div class="text-neutral-400 text-sm">Revisa cada herramienta: ¿realmente es necesaria? ¿El agente puede causar daño si recibe instrucciones incorrectas?</div>
+</div>
+<div class="mb-4">
+<div class="text-purple-400 font-semibold text-sm">2. Claridad del alcance</div>
+<div class="text-neutral-400 text-sm">¿Alguien que nunca vio el agente puede entender lo que hace en 30 segundos?</div>
+</div>
+<div class="mb-4">
+<div class="text-purple-400 font-semibold text-sm">3. Formato de salida</div>
+<div class="text-neutral-400 text-sm">¿La salida se puede analizar? ¿El orquestador sabe qué esperar?</div>
+</div>
+<div class="mb-4">
+<div class="text-purple-400 font-semibold text-sm">4. Prueba con un caso real</div>
+<div class="text-neutral-400 text-sm">Pruébalo con un caso concreto antes de considerarlo listo. Las fallas revelan lagunas en el system prompt.</div>
+</div>
+<div>
+<div class="text-purple-400 font-semibold text-sm">5. Documentación mínima</div>
+<div class="text-neutral-400 text-sm">Agrega al frontmatter: cuándo usar y cuándo NO usar. Evita dudas futuras.</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-amber-900/20 rounded-xl p-5 border border-amber-500/30">
+<div class="flex items-start space-x-3">
+<span class="text-amber-400 text-xl flex-shrink-0">⚠️</span>
+<div>
+<div class="text-amber-400 font-semibold mb-1">Trampa común</div>
+<div class="text-neutral-300 text-sm">Agentes con <code class="bg-dark-700 px-1 rounded text-amber-400 text-xs">Bash</code> sin restricciones, los subprocesos pueden crear bucles o consumir recursos de forma inesperada. Siempre prueba primero en un entorno aislado.</div>
+</div>
+</div>
+</div>
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600 mt-4">
+<h3 class="text-neutral-300 font-semibold mb-3">Conceptos clave: la lista de verificación resumida</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+<div class="flex items-center space-x-2 text-neutral-400"><span class="text-emerald-400">☑</span><span>Las herramientas son las mínimas necesarias</span></div>
+<div class="flex items-center space-x-2 text-neutral-400"><span class="text-emerald-400">☑</span><span>disallowedTools enumerados si corresponde</span></div>
+<div class="flex items-center space-x-2 text-neutral-400"><span class="text-emerald-400">☑</span><span>System prompt ≤ 150 líneas</span></div>
+<div class="flex items-center space-x-2 text-neutral-400"><span class="text-emerald-400">☑</span><span>Formato de salida especificado</span></div>
+<div class="flex items-center space-x-2 text-neutral-400"><span class="text-emerald-400">☑</span><span>Probado con un caso real</span></div>
+<div class="flex items-center space-x-2 text-neutral-400"><span class="text-emerald-400">☑</span><span>Cuándo NO usar, documentado</span></div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 5: Projeto × Global na prática -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-start space-x-4 mb-6">
+<span class="w-12 h-12 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-lg flex-shrink-0">5</span>
+<div>
+<h2 class="text-2xl font-bold text-neutral-100">🔀 Proyecto × Global en la práctica</h2>
+<p class="text-neutral-400 mt-1">Qué va a <code class="bg-dark-700 px-1.5 rounded text-purple-400">~/.claude/</code> y lo que queda en <code class="bg-dark-700 px-1.5 rounded text-purple-400">.claude/</code>?</p>
+</div>
+</div>
+<div class="bg-gradient-to-br from-purple-900/20 to-dark-800 rounded-xl p-6 border border-purple-500/30 mb-4">
+<h3 class="text-purple-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed">
+          Claude Code resuelve los agentes en dos ámbitos: <strong>global</strong> (~/.claude/agents/) y <strong>local</strong> (.claude/agents/ del proyecto). Si existe un agente en ambos lugares con el mismo nombre, el local sobrescribe al global, lo que permite "sobrescribir" especialistas genéricos con versiones adaptadas al proyecto sin eliminar el global.
+        </p>
+</div>
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600 mb-4">
+<h3 class="text-neutral-300 font-semibold mb-4">Por qué esto importa en la práctica</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="bg-purple-500/10 rounded-xl p-4 border border-purple-500/20">
+<div class="text-purple-400 font-bold mb-2">~/.claude/agents/ (Global)</div>
+<ul class="space-y-1 text-sm text-neutral-400">
+<li>• security-auditor genérico</li>
+<li>• doc-writer universal</li>
+<li>• plan-roaster predeterminado</li>
+<li>• Agentes para uso personal constante</li>
+</ul>
+</div>
+<div class="bg-sky-500/10 rounded-xl p-4 border border-sky-500/20">
+<div class="text-sky-400 font-bold mb-2">.claude/agents/ (Proyecto)</div>
+<ul class="space-y-1 text-sm text-neutral-400">
+<li>• db-expert del stack del proyecto</li>
+<li>• test-runner con el framework adecuado</li>
+<li>• style-reviewer de la guía del equipo</li>
+<li>• Agentes específicos del dominio</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl p-5 border border-primary/30 mb-4">
+<div class="flex items-start space-x-3">
+<span class="text-primary text-xl flex-shrink-0">💡</span>
+<div>
+<div class="text-primary font-semibold mb-1">Consejo práctico: jerarquía de override</div>
+<div class="text-neutral-300 text-sm">Empieza con el agente genérico a nivel global. Cuando un proyecto tenga necesidades específicas, crea una versión local con el mismo nombre. Claude Code usa automáticamente la versión local, sin configuración.</div>
+</div>
+</div>
+</div>
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h3 class="text-neutral-300 font-semibold mb-3">Conceptos clave</h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+<div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold mb-1">Anulación por nombre</div>
+<div class="text-neutral-400">Local sobrescribe al global con el mismo filename.</div>
+</div>
+<div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold mb-1">Control de versiones</div>
+<div class="text-neutral-400">Los agentes locales van a git. Los globales quedan en la máquina del desarrollador.</div>
+</div>
+<div class="bg-dark-700 rounded-lg p-4 border border-dark-600">
+<div class="text-purple-400 font-semibold mb-1">Convención de nombres</div>
+<div class="text-neutral-400">Usa kebab-case. El nombre define la identidad. Evita nombres genéricos como «helper».</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TÓPICO 6: RECAP GERAL -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-start space-x-4 mb-6">
+<span class="w-12 h-12 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-lg flex-shrink-0">6</span>
+<div>
+<h2 class="text-2xl font-bold text-neutral-100">🧠 Recapitulación general — el curso en una pantalla</h2>
+<p class="text-neutral-400 mt-1">Todo lo que importa, en frases de una línea.</p>
+</div>
+</div>
+<div class="bg-gradient-to-br from-purple-900/20 to-dark-800 rounded-xl p-6 border border-purple-500/30 mb-6">
+<h3 class="text-purple-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed">
+          Esta es la diapositiva 18: la pantalla de cierre del curso. Cada regla de abajo resume un concepto completo que estudiaste. Si alguna te suena extraña, es señal de qué módulo debes repasar. Si todas te resultaron claras de inmediato, terminaste el curso con el mapa mental correcto.
+        </p>
+</div>
+<!-- TELA SIMULADA — Recap em uma tela -->
+<div class="rounded-2xl border border-purple-500/30 bg-dark-900/60 p-1 mb-6 overflow-hidden">
+<div class="bg-dark-800 rounded-xl overflow-hidden">
+<!-- Barra de janela simulada -->
+<div class="flex items-center px-4 py-2.5 bg-dark-700 border-b border-dark-600">
+<div class="flex space-x-1.5 mr-4">
+<span class="w-3 h-3 rounded-full bg-red-500/70"></span>
+<span class="w-3 h-3 rounded-full bg-amber-500/70"></span>
+<span class="w-3 h-3 rounded-full bg-emerald-500/70"></span>
+</div>
+<span class="text-neutral-500 text-xs font-mono">slide-18.md — Subagentes: el curso en una pantalla</span>
+<span class="ml-auto text-neutral-600 text-xs italic">ilustrativo</span>
+</div>
+<!-- Conteúdo do slide simulado -->
+<div class="p-6 sm:p-8">
+<h3 class="text-purple-400 font-bold text-lg mb-6 text-center">🤖 Subagentes: qué permanece</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+<div class="flex items-start space-x-3 bg-dark-700/50 rounded-lg p-3 border border-dark-600">
+<span class="text-purple-400 font-bold flex-shrink-0">01</span>
+<span class="text-neutral-300"><strong>¿Algo rápido?</strong> → Chat directo. Sin overhead.</span>
+</div>
+<div class="flex items-start space-x-3 bg-dark-700/50 rounded-lg p-3 border border-dark-600">
+<span class="text-purple-400 font-bold flex-shrink-0">02</span>
+<span class="text-neutral-300"><strong>¿Tarea pesada?</strong> → Subagente. Aísla el contexto.</span>
+</div>
+<div class="flex items-start space-x-3 bg-dark-700/50 rounded-lg p-3 border border-dark-600">
+<span class="text-purple-400 font-bold flex-shrink-0">03</span>
+<span class="text-neutral-300"><strong>¿Equipo compartido?</strong> → <code class="bg-dark-600 px-1 rounded text-purple-400">.claude/agents/</code></span>
+</div>
+<div class="flex items-start space-x-3 bg-dark-700/50 rounded-lg p-3 border border-dark-600">
+<span class="text-purple-400 font-bold flex-shrink-0">04</span>
+<span class="text-neutral-300"><strong>¿Solo tú lo usas?</strong> → <code class="bg-dark-600 px-1 rounded text-purple-400">~/.claude/agents/</code></span>
+</div>
+<div class="flex items-start space-x-3 bg-dark-700/50 rounded-lg p-3 border border-dark-600">
+<span class="text-purple-400 font-bold flex-shrink-0">05</span>
+<span class="text-neutral-300"><strong>¿Ahorrar tokens?</strong> → Flota económica + líder inteligente.</span>
+</div>
+<div class="flex items-start space-x-3 bg-dark-700/50 rounded-lg p-3 border border-dark-600">
+<span class="text-purple-400 font-bold flex-shrink-0">06</span>
+<span class="text-neutral-300"><strong>¿Mejor resultado?</strong> → Revisor desde cero al final.</span>
+</div>
+<div class="flex items-start space-x-3 bg-dark-700/50 rounded-lg p-3 border border-dark-600">
+<span class="text-purple-400 font-bold flex-shrink-0">07</span>
+<span class="text-neutral-300"><strong>¿Job gigante?</strong> → Workflow dinámico: úsalo con cuidado.</span>
+</div>
+<div class="flex items-start space-x-3 bg-amber-900/20 rounded-lg p-3 border border-amber-500/30">
+<span class="text-amber-400 font-bold flex-shrink-0">08</span>
+<span class="text-neutral-300"><strong>En caso de duda:</strong> "¿es una pila que nunca voy a volver a leer?" → subagente.</span>
+</div>
+</div>
+<p class="text-center text-neutral-500 text-xs mt-5 font-mono">— fin del curso · INEMA.CLUB/subagentes —</p>
+</div>
+</div>
+</div>
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h3 class="text-neutral-300 font-semibold mb-3">Por qué funciona el resumen en una pantalla</h3>
+<ul class="space-y-2 text-neutral-400">
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-0.5">▸</span><span>Mapa mental compacto: cuando tengas dudas en el trabajo real, vuelve a leer las 8 reglas</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-0.5">▸</span><span>Cada regla apunta a módulos del curso para profundizar</span></li>
+<li class="flex items-start space-x-2"><span class="text-purple-400 mt-0.5">▸</span><span>Facilita compartir lo aprendido con un colega en minutos</span></li>
+</ul>
+</div>
+</section>
+<!-- TÓPICO 7: Próximos passos -->
+<section class="mb-16" id="topico-7">
+<div class="flex items-start space-x-4 mb-6">
+<span class="w-12 h-12 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-lg flex-shrink-0">7</span>
+<div>
+<h2 class="text-2xl font-bold text-neutral-100">🚀 Próximos pasos</h2>
+<p class="text-neutral-400 mt-1">Qué hacer después de terminar el curso.</p>
+</div>
+</div>
+<div class="bg-gradient-to-br from-purple-900/20 to-dark-800 rounded-xl p-6 border border-purple-500/30 mb-4">
+<h3 class="text-purple-400 font-semibold mb-3">Qué es</h3>
+<p class="text-neutral-300 leading-relaxed">
+          El curso te dio el mapa. Los próximos pasos son el territorio. La práctica real con subagentes ocurre en proyectos reales, con errores reales, iteraciones y descubrimientos que ningún curso puede simular. Esta sección indica adónde ir a partir de aquí.
+        </p>
+</div>
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600 mb-4">
+<h3 class="text-neutral-300 font-semibold mb-4">Por qué importa actuar de inmediato</h3>
+<p class="text-neutral-400 mb-4">
+          El conocimiento de los subagentes decae rápido si no se aplica. La ventana de mejor asimilación son las primeras 48h después del curso. Aprovecha ese impulso.
+        </p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+<div class="bg-dark-700 rounded-lg p-4 border border-dark-600 text-center">
+<div class="text-3xl mb-2">48h</div>
+<div class="text-purple-400 font-semibold">Crea tu paquete inicial</div>
+<div class="text-neutral-500 mt-1">5 agentes del proyecto actual</div>
+</div>
+<div class="bg-dark-700 rounded-lg p-4 border border-dark-600 text-center">
+<div class="text-3xl mb-2">1 semana</div>
+<div class="text-purple-400 font-semibold">Usar en producción</div>
+<div class="text-neutral-500 mt-1">1 tarea real al día con un subagente</div>
+</div>
+<div class="bg-dark-700 rounded-lg p-4 border border-dark-600 text-center">
+<div class="text-3xl mb-2">1 mes</div>
+<div class="text-purple-400 font-semibold">Revisa y perfecciona</div>
+<div class="text-neutral-500 mt-1">¿Qué agentes sobrevivieron? ¿Cuáles murieron?</div>
+</div>
+</div>
+</div>
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h3 class="text-neutral-300 font-semibold mb-3">Conceptos clave: dónde continuar</h3>
+<div class="space-y-3 text-sm">
+<div class="flex items-start space-x-3">
+<span class="text-purple-400 font-bold w-6 flex-shrink-0">→</span>
+<span class="text-neutral-300"><strong>Documentación de Claude Code:</strong> actualizaciones constantes en hooks, MCP servers y nuevas formas de orquestación</span>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-purple-400 font-bold w-6 flex-shrink-0">→</span>
+<span class="text-neutral-300"><strong>Comunidad:</strong> comparte tu biblioteca: los agentes bien hechos se convierten en referentes para otros</span>
+</div>
+<div class="flex items-start space-x-3">
+<span class="text-purple-400 font-bold w-6 flex-shrink-0">→</span>
+<span class="text-neutral-300"><strong>Experimentación:</strong> el campo evoluciona rápido. Lo que funciona hoy puede tener un estándar mejor en 6 meses</span>
+</div>
+</div>
+</div>
+</section>
+<!-- BLOCO: EXEMPLO REAL (.md) -->
+<section class="mb-16">
+<h2 class="text-xl font-bold text-neutral-100 mb-4">📄 Ejemplo real: paquete de 5 agentes (.md)</h2>
+<p class="text-neutral-400 mb-4">Cinco archivos listos para copiar en <code class="bg-dark-700 px-1.5 py-0.5 rounded text-purple-400 text-sm">~/.claude/agents/</code> o <code class="bg-dark-700 px-1.5 py-0.5 rounded text-purple-400 text-sm">.claude/agents/</code>:</p>
+<div class="code-box mb-3">
+<pre># ~/.claude/agents/security-auditor.md
+---
+name: security-auditor
+description: Audita código em busca de vulnerabilidades de segurança. Use para revisar PRs críticos, módulos de autenticação, inputs de usuário. NÃO use para refatoração.
+tools:
+  - Read
+  - Bash  # somente leitura — sem escrita de arquivo
+disallowedTools:
+  - Write
+  - Edit
+---
+
+# Security Auditor
+
+Você é um especialista em segurança de aplicações. Sua única função é revisar código e apontar vulnerabilidades.
+
+## O que você faz
+- Identifica SQL injection, XSS, CSRF, secrets expostos, dependências com CVE
+- Classifica cada achado: CRÍTICO / ALTO / MÉDIO / BAIXO
+- Sugere correção específica para cada achado
+
+## O que você NÃO faz
+- Não modifica arquivos
+- Não sugere refatoração fora do escopo de segurança
+- Não executa código de produção
+
+## Formato de saída
+```markdown
+## Relatório de Segurança — [arquivo/PR]
+### Achados
+| Severidade | Linha | Descrição | Correção sugerida |
+```</pre>
+</div>
+<div class="code-box mb-3">
+<pre># ~/.claude/agents/test-runner.md
+---
+name: test-runner
+description: Roda suítes de teste, interpreta falhas e sugere correções. Ideal para CI debug e TDD. Use ANTES de mergear.
+tools:
+  - Bash
+  - Read
+disallowedTools:
+  - Write
+  - Edit
+---
+
+# Test Runner
+
+Roda testes, lê a saída e explica cada falha em linguagem humana. Sugere correção mas não aplica.
+
+## Regras
+- Rode sempre com `--no-coverage` para velocidade na primeira passagem
+- Agrupe falhas por módulo (não por arquivo)
+- Priorize: build breaks &gt; falhas de lógica &gt; warnings</pre>
+</div>
+<div class="code-box mb-3">
+<pre># ~/.claude/agents/doc-writer.md
+---
+name: doc-writer
+description: Gera documentação técnica (JSDoc, docstrings, README, CHANGELOG). Use após implementação. NÃO faz refatoração.
+tools:
+  - Read
+  - Write   # só para arquivos de documentação (.md, comentários)
+---
+
+# Doc Writer
+
+Especialista em documentação técnica. Lê código e gera docs claros, concisos e atualizados.
+
+## Convenções
+- JSDoc para funções públicas
+- Docstrings para funções com lógica não-óbvia
+- README: instalação, uso, exemplos mínimos
+- CHANGELOG: formato Keep a Changelog</pre>
+</div>
+<div class="code-box mb-3">
+<pre># .claude/agents/db-expert.md   (local — adapte ao projeto)
+---
+name: db-expert
+description: Especialista em banco de dados do projeto. Revisa queries, migrations e índices. NÃO executa DDL/DML.
+tools:
+  - Read
+  - Bash    # apenas queries SELECT em banco de dev
+disallowedTools:
+  - Write
+---
+
+# DB Expert — [nome do projeto]
+
+Stack: PostgreSQL 15, Prisma ORM, ambiente dev em localhost:5432.
+
+## O que faço
+- Analiso N+1, missing indexes, cartesian products
+- Reviso migrations antes do deploy
+- Explico planos de execução (EXPLAIN ANALYZE)
+
+## Formato de resposta
+Para cada problema: impacto estimado + query corrigida + índice sugerido.</pre>
+</div>
+<div class="code-box">
+<pre>## ~/.claude/agents/plan-roaster.md
+---
+name: plan-roaster
+description: Critica planes de implementación con escepticismo constructivo. Úsalo antes de cualquier tarea compleja. NO modifica código.
+tools:
+  - Read
+disallowedTools:
+  - Write
+  - Edit
+  - Bash
+---
+
+# Plan Roaster
+
+Eres el abogado del diablo técnico. Lees planes y señalas lo que saldrá mal.
+
+## Cómo operas
+1. Lees el plan completo
+2. Enumeras las suposiciones implícitas (las más peligrosas)
+3. Señalas los puntos de falla: casos límite, dependencias externas, rollback difícil
+4. Sugieres preguntas que el autor debería responder antes de empezar
+
+## Tono
+Directo y útil. No eres pesimista por naturaleza: solo realista.</pre>
+</div>
+</section>
+<!-- BLOCO: PROMPTS PRONTOS -->
+<section class="mb-16">
+<h2 class="text-xl font-bold text-neutral-100 mb-4">💬 Prompts listos</h2>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30">
+<div class="text-purple-400 font-semibold text-sm mb-2">Prompt 1 — Generar la suite inicial del proyecto actual</div>
+<div class="code-box">
+<pre>Analiza este proyecto y crea para mí 5 subagentes personalizados para .claude/agents/. Para cada uno: identifica la función que más falta, define las herramientas mínimas y las restricciones explícitas. Formato: un bloque de código por archivo .md, listo para copiar. Empieza por el de mayor impacto.</pre>
+</div>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30">
+<div class="text-purple-400 font-semibold text-sm mb-2">Prompt 2 — revisar un agente existente con una lista de verificación de producción</div>
+<div class="code-box">
+<pre>Leia o arquivo .claude/agents/[nome].md e aplique o checklist de produção: ferramentas são mínimas? restrições explícitas? escopo claro em 30s? formato de saída definido? Aponte problemas e sugira versão corrigida.</pre>
+</div>
+</div>
+<div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30">
+<div class="text-purple-400 font-semibold text-sm mb-2">Prompt 3 — dispatcher orquestador para la suite completa</div>
+<div class="code-box">
+<pre>Usando os subagentes disponíveis (security-auditor, test-runner, doc-writer, db-expert, plan-roaster), monte um workflow para revisão completa antes de PR: rode os agentes relevantes em paralelo, colete resultados e gere um relatório unificado com ações prioritárias. Comece pelo plano antes de executar.</pre>
+</div>
+</div>
+</div>
+</section>
+<!-- BLOCO: EXERCÍCIO FINAL -->
+<section class="mb-16">
+<div class="bg-gradient-to-br from-purple-900/30 to-dark-800 rounded-2xl p-8 border border-purple-500/30">
+<div class="flex items-start space-x-4 mb-6">
+<span class="text-4xl">🎯</span>
+<div>
+<h2 class="text-2xl font-bold text-neutral-100">Proyecto final</h2>
+<p class="text-purple-400 font-medium mt-1">Diseña y crea tu propio conjunto de subagentes</p>
+</div>
+</div>
+<div class="bg-dark-800/60 rounded-xl p-6 border border-dark-600 mb-6">
+<h3 class="text-neutral-200 font-semibold mb-4">Qué hacer</h3>
+<ol class="space-y-3 text-neutral-300 text-sm list-decimal pl-5">
+<li>Elige un proyecto real que tengas o estés desarrollando.</li>
+<li>Identifica los <strong>3 cuellos de botella recurrentes</strong> en tu workflow (ejemplos: "reviso la seguridad manualmente", "hago las pruebas a mano", "tardo mucho en documentar").</li>
+<li>Para cada cuello de botella, diseña un subagente: nombre, herramientas, restricciones, formato de salida.</li>
+<li>Crea los archivos <code class="bg-dark-700 px-1 rounded text-purple-400">.md</code> en <code class="bg-dark-700 px-1 rounded text-purple-400">.claude/agents/</code> del proyecto.</li>
+<li>Prueba cada agente en un caso real y documenta qué funcionó y qué ajustaste.</li>
+<li>Escribe un párrafo: "Mi suite hace X. Antes tardaba Y. Ahora me lleva Z."</li>
+</ol>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="bg-emerald-900/20 rounded-xl p-5 border border-emerald-500/30">
+<h3 class="text-emerald-400 font-semibold mb-3">✓ Criterios de finalización</h3>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-center space-x-2"><span class="text-emerald-400">✓</span><span>≥ 3 archivos .md creados y funcionales</span></li>
+<li class="flex items-center space-x-2"><span class="text-emerald-400">✓</span><span>Cada agente pasó por la lista de verificación de producción</span></li>
+<li class="flex items-center space-x-2"><span class="text-emerald-400">✓</span><span>Cada agente se probó en un caso real (no simulado)</span></li>
+<li class="flex items-center space-x-2"><span class="text-emerald-400">✓</span><span>Párrafo de impacto escrito con honestidad</span></li>
+<li class="flex items-center space-x-2"><span class="text-emerald-400">✓</span><span>Al menos 1 agente con commits en el repositorio</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl p-5 border border-red-500/30">
+<h3 class="text-red-400 font-semibold mb-3">✗ El ejercicio no vale si</h3>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-center space-x-2"><span class="text-red-400">✗</span><span>Los agentes solo se imaginaron, no se crearon</span></li>
+<li class="flex items-center space-x-2"><span class="text-red-400">✗</span><span>Ninguno se probó con una tarea real</span></li>
+<li class="flex items-center space-x-2"><span class="text-red-400">✗</span><span>El "proyecto" es un hello world creado solo para el ejercicio</span></li>
+<li class="flex items-center space-x-2"><span class="text-red-400">✗</span><span>El párrafo de impacto se generó con IA sin una revisión honesta</span></li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- BLOCO: PARABÉNS / CONCLUSÃO DO CURSO -->
+<section class="mb-16">
+<div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-900 rounded-2xl p-8 sm:p-12 border border-purple-500/40 text-center relative overflow-hidden">
+<!-- Decoração de fundo -->
+<div class="absolute inset-0 opacity-5">
+<div class="absolute top-4 left-8 text-6xl">🤖</div>
+<div class="absolute top-8 right-12 text-5xl">⚡</div>
+<div class="absolute bottom-6 left-16 text-4xl">🔧</div>
+<div class="absolute bottom-4 right-8 text-6xl">🎯</div>
+</div>
+<div class="relative z-10">
+<div class="text-6xl mb-6">🏆</div>
+<h2 class="text-3xl sm:text-4xl font-bold text-neutral-100 mb-4">
+            Completaste el curso <span class="text-purple-400">Subagentes</span>!
+          </h2>
+<p class="text-neutral-400 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+            Pasaste de «qué es un subagente» a crear tu propia fábrica de especialistas. Este es uno de los conjuntos de habilidades más valiosos del desarrollo con IA en 2026, y tienes el mapa completo.
+          </p>
+<!-- Recap do que foi aprendido -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 text-sm">
+<div class="bg-dark-800/80 rounded-xl p-4 border border-dark-600">
+<div class="text-emerald-400 font-bold text-lg">T1</div>
+<div class="text-neutral-400">Fundamentos</div>
+<div class="text-neutral-500 text-xs mt-1">Qué son y cómo funcionan</div>
+</div>
+<div class="bg-dark-800/80 rounded-xl p-4 border border-dark-600">
+<div class="text-blue-400 font-bold text-lg">T2</div>
+<div class="text-neutral-400">Práctica</div>
+<div class="text-neutral-500 text-xs mt-1">Crear e invocar</div>
+</div>
+<div class="bg-dark-800/80 rounded-xl p-4 border border-dark-600">
+<div class="text-amber-400 font-bold text-lg">T3</div>
+<div class="text-neutral-400">Intermedio</div>
+<div class="text-neutral-500 text-xs mt-1">Estándares y composición</div>
+</div>
+<div class="bg-dark-800/80 rounded-xl p-4 border border-purple-500/30">
+<div class="text-purple-400 font-bold text-lg">T4</div>
+<div class="text-neutral-400">Avanzado</div>
+<div class="text-neutral-500 text-xs mt-1">Escala y tu sistema</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl p-5 border border-primary/30 mb-8 max-w-xl mx-auto">
+<p class="text-primary font-semibold">"Un subagente bien hecho es un colega que nunca olvida, nunca se cansa y nunca se excede de su alcance."</p>
+<p class="text-neutral-500 text-sm mt-2">— Principio central del curso</p>
+</div>
+<a class="inline-flex items-center space-x-2 px-8 py-4 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl transition-all text-lg" href="../../index.html">
+<span>🏠</span>
+<span>Volver a la landing del curso</span>
+</a>
+</div>
+</div>
+</section>
+<!-- RESUMO FINAL -->
+<section class="mb-12">
+<div class="bg-dark-800 rounded-2xl p-6 border border-dark-600">
+<h2 class="text-xl font-bold text-neutral-100 mb-4">📋 Qué aprendiste en este módulo</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+<div class="flex items-center space-x-2 text-neutral-300"><span class="text-purple-400">✓</span><span>Cómo organizar una biblioteca de especialistas</span></div>
+<div class="flex items-center space-x-2 text-neutral-300"><span class="text-purple-400">✓</span><span>El paquete inicial: 5 agentes listos para usar</span></div>
+<div class="flex items-center space-x-2 text-neutral-300"><span class="text-purple-400">✓</span><span>Plantillas que eliminan el trabajo repetido al crear</span></div>
+<div class="flex items-center space-x-2 text-neutral-300"><span class="text-purple-400">✓</span><span>Lista de verificación de producción para agentes confiables</span></div>
+<div class="flex items-center space-x-2 text-neutral-300"><span class="text-purple-400">✓</span><span>Cuándo usar global vs. local (proyecto)</span></div>
+<div class="flex items-center space-x-2 text-neutral-300"><span class="text-purple-400">✓</span><span>El recap general del curso en 8 reglas</span></div>
+<div class="flex items-center space-x-2 text-neutral-300"><span class="text-purple-400">✓</span><span>Próximos pasos con plazos de 48h, 1 semana y 1 mes</span></div>
+<div class="flex items-center space-x-2 text-neutral-300"><span class="text-purple-400">✓</span><span>Proyecto final: tu suite real de subagentes</span></div>
+</div>
+</div>
+</section>
+</main>
+<!-- NAVEGAÇÃO INFERIOR -->
+<footer class="border-t border-dark-600 bg-dark-900/80">
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+<a class="flex items-center space-x-2 px-5 py-3 bg-dark-800 hover:bg-dark-700 border border-dark-600 rounded-xl transition-colors text-neutral-300 hover:text-neutral-100" href="modulo-4-5.html">
+<span>←</span>
+<span>Anterior: Bibliotecas y reutilización</span>
+</a>
+<div class="text-center">
+<div class="text-neutral-500 text-sm">Módulo 4.6 de 6 · Ruta 4</div>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<a class="flex items-center space-x-2 px-5 py-3 bg-purple-600 hover:bg-purple-500 border border-purple-500 rounded-xl transition-colors text-white font-semibold" href="../../index.html">
+<span>Finalizar curso</span>
+<span>🏁</span>
+</a>
+</div>
+<div class="text-center mt-6">
+<p class="text-neutral-500 text-sm">Curso <strong>Subagentes</strong> · Ruta 4 · Avanzado y entre entornos · 2026</p>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+</nav>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+        if (exp !== explanation) exp.classList.remove('active');
+      });
+      explanation.classList.toggle('active');
+    }
+
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function closeModal() {
+      document.querySelectorAll('.modal').forEach(modal => modal.classList.add('hidden'));
+      document.body.style.overflow = 'auto';
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('color-theme') === 'light' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+      html.classList.remove('dark');
+      themeToggleLightIcon.classList.remove('hidden');
+    } else {
+      html.classList.add('dark');
+      themeToggleDarkIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('color-theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('color-theme', 'dark');
+      }
+    });
+  </script>
+</body>
+</html>

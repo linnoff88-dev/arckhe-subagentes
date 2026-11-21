@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The body is the brain | Subagents</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha blue T2) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(37, 99, 235, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(37, 99, 235, 0.18); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #2563eb; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .from-blue-900\/30 { --tw-gradient-from: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+
+    /* Light mode - apoio (sky/ciano, red, emerald) */
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+
+    /* Light mode - remove gradientes */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - diagramas SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves (OBRIGATORIO - 2 regras) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Animações SVG — apenas se o usuário permitir movimento */
+    @keyframes sv-pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+    @keyframes sv-rise { from{transform:translateY(4px);opacity:.4} to{transform:translateY(0);opacity:1} }
+    @keyframes sv-dash { from{stroke-dashoffset:60} to{stroke-dashoffset:0} }
+    @media (prefers-reduced-motion: no-preference) {
+      .sv-step { animation: sv-rise 0.6s ease-out both; }
+      .sv-step:nth-child(2){animation-delay:.15s}
+      .sv-step:nth-child(3){animation-delay:.30s}
+      .sv-step:nth-child(4){animation-delay:.45s}
+      .sv-glow { animation: sv-pulse 2.8s ease-in-out infinite; }
+      .sv-trace { animation: sv-dash 1.4s ease-out forwards; animation-delay:.7s; stroke-dashoffset:60; }
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha2/modulo-2-3.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha2/modulo-2-3.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha2/modulo-2-3.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha2/modulo-2-3.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="modulo-2-3.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../../../es/curso/trilha2/modulo-2-3.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagents</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentals</span>
+</a>
+<!-- Trilha 2 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10" href="index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">In practice</span>
+</a>
+<!-- Trilha 3 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orchestration</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Advanced</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-blue-400" href="../../index.html">Start</a>
+<span>/</span>
+<a class="hover:text-blue-400" href="index.html">Track 2</a>
+<span>/</span>
+<span class="text-blue-400">Module 2.3</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">
+        MODULE 2.3 · Track 2 · Building in practice
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">🧠 The body is the brain</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        The frontmatter configures the agent, but the <strong class="text-blue-400">the .md body</strong> is what decides how it thinks,
+        how it acts, and what it delivers. A well-written body turns a generic tool into a
+        <strong class="text-blue-400">reliable specialist</strong>.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">7</div>
+<div class="text-xs text-neutral-400">Topics</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">~35</div>
+<div class="text-xs text-neutral-400">Minutes</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">Medium</div>
+<div class="text-xs text-neutral-400">Level</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">Practice</div>
+<div class="text-xs text-neutral-400">Type</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- SVG FUTURISTA: Escada Papel → Passos → Saída -->
+<section class="mb-16">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Every well-built subagent climbs the same ladder: it starts with a
+        <strong class="text-blue-400">clear role</strong>, moves through the
+        <strong class="text-blue-400">numbered steps</strong> and reaches a
+        <strong class="text-blue-400">output format</strong> that any orchestrator can read.
+        What separates a weak agent from a reliable specialist is this progression.
+      </p>
+<!-- Diagrama SVG Escada Futurista -->
+<div class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-6 mb-8">
+<svg aria-label="Subagent body-building ladder: Role → Numbered steps → Output format → Specialist agent" class="w-full h-auto" role="img" viewbox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<filter id="m23-glow">
+<fegaussianblur result="blur" stddeviation="1.8"></fegaussianblur>
+<fecomposite in="SourceGraphic" in2="blur" operator="over"></fecomposite>
+</filter>
+<lineargradient id="m23-trace" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" stop-color="#60a5fa" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#38bdf8" stop-opacity="0.8"></stop>
+</lineargradient>
+<lineargradient id="m23-bg1" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#0e1622"></stop>
+<stop offset="100%" stop-color="#0a1020"></stop>
+</lineargradient>
+</defs>
+<!-- Grid de fundo sutil -->
+<pattern height="32" id="m23-grid" patternunits="userSpaceOnUse" width="32" x="0" y="0">
+<path d="M32 0 L0 0 0 32" fill="none" stroke="#1e3a5f" stroke-width="0.4"></path>
+</pattern>
+<rect fill="url(#m23-grid)" height="220" opacity="0.5" width="640"></rect>
+<!-- Linha tracejada de progresso -->
+<path class="sv-trace" d="M 60 180 L 180 140 L 320 100 L 460 60 L 580 30" fill="none" stroke="url(#m23-trace)" stroke-dasharray="8 5" stroke-width="1.5"></path>
+<!-- Degrau 1: Papel -->
+<g class="sv-step" style="animation-delay:0s">
+<rect fill="#0e1622" height="44" rx="8" stroke="#60a5fa" stroke-width="2" width="110" x="30" y="148"></rect>
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="85" y="166">ROLE</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="85" y="181">you are a senior…</text>
+</g>
+<!-- Degrau 2: Contexto -->
+<g class="sv-step" style="animation-delay:.15s">
+<rect fill="#0e1622" height="44" rx="8" stroke="#60a5fa" stroke-width="2" width="120" x="165" y="108"></rect>
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="225" y="126">CONTEXT</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="225" y="141">when invoked…</text>
+</g>
+<!-- Degrau 3: Passos -->
+<g class="sv-step" style="animation-delay:.30s">
+<rect fill="#0e1622" height="44" rx="8" stroke="#38bdf8" stroke-width="2" width="120" x="300" y="68"></rect>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="360" y="86">STEPS</text>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="360" y="101">1. analyze · 2. check…</text>
+</g>
+<!-- Degrau 4: Saída — glow no topo -->
+<g class="sv-step sv-glow" filter="url(#m23-glow)" style="animation-delay:.45s">
+<rect fill="#0e1b26" height="44" rx="8" stroke="#38bdf8" stroke-width="2.5" width="150" x="440" y="28"></rect>
+<text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10" font-weight="700" text-anchor="middle" x="515" y="46">OUTPUT + DO NOT</text>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="515" y="61">structured format</text>
+</g>
+<!-- Setas de subida -->
+<path d="M 140 162 L 162 148" fill="none" marker-end="url(#m23-arr)" stroke="#60a5fa" stroke-width="1.2"></path>
+<path d="M 285 122 L 297 108" fill="none" marker-end="url(#m23-arr)" stroke="#60a5fa" stroke-width="1.2"></path>
+<path d="M 420 82 L 437 68" fill="none" marker-end="url(#m23-arr)" stroke="#38bdf8" stroke-width="1.2"></path>
+<!-- Marcador de seta -->
+<defs>
+<marker id="m23-arr" markerheight="6" markerwidth="6" orient="auto" refx="3" refy="3">
+<path d="M0,0 L6,3 L0,6 Z" fill="#60a5fa"></path>
+</marker>
+</defs>
+<!-- Label rodapé -->
+<text fill="#4b5563" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="320" y="212">Subagent body ladder — each rung amplifies the next</text>
+</svg>
+</div>
+</section>
+<!-- TOPICO 1: Papel -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">🎭 Role: "you are a senior…"</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The first line of the body defines the <strong class="text-blue-400">identity</strong> from the agent.
+        This isn't vanity — it's a signal of expertise. The model calibrates vocabulary, depth, and tone
+        based on this statement. A well-written role sentence is worth more than ten paragraphs of vague instructions.
+      </p>
+<!-- Box Conceito Principal -->
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="font-bold text-blue-400 mb-3">Anatomy of an effective role</h3>
+<p class="text-neutral-300 text-sm leading-relaxed mb-4">
+          A complete role has three parts: <strong class="text-blue-400">level</strong> (senior / staff / principal),
+          <strong class="text-blue-400">domain</strong> (security engineer / code reviewer / technical writer)
+          and <strong class="text-blue-400">operational context</strong> (working in a production codebase / reviewing PRs / writing for developers).
+        </p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div class="bg-dark-700 rounded-lg p-3 text-center">
+<div class="text-blue-400 font-bold text-sm mb-1">Level</div>
+<div class="text-xs text-neutral-400">senior · staff · principal · lead</div>
+</div>
+<div class="bg-dark-700 rounded-lg p-3 text-center">
+<div class="text-blue-400 font-bold text-sm mb-1">Domain</div>
+<div class="text-xs text-neutral-400">security engineer · reviewer · writer</div>
+</div>
+<div class="bg-dark-700 rounded-lg p-3 text-center">
+<div class="text-blue-400 font-bold text-sm mb-1">Context</div>
+<div class="text-xs text-neutral-400">in production · reviewing PRs · writing docs</div>
+</div>
+</div>
+</div>
+<!-- Grid Fazer vs Evitar -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-5">
+<h4 class="font-semibold text-emerald-400 mb-3 flex items-center gap-2">
+<span>✓</span> Effective role
+          </h4>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> "You are a senior security engineer reviewing production Python code for OWASP vulnerabilities."</li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> "You are a staff technical writer creating developer documentation for a REST API."</li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> Includes the specific domain + usage context</li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-5">
+<h4 class="font-semibold text-red-400 mb-3 flex items-center gap-2">
+<span>✗</span> Weak role
+          </h4>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> "You are a helpful assistant." — too generic, no domain cues</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> "You are an expert." — without specifying what in</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Omit the role entirely</li>
+</ul>
+</div>
+</div>
+<!-- Box Dica -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5">
+<p class="text-sm text-neutral-300">
+<strong class="text-primary">Tip:</strong> test your role by asking
+          <em>"what vocabulary would a [your role] use?"</em> — if the answer changes between "helpful assistant" and "senior security engineer",
+          the role is doing real work.
+        </p>
+</div>
+</section>
+<!-- TOPICO 2: Passos numerados -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">🔢 Numbered steps: "when invoked: 1…"</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        After the role come the <strong class="text-blue-400">execution steps</strong> — the exact sequence
+        the agent should follow every time it’s invoked. Numbered steps turn
+        emergent (unpredictable) behavior into <strong class="text-blue-400">reproducible</strong>.
+      </p>
+<!-- Timeline de passos -->
+<div class="space-y-4 mb-6">
+<div class="flex gap-4 items-start">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">1</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-4 flex-1">
+<div class="font-semibold text-blue-400 mb-1">Read the entire input before acting</div>
+<div class="text-sm text-neutral-400">A nearly universal first step. Keeps the agent from responding to the first sentence and ignoring the context that follows.</div>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">2</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-4 flex-1">
+<div class="font-semibold text-blue-400 mb-1">Classify / identify the item type</div>
+<div class="text-sm text-neutral-400">A typical second step in reviewers and classifiers. Defines the processing route before execution.</div>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">3</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-4 flex-1">
+<div class="font-semibold text-blue-400 mb-1">Run the main analysis</div>
+<div class="text-sm text-neutral-400">The actual domain work. Be specific: "check for SQL injection, XSS, insecure deserialization" is better than "look for bugs."</div>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">4</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-4 flex-1">
+<div class="font-semibold text-blue-400 mb-1">Format and deliver the output</div>
+<div class="text-sm text-neutral-400">Final step: applies the defined output format. Keeps things consistent even if the orchestrator changes.</div>
+</div>
+</div>
+</div>
+<!-- Box Dados -->
+<div class="bg-blue-900/20 border border-blue-500/30 rounded-xl p-5">
+<h4 class="font-semibold text-blue-400 mb-2">Why number them?</h4>
+<p class="text-sm text-neutral-300">
+          The model tends to follow numbered lists more faithfully than paragraphs of instructions.
+          Numbering creates a <strong class="text-blue-400">explicit execution contract</strong> — skipping a step becomes visible to whoever reviews the output.
+        </p>
+</div>
+</section>
+<!-- TOPICO 3: Formato de saída -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">📄 Output format</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The orchestrator will read what the subagent returns. If the format varies, the orchestrator
+        needs extra logic to parse it. A <strong class="text-blue-400">declared output format</strong>
+        in the agent's body eliminates this variation and makes integration trivial.
+      </p>
+<!-- Box Conceito Principal -->
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="font-bold text-blue-400 mb-3">Section <code class="bg-dark-700 px-2 py-0.5 rounded text-sm font-mono">## Output Format</code> in the body</h3>
+<p class="text-neutral-300 text-sm leading-relaxed mb-3">
+          Explicitly state the format in a separate section from the body. Use Markdown for structure
+          and <code class="bg-dark-700 px-1.5 py-0.5 rounded text-xs font-mono">code fences</code> to show the exact expected schema.
+        </p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-xs text-neutral-300 overflow-x-auto">
+<span class="text-blue-400">## Output Format</span><br/>
+<span class="text-neutral-500">Respond with a Markdown document containing:</span><br/>
+<span class="text-neutral-400">- **Summary**: 1–2 sentences</span><br/>
+<span class="text-neutral-400">- **Findings**: numbered list, each with severity (HIGH/MED/LOW)</span><br/>
+<span class="text-neutral-400">- **Recommendation**: one actionable fix per finding</span><br/>
+<span class="text-neutral-500">Do not include any other sections.</span>
+</div>
+</div>
+<!-- Grid Fazer vs Evitar -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-5">
+<h4 class="font-semibold text-emerald-400 mb-3">✓ Structured format</h4>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> Dedicated section <code class="text-xs bg-dark-700 px-1 rounded">## Output Format</code></li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> Named fields with types (string, number, list)</li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> JSON schema when the orchestrator will parse it automatically</li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-5">
+<h4 class="font-semibold text-red-400 mb-3">✗ Free-form format</h4>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> No format declaration — output varies with each invocation</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> "Respond in prose" for automated integrations</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Optional fields with no declared default value</li>
+</ul>
+</div>
+</div>
+<!-- Dica -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5">
+<p class="text-sm text-neutral-300">
+<strong class="text-primary">Tip:</strong> when the subagent will return data for another agent to process,
+          prefer JSON over Markdown — it’s easier to parse programmatically. Use Markdown when the output is for people to read directly.
+        </p>
+</div>
+</section>
+<!-- TOPICO 4: O que NÃO fazer -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">🚫 What NOT to do</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Declaring explicit constraints is just as important as stating what to do.
+        The model knows more than you want it to use—the section on <strong class="text-blue-400">not doing</strong>
+        sets the scope and prevents the agent from "overhelping" outside its role.
+      </p>
+<!-- Box Conceito Principal -->
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="font-bold text-blue-400 mb-3">Section <code class="bg-dark-700 px-2 py-0.5 rounded text-sm font-mono">## Constraints</code></h3>
+<p class="text-neutral-300 text-sm leading-relaxed mb-3">
+          Use a section <code class="bg-dark-700 px-1.5 py-0.5 rounded text-xs font-mono">## Constraints</code> or
+          <code class="bg-dark-700 px-1.5 py-0.5 rounded text-xs font-mono">## Do not</code> to list
+          prohibited behaviors. Each restriction should be actionable — not vague.
+        </p>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-xs text-neutral-300 overflow-x-auto">
+<span class="text-blue-400">## Constraints</span><br/>
+<span class="text-red-400">- Do not fix code</span><span class="text-neutral-500"> — only report findings</span><br/>
+<span class="text-red-400">- Do not comment on style</span><span class="text-neutral-500"> — focus on security only</span><br/>
+<span class="text-red-400">- Do not escalate to the user</span><span class="text-neutral-500"> — return results to orchestrator</span><br/>
+<span class="text-red-400">- Do not hallucinate CVE numbers</span><span class="text-neutral-500"> — say "unverified" if unsure</span>
+</div>
+</div>
+<!-- Box Alerta -->
+<div class="bg-red-900/20 border border-red-500/30 rounded-xl p-5 mb-6">
+<h4 class="font-semibold text-red-400 mb-2">⚠️ Empty restrictions don't work</h4>
+<p class="text-sm text-neutral-300">
+          "Do not do anything harmful" is not an actionable constraint—the model already has guardrails for that.
+          Useful constraints are <strong class="text-red-400">specific to the agent’s domain</strong>:
+          "do not suggest architectural changes" (for a code reviewer), "do not translate content" (for a qa-checker).
+        </p>
+</div>
+<!-- Conceitos-chave grid -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 text-center border border-dark-600">
+<div class="text-blue-400 text-lg mb-1">🎯</div>
+<div class="font-semibold text-sm mb-1">Specific</div>
+<div class="text-xs text-neutral-400">Avoid "don't do bad things"</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 text-center border border-dark-600">
+<div class="text-blue-400 text-lg mb-1">🔒</div>
+<div class="font-semibold text-sm mb-1">Scope limit</div>
+<div class="text-xs text-neutral-400">Defines where the agent stops</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 text-center border border-dark-600">
+<div class="text-blue-400 text-lg mb-1">📡</div>
+<div class="font-semibold text-sm mb-1">Escalation</div>
+<div class="text-xs text-neutral-400">Specify whether it should escalate</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 text-center border border-dark-600">
+<div class="text-blue-400 text-lg mb-1">🔕</div>
+<div class="font-semibold text-sm mb-1">Silence</div>
+<div class="text-xs text-neutral-400">When nothing is returned</div>
+</div>
+</div>
+</section>
+<!-- TOPICO 5: Um agente, uma tarefa -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">⚡ One agent, one task</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The biggest mistake in an agent’s body isn’t what’s there — it’s what’s <em>more</em>.
+        Agents that do multiple things don’t do any of them well. The test is simple:
+        if you can put a <strong class="text-blue-400">"and also"</strong> in the agent's role,
+        it needs to be split up.
+      </p>
+<!-- Box Dados -->
+<div class="bg-blue-900/20 border border-blue-500/30 rounded-xl p-6 mb-6">
+<h3 class="font-bold text-blue-400 mb-4">The "and also" test</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="bg-dark-800 rounded-lg p-4">
+<div class="text-red-400 font-semibold text-sm mb-2">✗ Do-it-all agent</div>
+<div class="font-mono text-xs text-neutral-400 leading-relaxed">
+              You are a senior engineer.<br/>
+              Review the code for bugs,<br/>
+<span class="text-red-400">and also</span> suggest improvements,<br/>
+<span class="text-red-400">and also</span> update the docs,<br/>
+<span class="text-red-400">and also</span> check security.
+            </div>
+</div>
+<div class="bg-dark-800 rounded-lg p-4">
+<div class="text-emerald-400 font-semibold text-sm mb-2">✓ Specialized agents</div>
+<div class="font-mono text-xs text-neutral-400 leading-relaxed">
+<span class="text-emerald-400">bug-finder</span>: review for correctness<br/>
+<span class="text-emerald-400">security-reviewer</span>: OWASP checks<br/>
+<span class="text-emerald-400">doc-writer</span>: update docs<br/>
+<span class="text-emerald-400">refactor-advisor</span>: suggest improvements
+            </div>
+</div>
+</div>
+</div>
+<!-- Dica -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5 mb-6">
+<p class="text-sm text-neutral-300">
+<strong class="text-primary">Practical tip:</strong> when an agent takes too long, produces large, hard-to-parse outputs,
+          or gets "confused" between operating modes — it’s a sign it’s trying to do too much.
+          Split at the "and also" point.
+        </p>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 text-center border border-dark-600">
+<div class="text-blue-400 text-lg mb-1">🔬</div>
+<div class="font-semibold text-sm mb-1">Specialization</div>
+<div class="text-xs text-neutral-400">One role → one responsibility</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 text-center border border-dark-600">
+<div class="text-blue-400 text-lg mb-1">🧩</div>
+<div class="font-semibold text-sm mb-1">Composition</div>
+<div class="text-xs text-neutral-400">Orchestrator combines specialists</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 text-center border border-dark-600">
+<div class="text-blue-400 text-lg mb-1">🔄</div>
+<div class="font-semibold text-sm mb-1">Testability</div>
+<div class="text-xs text-neutral-400">Single agent = single point of failure</div>
+</div>
+</div>
+</section>
+<!-- TOPICO 6: O corpo invoca skills -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">🔧 The body invokes skills</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        A subagent can use skills registered in the system — it invokes them
+        <strong class="text-blue-400">by name</strong>, with a command in the body.
+        This allows the agent to delegate parts of the work to specialized skills
+        without having to reimplement behaviors that already exist.
+      </p>
+<!-- Box Conceito Principal -->
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="font-bold text-blue-400 mb-3">How to declare in the body</h3>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-xs text-neutral-300 overflow-x-auto mb-3">
+<span class="text-blue-400">## When invoked</span><br/>
+<span class="text-neutral-500">1. Read the target file(s) fully.</span><br/>
+<span class="text-neutral-500">2. </span><span class="text-emerald-400">Use the `impeccable` skill</span><span class="text-neutral-500"> to check prose quality.</span><br/>
+<span class="text-neutral-500">3. Apply findings to the output.</span><br/>
+<span class="text-neutral-500">4. Return a diff-style summary.</span>
+</div>
+<p class="text-sm text-neutral-400">
+          The skill’s usage instructions go in the numbered steps—not in the role.
+          The role defines who the agent is; the steps define what it uses.
+        </p>
+</div>
+<!-- Grid Fazer vs Evitar -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-5">
+<h4 class="font-semibold text-emerald-400 mb-3">✓ Correct delegation</h4>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> Skill invoked at a specific, numbered step</li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> Skill result integrated into the final output</li>
+<li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">✓</span> Skill does one thing; agent orchestrates the workflow</li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-5">
+<h4 class="font-semibold text-red-400 mb-3">✗ Common problems</h4>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Invoke a skill without using the result (token waste)</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Call a skill that does exactly what the agent already does</li>
+<li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">✗</span> Invoke multiple skills without an ordering criterion</li>
+</ul>
+</div>
+</div>
+<!-- Conceitos-chave -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 text-center border border-dark-600">
+<div class="text-blue-400 text-lg mb-1">🎓</div>
+<div class="font-semibold text-sm mb-1">Skill</div>
+<div class="text-xs text-neutral-400">Reusable behavior</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 text-center border border-dark-600">
+<div class="text-blue-400 text-lg mb-1">📋</div>
+<div class="font-semibold text-sm mb-1">Invocation</div>
+<div class="text-xs text-neutral-400">By name, in the steps</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 text-center border border-dark-600">
+<div class="text-blue-400 text-lg mb-1">🔗</div>
+<div class="font-semibold text-sm mb-1">Composition</div>
+<div class="text-xs text-neutral-400">Agent + skills = system</div>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 text-center border border-dark-600">
+<div class="text-blue-400 text-lg mb-1">♻️</div>
+<div class="font-semibold text-sm mb-1">Reuse</div>
+<div class="text-xs text-neutral-400">Skill serves N agents</div>
+</div>
+</div>
+</section>
+<!-- TOPICO 7: Iterar com feedback -->
+<section class="mb-16" id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">7</span>
+<h2 class="text-2xl font-bold">🔁 Iterate with feedback</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        An agent’s body doesn’t come ready-made. The first version works 70% of the time —
+        the other 30% reveals what’s missing or wrong.
+        <strong class="text-blue-400">Iterate with real feedback</strong> is what separates
+        an agent that "works sometimes" from one that is "reliable in production."
+      </p>
+<!-- Timeline de ciclo de iteração -->
+<div class="space-y-4 mb-6">
+<div class="flex gap-4 items-start">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">1</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-4 flex-1">
+<div class="font-semibold text-blue-400 mb-1">Initial draft</div>
+<div class="text-sm text-neutral-400">Role + basic steps + format. It doesn’t need to be perfect—it needs to be testable.</div>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">2</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-4 flex-1">
+<div class="font-semibold text-blue-400 mb-1">Run with 3-5 real inputs</div>
+<div class="text-sm text-neutral-400">Choose representative cases from real usage — not easy inputs. The agent needs to perform well on difficult cases.</div>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">3</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-4 flex-1">
+<div class="font-semibold text-blue-400 mb-1">Identify the failure pattern</div>
+<div class="text-sm text-neutral-400">Where does the output diverge from what you expected? Wrong format, scope creep, skipped step? Each failure maps to a correction in the body.</div>
+</div>
+</div>
+<div class="flex gap-4 items-start">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm">4</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-4 flex-1">
+<div class="font-semibold text-blue-400 mb-1">Fix it in the body, retest</div>
+<div class="text-sm text-neutral-400">One fix at a time. If you change three things at once, you won’t know which one fixed it. Simple versioning: v1, v2, v3.</div>
+</div>
+</div>
+</div>
+<!-- Dica -->
+<div class="bg-primary/10 border border-primary/30 rounded-xl p-5">
+<p class="text-sm text-neutral-300">
+<strong class="text-primary">Practical rule:</strong> if you had to explain it to the orchestrator
+          <em>"the agent returned X, but you should ignore part Y"</em>,
+          that’s a sign the fix should be in the agent’s body, not in the orchestrator’s logic.
+        </p>
+</div>
+</section>
+<!-- EXEMPLO .md: security-reviewer -->
+<section class="mb-16" id="exemplo-md">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">📎</span>
+<h2 class="text-2xl font-bold">Real example: <code class="text-base font-mono bg-dark-700 px-2 py-0.5 rounded">security-reviewer.md</code></h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Below is a complete security review subagent body.
+        Each section demonstrates one of this module’s concepts applied together.
+      </p>
+<div class="bg-dark-900 rounded-2xl border border-blue-500/30 overflow-hidden mb-6">
+<!-- Barra de título mock -->
+<div class="flex items-center gap-2 px-4 py-3 bg-dark-800 border-b border-dark-600">
+<span class="w-3 h-3 rounded-full bg-red-500/70"></span>
+<span class="w-3 h-3 rounded-full bg-yellow-500/70"></span>
+<span class="w-3 h-3 rounded-full bg-emerald-500/70"></span>
+<span class="ml-3 font-mono text-xs text-neutral-500">~/.claude/agents/security-reviewer.md</span>
+</div>
+<!-- Conteúdo do .md -->
+<div class="p-6 font-mono text-xs text-neutral-300 leading-relaxed overflow-x-auto whitespace-pre-wrap">
+<span class="text-neutral-500">---
+name: security-reviewer
+description: Reviews code for security vulnerabilities. Invoke when a file or diff needs OWASP/CVE analysis before merge.
+model: claude-sonnet-4-5
+tools:
+  - Read
+  - Bash
+---</span>
+<span class="text-blue-400">You are a senior security engineer</span> specializing in application security for Python and TypeScript production codebases. Your sole responsibility is identifying security vulnerabilities — not fixing code, not commenting on style.
+
+<span class="text-blue-400">## When invoked</span>
+<span class="text-neutral-400">1. Read every file or diff provided in full before making any assessment.
+2. Identify the language and framework in use (Django, FastAPI, Next.js, etc.).
+3. Check systematically for the following vulnerability classes:
+   - Injection (SQL, command, LDAP)
+   - Authentication and session management flaws
+   - Sensitive data exposure (secrets in code, logging PII)
+   - Insecure deserialization
+   - Known vulnerable dependency versions (check package.json / requirements.txt)
+4. For each finding, assign a severity: HIGH / MEDIUM / LOW.
+5. Format and return your report as specified below.</span>
+<span class="text-blue-400">## Output Format</span>
+<span class="text-neutral-400">Return a Markdown document with exactly these sections:
+
+**Summary**: 1-2 sentences on overall security posture.
+
+**Findings**: numbered list. Each entry:
+  - Severity: HIGH / MEDIUM / LOW
+  - Location: filename:line
+  - Description: what the vulnerability is
+  - Evidence: the relevant code snippet (max 3 lines)
+
+**Verdict**: PASS (no HIGH/MEDIUM), REVIEW (has MEDIUM), or BLOCK (has HIGH)</span>
+<span class="text-red-400">## Constraints</span>
+<span class="text-neutral-400">- Do not suggest code fixes — report only
+- Do not comment on code quality, style, or architecture
+- Do not escalate directly to the user — return results to orchestrator
+- If a CVE number is uncertain, write "potential CVE — unverified" instead of a CVE ID
+- Do not analyze files outside the provided scope</span>
+</div>
+</div>
+<!-- Box Dica sobre o exemplo -->
+<div class="bg-blue-900/20 border border-blue-500/30 rounded-xl p-5">
+<h4 class="font-semibold text-blue-400 mb-2">Why this body works</h4>
+<ul class="text-sm text-neutral-300 space-y-2">
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">→</span> <strong class="text-blue-400">Specific role:</strong> seniority + domain + scope (Python/TS, production)</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">→</span> <strong class="text-blue-400">Checklist steps:</strong> 5 steps that cover the entire workflow without ambiguity</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">→</span> <strong class="text-blue-400">Declared format:</strong> 3 named sections with an exact structure</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">→</span> <strong class="text-blue-400">Actionable restrictions:</strong> 5 security-domain-specific prohibitions</li>
+</ul>
+</div>
+</section>
+<!-- PROMPTS PRONTOS -->
+<section class="mb-16" id="prompts">
+<h2 class="text-2xl font-bold mb-6">Detailed content</h2>
+<div class="space-y-4">
+<!-- Prompt 1 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center gap-3 mb-3">
+<span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded">PROMPT 1</span>
+<span class="text-sm font-semibold">Turn the checklist into an agent’s body</span>
+</div>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-xs text-neutral-300 mb-3 overflow-x-auto">
+Read this PR review checklist:
+[paste the checklist here]
+
+Turn it into a complete subagent body for a .md file:
+- Role (senior + domain extracted from the checklist)
+- Numbered steps (mapped from the checklist items)
+- Output format (structured, parseable)
+- Constraints (what the agent must NOT do beyond the checklist)
+          </div>
+<p class="text-xs text-neutral-500">Use when you already have a documented process and want to turn it into an agent.</p>
+</div>
+<!-- Prompt 2 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center gap-3 mb-3">
+<span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded">PROMPT 2</span>
+<span class="text-sm font-semibold">Audit existing content</span>
+</div>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-xs text-neutral-300 mb-3 overflow-x-auto">
+Read this subagent’s body:
+[paste the .md here]
+
+Evaluate:
+1. Is the role specific enough? (level + domain + operational context)
+2. Do the steps cover the full workflow without gaps?
+3. Is the output format specified and parseable?
+4. Are the constraints domain-specific or too generic?
+
+Return a list of improvements with concrete examples.
+          </div>
+<p class="text-xs text-neutral-500">Use it to review agents that “almost work” and identify what’s missing.</p>
+</div>
+<!-- Prompt 3 -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center gap-3 mb-3">
+<span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded">PROMPT 3</span>
+<span class="text-sm font-semibold">Split up the do-everything agent</span>
+</div>
+<div class="bg-dark-900 rounded-lg p-4 font-mono text-xs text-neutral-300 mb-3 overflow-x-auto">
+This agent does many things:
+[paste the agent body here]
+
+Apply the "and also" test:
+1. List each separate responsibility the agent has
+2. Propose splitting it into N specialized agents (name + role for each)
+3. For the most important agent, write the full body
+
+Criterion: each agent must have exactly one responsibility.
+          </div>
+<p class="text-xs text-neutral-500">Use when an agent does everything but does nothing well.</p>
+</div>
+</div>
+</section>
+<!-- TELA SIMULADA -->
+<section class="mb-16" id="tela-simulada">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">🖥️</span>
+<h2 class="text-2xl font-bold">Simulated screen: invoking the security-reviewer</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        The orchestrator invoked the <code class="bg-dark-700 px-2 py-0.5 rounded text-sm font-mono text-blue-400">security-reviewer</code>
+        in an authentication file. See how the structured body produces consistent, parseable output.
+      </p>
+<!-- Mock terminal -->
+<div class="rounded-2xl overflow-hidden border border-blue-500/30 bg-dark-900/60">
+<!-- Barra de título -->
+<div class="flex items-center justify-between px-4 py-3 bg-dark-800 border-b border-dark-600">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-red-500/70"></span>
+<span class="w-3 h-3 rounded-full bg-yellow-500/70"></span>
+<span class="w-3 h-3 rounded-full bg-emerald-500/70"></span>
+</div>
+<span class="font-mono text-xs text-neutral-500">claude — subagent: security-reviewer</span>
+<span class="text-xs text-neutral-600">illustrative recreation</span>
+</div>
+<!-- Output do agente -->
+<div class="p-6 font-mono text-xs text-neutral-300 leading-relaxed space-y-3">
+<div class="text-neutral-500"># Invoking security-reviewer in auth/login.py</div>
+<div class="text-blue-400">→ Reading full file (312 lines)...</div>
+<div class="text-blue-400">→ Framework detected: FastAPI + SQLAlchemy</div>
+<div class="text-blue-400">→ Checking vulnerability classes...</div>
+<div class="border-t border-dark-600 pt-3 mt-3">
+<div class="text-neutral-100 font-semibold mb-2">## Summary</div>
+<div class="text-neutral-400 mb-4">Two HIGH-severity findings in auth/login.py. SQL injection via raw query and hardcoded secret key. Immediate action required before merge.</div>
+<div class="text-neutral-100 font-semibold mb-2">## Findings</div>
+<div class="mb-3">
+<span class="text-red-400 font-semibold">1. Severity: HIGH</span>
+<div class="text-neutral-400 pl-3 mt-1">Location: auth/login.py:87</div>
+<div class="text-neutral-400 pl-3">Description: Raw SQL string interpolation — SQL injection</div>
+<div class="bg-dark-700 rounded p-2 pl-3 mt-1 text-red-300">query = f"SELECT * FROM users WHERE email = '{email}'"</div>
+</div>
+<div class="mb-3">
+<span class="text-yellow-400 font-semibold">2. Severity: MEDIUM</span>
+<div class="text-neutral-400 pl-3 mt-1">Location: auth/login.py:12</div>
+<div class="text-neutral-400 pl-3">Description: Hardcoded SECRET_KEY in source file</div>
+<div class="bg-dark-700 rounded p-2 pl-3 mt-1 text-yellow-300">SECRET_KEY = "dev-secret-do-not-use"</div>
+</div>
+<div class="text-neutral-100 font-semibold mb-1">## Verdict</div>
+<div class="text-red-400 font-bold">BLOCK — 1 HIGH finding requires resolution before merge.</div>
+</div>
+</div>
+</div>
+</section>
+<!-- EXERCÍCIO -->
+<section class="mb-16" id="exercicio">
+<div class="bg-dark-800 rounded-2xl border border-blue-500/30 p-8">
+<div class="flex items-center gap-3 mb-2">
+<span class="text-2xl">🏋️</span>
+<h2 class="text-2xl font-bold">Exercise: split up a do-it-all agent</h2>
+</div>
+<p class="text-neutral-400 mb-6">Apply what you learned in this module.</p>
+<!-- Descrição do exercício -->
+<div class="bg-dark-900 rounded-xl p-6 mb-6">
+<h3 class="font-semibold text-blue-400 mb-4">The problematic agent</h3>
+<div class="font-mono text-xs text-neutral-300 leading-relaxed whitespace-pre-wrap bg-dark-700 rounded-lg p-4">You are a helpful senior engineer.
+
+When invoked:
+1. Review the code for bugs AND style issues AND security problems.
+2. Suggest architectural improvements if you see any.
+3. Update the changelog.
+4. If there are tests missing, write them.
+5. Check documentation is up to date.
+6. Respond in a friendly, conversational tone with all your thoughts.</div>
+</div>
+<!-- Tarefa -->
+<div class="mb-6">
+<h3 class="font-semibold text-blue-400 mb-3">Your task</h3>
+<ol class="space-y-3 text-sm text-neutral-300">
+<li class="flex items-start gap-3">
+<span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">1</span>
+<span>List all separate responsibilities of this agent (apply the “and also” test)</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">2</span>
+<span>Suggest 3 specialized agents (name + one-line role for each)</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">3</span>
+<span>Write the full body of one of the agents: role + numbered steps + output format + constraints</span>
+</li>
+</ol>
+</div>
+<!-- Critério de conclusão -->
+<div class="bg-blue-900/20 border border-blue-500/30 rounded-xl p-5">
+<h4 class="font-semibold text-blue-400 mb-3">Completion criterion</h4>
+<ul class="space-y-2 text-sm text-neutral-300">
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">✓</span> You identified ≥4 separate responsibilities in the original agent</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">✓</span> Each proposed agent passes the “and also” test — zero overlap in responsibilities</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">✓</span> The body you wrote has a specific role (level + domain + context)</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">✓</span> The numbered steps cover the complete workflow without “and also”</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">✓</span> The output format is declared and could be parsed by another agent</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">✓</span> The constraints are domain-specific — not generic</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- RESUMO FINAL -->
+<section class="mb-16" id="resumo">
+<div class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 rounded-2xl border border-blue-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6">📌 What you learned</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+<div class="space-y-3">
+<div class="flex items-start gap-3 text-sm text-neutral-300">
+<span class="text-blue-400 font-bold mt-0.5">✓</span>
+<span><strong class="text-blue-400">Role:</strong> level + domain + operational context — not "helpful assistant"</span>
+</div>
+<div class="flex items-start gap-3 text-sm text-neutral-300">
+<span class="text-blue-400 font-bold mt-0.5">✓</span>
+<span><strong class="text-blue-400">Numbered steps:</strong> turn emergent behavior into something reproducible</span>
+</div>
+<div class="flex items-start gap-3 text-sm text-neutral-300">
+<span class="text-blue-400 font-bold mt-0.5">✓</span>
+<span><strong class="text-blue-400">Output format:</strong> explicitly declared, parseable by the orchestrator</span>
+</div>
+<div class="flex items-start gap-3 text-sm text-neutral-300">
+<span class="text-blue-400 font-bold mt-0.5">✓</span>
+<span><strong class="text-blue-400">Constraints:</strong> domain-specific, actionable, not generic</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-start gap-3 text-sm text-neutral-300">
+<span class="text-blue-400 font-bold mt-0.5">✓</span>
+<span><strong class="text-blue-400">Testing “and also”:</strong> one agent, one responsibility</span>
+</div>
+<div class="flex items-start gap-3 text-sm text-neutral-300">
+<span class="text-blue-400 font-bold mt-0.5">✓</span>
+<span><strong class="text-blue-400">Skills:</strong> invoked in the steps, not on paper</span>
+</div>
+<div class="flex items-start gap-3 text-sm text-neutral-300">
+<span class="text-blue-400 font-bold mt-0.5">✓</span>
+<span><strong class="text-blue-400">Iteration:</strong> draft → 3-5 real inputs → failure pattern → fix</span>
+</div>
+</div>
+</div>
+<!-- Próximo módulo -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="text-xs text-neutral-500 mb-1 uppercase tracking-wide">Next module</div>
+<div class="font-semibold text-blue-400 mb-1">2.4 → Tools and permissions</div>
+<div class="text-sm text-neutral-400">
+            The body defines what the agent does — but the tools define what it <em>can</em> do.
+            In the next module, you'll learn to declare and restrict tool access with surgical precision.
+          </div>
+</div>
+</div>
+</section>
+<!-- NAVEGAÇÃO INFERIOR -->
+<div class="flex justify-between items-center pt-8 border-t border-dark-600">
+<a class="flex items-center gap-2 px-4 py-2 bg-dark-800 rounded-lg border border-dark-600 hover:border-blue-500/30 hover:text-blue-400 transition-all text-sm font-medium" href="modulo-2-2.html">
+<span>←</span>
+<span>2.2 The description is the trigger</span>
+</a>
+<a class="flex items-center gap-2 px-4 py-2 bg-blue-500/20 rounded-lg border border-blue-500/30 hover:bg-blue-500/30 text-blue-400 transition-all text-sm font-medium" href="modulo-2-4.html">
+<span>2.4 Tools and permissions</span>
+<span>→</span>
+</a>
+</div>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-12">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagents — 2026 · a course in the format
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Track 2 · Hands-on · Module 2.3</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    // Toggle de tópicos
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>La descripción es el activador | Subagentes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha blue T2) */
+    html:not(.dark) .text-blue-400 { color: #1d4ed8; }
+    html:not(.dark) .bg-blue-500\/20 { background-color: rgba(29, 78, 216, 0.12); }
+    html:not(.dark) .bg-blue-500\/10 { background-color: rgba(29, 78, 216, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(29, 78, 216, 0.25); }
+    html:not(.dark) .hover\:bg-blue-500\/30:hover { background-color: rgba(29, 78, 216, 0.18); }
+    html:not(.dark) .hover\:text-blue-400:hover { color: #1d4ed8; }
+    html:not(.dark) .hover\:bg-blue-500\/10:hover { background-color: rgba(29, 78, 216, 0.08); }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(29, 78, 216, 0.08); }
+    html:not(.dark) .from-blue-900\/30 { --tw-gradient-from: rgba(29, 78, 216, 0.12); }
+
+    /* Light mode - cores de apoio (sky dados / red erros / emerald ok) */
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - diagramas SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Pulso dos agentes nos diagramas (apenas se o usuario permitir movimento) */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes wf-bar { from { transform: translateX(-6%); } to { transform: translateX(0); } }
+    @keyframes wf-slide { from { stroke-dashoffset: 80; } to { stroke-dashoffset: 0; } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.2s} .wf-a:nth-child(3){animation-delay:.4s}
+      .barfill { animation: wf-bar 3s ease-in-out infinite alternate; }
+      .barfill.b2{animation-delay:.5s} .barfill.b3{animation-delay:1s}
+      .wf-line { stroke-dasharray: 80; animation: wf-slide 1.6s ease-in-out infinite alternate; }
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha2/modulo-2-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha2/modulo-2-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha2/modulo-2-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha2/modulo-2-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha2/modulo-2-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-2-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagentes</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentos</span>
+</a>
+<!-- Trilha 2 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-blue-400 bg-blue-500/10" href="index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">En la práctica</span>
+</a>
+<!-- Trilha 3 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors" href="../trilha3/index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orquestación</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Avanzado</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-blue-400" href="../../index.html">Inicio</a>
+<span>/</span>
+<a class="hover:text-blue-400" href="index.html">Ruta 2</a>
+<span>/</span>
+<span class="text-blue-400">Módulo 2.2</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-blue-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full mb-4">
+        MÓDULO 2.2 · Ruta 2 · Creación práctica
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">🎯 La descripción es el disparador</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        El campo <code class="text-blue-400">description</code> no es un resumen —
+        es el <strong class="text-blue-400">algoritmo de selección</strong> del director.
+        Una palabra equivocada y el agente nunca se activa. Una palabra correcta y se activa en el momento adecuado, para siempre.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">7</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">~30</div>
+<div class="text-xs text-neutral-400">Minutos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">Práctico</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-blue-400">Config</div>
+<div class="text-xs text-neutral-400">Tipo</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- ABERTURA + SVG ROTEAMENTO -->
+<section class="mb-12">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Cuando escribes una solicitud, el maestro lee tu mensaje y, a continuación, lee las <code class="text-blue-400">description</code>s
+        de todos los agentes que existen. Hace una pregunta implícita: <em>"¿alguno de estos textos coincide con lo que pidió el usuario?"</em>
+        Si coincide, el agente se activa. Si no coincide —aunque el agente sea perfecto para la tarea— permanece inactivo.
+        La <strong class="text-blue-400">description</strong> es el único vínculo entre tu pedido y el especialista adecuado.
+      </p>
+<!-- SVG: duas descrições → roteamento diferente -->
+<div class="rounded-2xl border border-blue-500/30 bg-dark-900/40 p-3 sm:p-4 mb-2 overflow-hidden">
+<svg aria-label="Dos descripciones diferentes para el mismo agente: la débil no lo activa; la fuerte activa al agente en el momento adecuado" class="w-full h-auto" role="img" viewbox="0 0 1000 280">
+<defs>
+<lineargradient id="m22-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#3b82f6"></stop><stop offset="1" stop-color="#60a5fa"></stop>
+</lineargradient>
+<lineargradient id="m22-red" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#ef4444"></stop><stop offset="1" stop-color="#f87171"></stop>
+</lineargradient>
+<lineargradient id="m22-green" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#22c55e"></stop><stop offset="1" stop-color="#4ade80"></stop>
+</lineargradient>
+<filter height="180%" id="m22-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m22-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#3b82f6" opacity="0.10" r="1.3"></circle>
+</pattern>
+<marker id="m22-ah-red" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#ef4444"></path></marker>
+<marker id="m22-ah-green" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#22c55e"></path></marker>
+<marker id="m22-ah-blue" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#60a5fa"></path></marker>
+</defs>
+<rect fill="url(#m22-grid)" height="280" width="1000" x="0" y="0"></rect>
+<!-- Prompt do usuário (centro-esquerda) -->
+<g filter="url(#m22-glow)">
+<rect fill="#0d1929" height="60" rx="12" stroke="url(#m22-grad)" stroke-width="2" width="190" x="30" y="110"></rect>
+</g>
+<text fill="#60a5fa" font-family="Inter,sans-serif" font-size="14" font-weight="600" text-anchor="middle" x="125" y="136">Prompt del usuario</text>
+<text fill="#93c5fd" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="125" y="155">"revisa el código de auth"</text>
+<!-- seta para cima (description fraca) -->
+<path class="wf-line" d="M220,130 C310,130 340,60 440,60" fill="none" marker-end="url(#m22-ah-red)" opacity="0.6" stroke="#ef4444" stroke-width="1.8"></path>
+<!-- seta para baixo (description forte) -->
+<path d="M220,150 C310,150 340,220 440,220" fill="none" marker-end="url(#m22-ah-green)" opacity="0.6" stroke="#22c55e" stroke-width="1.8"></path>
+<!-- Description FRACA -->
+<rect fill="#1a0d0d" height="60" opacity="0.9" rx="10" stroke="#ef4444" stroke-width="1.8" width="220" x="440" y="30"></rect>
+<text fill="#fca5a5" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="550" y="55">❌ Description débil</text>
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="550" y="73">"Agente para revisión de código."</text>
+<!-- Description FORTE -->
+<rect fill="#0a1a0f" height="60" opacity="0.9" rx="10" stroke="#22c55e" stroke-width="1.8" width="220" x="440" y="190"></rect>
+<text fill="#86efac" font-family="Inter,sans-serif" font-size="12" font-weight="600" text-anchor="middle" x="550" y="215">✅ Description sólida</text>
+<text fill="#4ade80" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="550" y="232">"Revisa el diff después de los cambios en auth/</text>
+<text fill="#4ade80" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="550" y="244">pagos. Úsalo de forma proactiva."</text>
+<!-- Resultado FRACA: agente dorme -->
+<rect fill="#130d0d" height="60" opacity="0.7" rx="10" stroke="#ef4444" stroke-width="1.5" width="240" x="720" y="30"></rect>
+<text fill="#fca5a5" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="840" y="55">el agente no se activa</text>
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="840" y="73">el maestro no combinó el contexto</text>
+<!-- seta fraca → resultado -->
+<path d="M660,60 L720,60" fill="none" marker-end="url(#m22-ah-red)" opacity="0.5" stroke="#ef4444" stroke-width="1.5"></path>
+<!-- Resultado FORTE: agente dispara -->
+<g filter="url(#m22-glow)">
+<rect fill="#0a1a0f" height="60" rx="10" stroke="url(#m22-green)" stroke-width="2" width="240" x="720" y="190"></rect>
+</g>
+<text fill="#4ade80" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="840" y="215">el agente se activa</text>
+<text fill="#86efac" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="840" y="233">revisa el diff, entrega un informe</text>
+<!-- seta forte → resultado -->
+<path d="M660,220 L720,220" fill="none" marker-end="url(#m22-ah-green)" opacity="0.7" stroke="#22c55e" stroke-width="1.8"></path>
+</svg>
+</div>
+<p class="text-xs text-neutral-500 mb-0">↑ El mismo mensaje del usuario, dos agentes con descriptions diferentes: resultados opuestos.</p>
+</section>
+<!-- DIVISOR -->
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+<!-- TÓPICO 1 — Por que a description dispara -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">🔍 Por qué se activa la description</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El maestro no tiene un catálogo de agentes memorizado. En cada turno, lee tu prompt y los campos
+        <code class="text-blue-400">description</code> de todos los agentes disponibles. La decisión de activar o no es una
+        <strong class="text-blue-400">correspondencia semántica</strong> entre lo que pediste y lo que describe la description —
+        no es un nombre, no es un emoji, no es un título.
+      </p>
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4 flex items-center">
+<span class="mr-2">⚙️</span> Cómo procesa el maestro
+        </h3>
+<div class="space-y-4">
+<div class="flex items-start space-x-3">
+<span class="flex-shrink-0 w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-sm">1</span>
+<p class="text-neutral-300 text-sm">Envías: <em>"revisa el código de pago antes del deploy"</em>.</p>
+</div>
+<div class="flex items-start space-x-3">
+<span class="flex-shrink-0 w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-sm">2</span>
+<p class="text-neutral-300 text-sm">El maestro recorre las descripciones de todos los agentes activos.</p>
+</div>
+<div class="flex items-start space-x-3">
+<span class="flex-shrink-0 w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-sm">3</span>
+<p class="text-neutral-300 text-sm">Si una description dice <em>"después de cambios en pagos, úsalo de forma proactiva"</em> — combina. Dispara.</p>
+</div>
+<div class="flex items-start space-x-3">
+<span class="flex-shrink-0 w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-sm">4</span>
+<p class="text-neutral-300 text-sm">Si la description solo dice <em>"agente de revisión"</em> — demasiado vaga para coincidir. Silencio.</p>
+</div>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3 mb-6">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">El maestro lee la description en cada turno para decidir qué agente usar. Es el único texto que guía la selección automática.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Los agentes con descriptions vagas son invisibles para el maestro. Sin entender el mecanismo, creas agentes que nunca aparecen y no sabes por qué.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Correspondencia semántica · lectura por turno · description como algoritmo de enrutamiento.</p>
+</div>
+</div>
+<!-- 4 mini-cards -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">📖</div><div class="text-sm font-semibold text-blue-400">Gestiona</div><div class="text-xs text-neutral-400">en cada turno</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🧲</div><div class="text-sm font-semibold text-blue-400">Combina</div><div class="text-xs text-neutral-400">con la solicitud</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">⚡</div><div class="text-sm font-semibold text-blue-400">Se activa</div><div class="text-xs text-neutral-400">automáticamente</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🔇</div><div class="text-sm font-semibold text-blue-400">Silencia</div><div class="text-xs text-neutral-400">si está disponible</div></div>
+</div>
+</section>
+<!-- TÓPICO 2 — Description fraca × forte -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">⚖️ Débil × fuerte: qué las diferencia</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Una description <strong class="text-red-400">débil</strong> dice <em>qué es el agente</em>. Una descripción
+        <strong class="text-emerald-400">fuerte</strong> dice <em>cuándo usar</em> e <em>para qué</em>. La diferencia parece sutil,
+        pero es la distancia entre un agente que nunca se activa y uno que se activa en el momento exacto.
+      </p>
+<!-- Grid fazer × evitar -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-semibold text-red-400 mb-4 flex items-center"><span class="mr-2">❌</span> Descriptions débiles</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-red-400 mt-0.5">▸</span><span><code class="text-red-300">"Agente para revisão de código."</code><br/><span class="text-neutral-500 text-xs">— vago, sin disparador, se activa para todo o para nada</span></span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400 mt-0.5">▸</span><span><code class="text-red-300">"Helper de programação."</code><br/><span class="text-neutral-500 text-xs">— tan amplio que compite con cualquier agente</span></span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400 mt-0.5">▸</span><span><code class="text-red-300">"Especialista em segurança."</code><br/><span class="text-neutral-500 text-xs">— título sin condición: el maestro no sabe cuándo</span></span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400 mt-0.5">▸</span><span><code class="text-red-300">"Faz análises."</code><br/><span class="text-neutral-500 text-xs">— una palabra que lo abarca todo y, por eso, no abarca nada</span></span></li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-semibold text-emerald-400 mb-4 flex items-center"><span class="mr-2">✅</span> Descriptions sólidas</h4>
+<ul class="space-y-3 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">▸</span><span><code class="text-emerald-300">"Revisa diffs em auth/pagamentos. Use proactively após mudanças nessas áreas."</code><br/><span class="text-neutral-500 text-xs">— dominio + condición + instrucción de cuándo</span></span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">▸</span><span><code class="text-emerald-300">"Pesquisa na web e indexa fontes. Acione quando o usuário precisar de dados externos ou quiser verificar fatos."</code><br/><span class="text-neutral-500 text-xs">— caso de uso claro, no competitivo</span></span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400 mt-0.5">▸</span><span><code class="text-emerald-300">"Gera e revisa planos de implementação. Use proactively antes de qualquer tarefa de desenvolvimento grande."</code><br/><span class="text-neutral-500 text-xs">— «antes de» define el momento exacto</span></span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">La diferencia estructural: la descripción débil define la identidad; la fuerte describe la situación de uso.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Las descriptions débiles crean agentes que nunca se activan (subuso) o se activan para todo (sobreactivación). Una sólida es precisa.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Identidad vs. situación · activador condicional · «Use proactively» como instrucción de timing.</p>
+</div>
+</div>
+</section>
+<!-- TÓPICO 3 — "use proactively" e o timing -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">⏱️ "Use proactively" — el momento explícito</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        La frase <code class="text-blue-400">Use proactively</code> en description es una instrucción directa al maestro:
+        <em>"no esperes a que el usuario lo pida explícitamente: actívalo cuando el contexto coincida"</em>. Sin ella, el director puede
+        dudar y no activar al agente incluso cuando el contexto es perfecto.
+      </p>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">💡</span> Anatomía de una description con timing</h3>
+<div class="bg-dark-800 rounded-lg p-4 font-mono text-sm text-neutral-300 leading-relaxed">
+<span class="text-blue-400">description:</span> Revisa el diff actual en busca de errores y fallas de seguridad.<br/>
+<span class="text-emerald-400">Usa de forma proactiva</span> después de cualquier cambio en <span class="text-blue-300">auth</span>,
+          <span class="text-blue-300">pagos</span> o <span class="text-blue-300">sesiones</span>.
+        </div>
+<div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+<div class="bg-dark-800 rounded-lg p-3 border border-blue-500/20">
+<div class="text-xs font-semibold text-blue-400 mb-1">1 — Qué</div>
+<p class="text-xs text-neutral-400">"Revisa el diff…" — la tarea en sí.</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-blue-500/20">
+<div class="text-xs font-semibold text-blue-400 mb-1">2 — Cuándo (trigger)</div>
+<p class="text-xs text-neutral-400">"Úsalo de forma proactiva después de…" — el momento explícito.</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-3 border border-blue-500/20">
+<div class="text-xs font-semibold text-blue-400 mb-1">3 — Dominio</div>
+<p class="text-xs text-neutral-400">"auth, pagos, sesiones" — restringe el alcance.</p>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h4 class="font-semibold text-primary mb-2 flex items-center"><span class="mr-2">⚡</span> Consejo práctico</h4>
+<p class="text-neutral-300 text-sm">
+          Usa <code class="text-primary">"Use proactively"</code> solo cuando quieres una activación automática.
+          Para agentes que solo deben invocarse por nombre (<code class="text-primary">@nome</code>), omite la frase —
+          el maestro esperará entonces a que lo invoquen explícitamente, sin intervenir cuando no lo hayan llamado.
+        </p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">La instrucción "Use proactively" en la description autoriza al maestro a activar al agente sin una solicitud explícita del usuario.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Sin este patrón, los agentes valiosos quedan inactivos. Si lo aplicas en exceso, todo se dispara, lo cual no es deseable.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Proactivo vs. reactivo · "@nombre" para invocación manual · el momento como dimensión de la description.</p>
+</div>
+</div>
+</section>
+<!-- TÓPICO 4 — Misfires: a mais e a menos -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">🔥 Misfires: cuando el agente se activa por error</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Hay dos tipos de misfire: <strong class="text-red-400">más</strong> (se activa cuando no debería) y
+        <strong class="text-red-400">menos</strong> (no se activa cuando debería). Ambos tienen la misma causa:
+        la description no describe el caso de uso con suficiente precisión.
+      </p>
+<!-- Grid misfires -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-semibold text-red-400 mb-3">🔊 Misfire A más — activación excesiva</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><span class="text-red-400">Causa:</span> description demasiado amplia o «Use proactively» sin restricción de dominio.</li>
+<li><span class="text-red-400">Síntoma:</span> el agente aparece en solicitudes que no tienen nada que ver.</li>
+<li><span class="text-red-400">Ejemplo:</span> "Revisa código. Úsalo de forma proactiva." → se activa para <em>cualquier</em> mención al código.</li>
+<li><span class="text-red-400">Corrección:</span> añadir una restricción de dominio — "Revisa diffs en auth/pagos. Use proactively <strong>después de cambios en estas áreas</strong>."</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-neutral-300 mb-3">🔇 Misfire A menos — activación insuficiente</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><span class="text-blue-400">Causa:</span> description demasiado específica, sin sinónimos o sin «Use proactively».</li>
+<li><span class="text-blue-400">Síntoma:</span> el agente nunca aparece, aunque sea ideal para la tarea.</li>
+<li><span class="text-blue-400">Ejemplo:</span> "Agente de revisión." → el maestro no relaciona la descripción con el pedido.</li>
+<li><span class="text-blue-400">Corrección:</span> ampliar el vocabulario y agregar un trigger — "Revisa diffs. Úsalo de forma proactiva después de los cambios."</li>
+</ul>
+</div>
+</div>
+<!-- Timeline de diagnóstico -->
+<h3 class="text-lg font-semibold text-blue-400 mb-4">Cómo diagnosticar un misfire</h3>
+<div class="space-y-4 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-sm">1</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">Observa el comportamiento</h4>
+<p class="text-sm text-neutral-400">¿El agente se activó cuando no debía o debería haberse activado y no apareció?</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-sm">2</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">Lee la description actual</h4>
+<p class="text-sm text-neutral-400">Pregunta: si yo fuera el director de orquesta, este texto me diría <em>cuándo</em> ¿usar ese agente?</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-sm">3</div>
+<div class="flex-1 bg-dark-800 rounded-xl p-4 border border-dark-600">
+<h4 class="font-semibold text-white mb-1">Ajusta el activador o el dominio</h4>
+<p class="text-sm text-neutral-400">Para agregar: añade una restricción. Para reducir: añade "Use proactively" y amplía el vocabulario.</p>
+</div>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Dos patrones de falla: el agente se activa demasiado (description amplia) o muy poco (description vaga/sin trigger).</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Los misfires son la principal causa de desconfianza en el sistema. Reconocer el tipo agiliza la solución en segundos.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Exceso de activación frente a activación insuficiente · el dominio como filtro · diagnóstico iterativo.</p>
+</div>
+</div>
+</section>
+<!-- TÓPICO 5 — Colisão skill × agent: caso plan-roaster -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">💥 Colisión skill × agent: el caso plan-roaster</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Skills (archivos en <code class="text-blue-400">.claude/commands/</code>) y los agents (archivos en
+        <code class="text-blue-400">.claude/agents/</code>) pueden entrar en conflicto cuando ambos tienen descripciones semánticas parecidas.
+        A veces, el maestro selecciona uno cuando el usuario quería el otro. El caso
+        <strong class="text-blue-400">plan-roaster</strong> ilustra ese problema y cómo resolverlo.
+      </p>
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-4">📌 El caso plan-roaster</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-sm font-semibold text-neutral-300 mb-2">❌ Antes: descripción que entraba en conflicto</h4>
+<div class="bg-dark-700 rounded p-3 font-mono text-xs text-neutral-400 leading-relaxed">
+<span class="text-blue-300">name:</span> plan-roaster<br/>
+<span class="text-blue-300">description:</span> Analiza y critica<br/>
+                planes de implementación.<br/>
+<span class="text-blue-300">tools:</span> Read
+            </div>
+<p class="text-xs text-red-400 mt-2">Problema: "analiza planes" también coincide con la skill /plan → colisión.</p>
+</div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600">
+<h4 class="text-sm font-semibold text-neutral-300 mb-2">✅ Después: description quirúrgica</h4>
+<div class="bg-dark-700 rounded p-3 font-mono text-xs text-neutral-400 leading-relaxed">
+<span class="text-blue-300">name:</span> plan-roaster<br/>
+<span class="text-blue-300">description:</span> Critica planes<br/>
+                de implementación listos,<br/>
+                buscando fallas y riesgos.<br/>
+                Usa <span class="text-emerald-400">después de</span> un plan sea<br/>
+                generado, no durante.<br/>
+<span class="text-blue-300">tools:</span> Read
+            </div>
+<p class="text-xs text-emerald-400 mt-2">Corrección: "después de generar un plan" distingue esto de /plan (que crea, no critica).</p>
+</div>
+</div>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h4 class="font-semibold text-primary mb-2">🧪 Cómo detectar colisiones</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-primary">→</span><span>Pídele al director de orquesta: <em>"lista los agentes y las skills que coinciden con 'crear un plan'"</em>.</span></li>
+<li class="flex items-start space-x-2"><span class="text-primary">→</span><span>Si dos aparecen con una semántica similar, uno de los dos necesita una description más específica.</span></li>
+<li class="flex items-start space-x-2"><span class="text-primary">→</span><span>Qué los diferencia: las skills son acciones que activa el usuario; los agents son trabajadores automáticos.</span></li>
+</ul>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Hay una colisión cuando la descripción de un agent y la de una skill se superponen semánticamente: el agente coordinador elige uno, pero tú querías el otro.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">A medida que crece el repertorio de agentes, las colisiones son inevitables sin disciplina en la description.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Superposición semántica · skill frente a agent · «después» como separador temporal del alcance.</p>
+</div>
+</div>
+</section>
+<!-- TÓPICO 6 — Iterar: por que não disparou? -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">🔄 Iterar: preguntar por qué no se activó</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El maestro es tu aliado en el diagnóstico. Cuando un agente no se activa como esperas, la estrategia más rápida es
+        <strong class="text-blue-400">preguntar directamente</strong> al maestro por qué no usó ese agente, y pedir
+        que proponga una descripción corregida.
+      </p>
+<!-- Prompts de diagnóstico -->
+<div class="space-y-4 mb-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-blue-400">Prompt 1 — diagnóstico de subactivación</span>
+<span class="text-xs text-neutral-500">pégalo en el chat</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Por que o agente [nome] não disparou no meu último pedido?
+Leia a description dele e explique o mismatch.
+Depois proponha uma description corrigida.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-blue-400">Prompt 2 — diagnóstico de activaciones excesivas</span>
+<span class="text-xs text-neutral-500">pégalo en el chat</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>O agente [nome] disparou quando eu pedi "[pedido X]",
+mas não queria isso. Leia a description e diga por que
+combinou. Reescreva para evitar esse over-disparo.</code></pre>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">🔍 El ciclo de iteración</h4>
+<div class="flex flex-wrap gap-2 items-center text-sm text-neutral-300">
+<span class="bg-dark-700 px-3 py-1.5 rounded-lg border border-dark-600">1. ¿Se activa mal?</span>
+<span class="text-blue-400">→</span>
+<span class="bg-dark-700 px-3 py-1.5 rounded-lg border border-dark-600">2. Pregunta al agente principal</span>
+<span class="text-blue-400">→</span>
+<span class="bg-dark-700 px-3 py-1.5 rounded-lg border border-dark-600">3. Edita la descripción</span>
+<span class="text-blue-400">→</span>
+<span class="bg-dark-700 px-3 py-1.5 rounded-lg border border-dark-600">4. Prueba de nuevo</span>
+<span class="text-blue-400">→</span>
+<span class="bg-blue-500/20 px-3 py-1.5 rounded-lg border border-blue-500/30 text-blue-400">✓ Ajustado</span>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">El flujo de diagnóstico: preguntarle al maestro sobre el mismatch, recibir una sugerencia, editar y probar.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Intentar adivinar el problema sin preguntarle al maestro es lento. Tiene acceso a la description y al contexto; aprovéchalo.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Diagnóstico asistido · ciclo corto · el maestro como detective de su propia selección.</p>
+</div>
+</div>
+</section>
+<!-- TÓPICO 7 — Fechar aspas no YAML: o bug real -->
+<section class="mb-16" id="topico-7">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">7</span>
+<h2 class="text-2xl font-bold">🐛 Cerrar comillas en YAML: el bug real</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El frontmatter de los agentes es <strong class="text-blue-400">YAML</strong>. YAML tiene reglas poco evidentes sobre comillas y saltos de línea.
+        El error más común (e invisible) es una <strong class="text-red-400">comillas sin cerrar</strong> o
+        <strong class="text-red-400">sangría incorrecta</strong> que hace que el parser corte la description por la mitad —
+        el agente se carga, pero el activador queda truncado.
+      </p>
+<!-- Exemplo .md antes/depois -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-4">
+<span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/code-reviewer.md — ejemplo antes/después</span>
+<span class="text-xs text-blue-400">YAML + Markdown</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- ANTES -->
+<div>
+<div class="text-xs text-red-400 font-semibold mb-2">❌ Description con error (comillas sin cerrar)</div>
+<pre class="font-mono text-xs text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">---</span>
+<span class="text-blue-400">name</span>: code-reviewer
+<span class="text-blue-400">description</span>: <span class="text-red-400">"</span>Revisa o diff após mudanças
+  em auth e pagamentos. Use proactively
+  após qualquer alteração nessas áreas.
+<span class="text-blue-400">tools</span>: Read, Grep
+<span class="text-neutral-500">---</span>
+
+# Code Reviewer
+Revisa o diff do repositório atual...</code></pre>
+<p class="text-xs text-red-400 mt-2">Error: comillas sin cerrar en <code>"</code> nunca cerradas. El parser YAML lee todo hasta la siguiente comilla (que no existe): la description queda truncada o rompe todo el frontmatter.</p>
+</div>
+<!-- DEPOIS -->
+<div>
+<div class="text-xs text-emerald-400 font-semibold mb-2">✅ Description correcta (sin comillas o con las comillas cerradas)</div>
+<pre class="font-mono text-xs text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">---</span>
+<span class="text-blue-400">name</span>: code-reviewer
+<span class="text-blue-400">description</span>: <span class="text-emerald-400">Revisa o diff após mudanças
+  em auth e pagamentos. Use proactively
+  após qualquer alteração nessas áreas.</span>
+<span class="text-blue-400">tools</span>: Read, Grep
+<span class="text-neutral-500">---</span>
+
+# Code Reviewer
+Revisa o diff do repositório atual...</code></pre>
+<p class="text-xs text-emerald-400 mt-2">Corrección: usar un bloque literal de YAML (sin comillas, con indentación coherente). La descripción se lee completa.</p>
+</div>
+</div>
+</div>
+<!-- Grid regras YAML -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-4">
+<h4 class="text-sm font-semibold text-red-400 mb-2">❌ Evitar</h4>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li>• Comillas sin cerrar</li>
+<li>• Dos puntos sin comillas en medio de la frase</li>
+<li>• Sangría mixta (tabulación + espacio)</li>
+<li>• Líneas de continuación sin espacio inicial</li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-4">
+<h4 class="text-sm font-semibold text-emerald-400 mb-2">✅ Hacer</h4>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li>• Escalar de bloque: sin comillas, 2 espacios de sangría</li>
+<li>• Probar con <code>python -c "import yaml; yaml.safe_load(open('agent.md').read())"</code></li>
+<li>• Una frase por línea en las continuaciones</li>
+</ul>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-4">
+<h4 class="text-sm font-semibold text-blue-400 mb-2">🔍 Diagnóstico</h4>
+<ul class="space-y-1 text-xs text-neutral-400">
+<li>• ¿El agente se carga pero nunca se activa? Verifica el YAML.</li>
+<li>• Pídele al maestro: "lee el frontmatter de [agent.md] y valida el YAML".</li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div>
+<span class="text-blue-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Error silencioso de YAML que trunca la description: el agente existe, pero el disparador está roto.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Es el bug más difícil de detectar: el archivo es válido, el agente se carga, pero el comportamiento cambia sin aviso.</p>
+</div>
+<div>
+<span class="text-blue-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Block scalar YAML · análisis del frontmatter · validación antes de confiar en el disparador.</p>
+</div>
+</div>
+</section>
+<!-- PROMPTS PRONTOS -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">💬</span>
+<h2 class="text-2xl font-bold">Prompts listos para usar ahora</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Pega estos prompts directamente en el agente coordinador para diagnosticar y corregir las descripciones.
+      </p>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-blue-400">Prompt 1 — corregir una description que no se activa</span>
+<span class="text-xs text-neutral-500">diagnóstico</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Por que o subagente [nome] não disparou nesse prompt?
+Leia o arquivo .claude/agents/[nome].md, analise a
+description e diga onde está o mismatch.
+Depois reescreva a description para consertar.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-blue-400">Prompt 2 — comprobar colisión entre skill y agente</span>
+<span class="text-xs text-neutral-500">prevención</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Liste todos os agentes e skills cujas descriptions
+combinam com "[pedido X]". Se mais de um combinar,
+aponte a colisão e sugira como diferenciar cada um.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-blue-400">Prompt 3 — validar el YAML del frontmatter</span>
+<span class="text-xs text-neutral-500">debug</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Leia o arquivo .claude/agents/[nome].md e valide o
+frontmatter YAML. Há aspas não fechadas, dois pontos
+no meio de strings sem aspas, ou indentação mista?
+Se sim, corrija e mostre o frontmatter válido.</code></pre>
+</div>
+</div>
+</section>
+<!-- TELA SIMULADA -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">🖥️</span>
+<h2 class="text-2xl font-bold">Pantalla simulada: diagnosticando una description</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Mira cómo se ve en la práctica el ciclo de diagnóstico: el usuario le pide al maestro que explique por qué el agente
+        no se activó y recibe la description corregida.
+      </p>
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<!-- barra de título -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700/60 border-b border-dark-600">
+<div class="flex items-center space-x-2"><span class="w-3 h-3 rounded-full bg-red-400/70"></span><span class="w-3 h-3 rounded-full bg-amber-400/70"></span><span class="w-3 h-3 rounded-full bg-blue-400/70"></span></div>
+<span class="text-xs text-neutral-400 font-mono">claude code · diagnóstico de description</span>
+<span class="text-xs text-blue-400 font-mono">T2 · M2.2</span>
+</div>
+<!-- conversa simulada -->
+<div class="p-4 space-y-4 font-mono text-xs">
+<div class="flex gap-2">
+<span class="text-neutral-500 w-16 shrink-0 mt-0.5">tú</span>
+<span class="text-neutral-200">¿Por qué no se activó code-reviewer cuando pedí "revisa el auth.js"?</span>
+</div>
+<div class="flex gap-2">
+<span class="text-blue-400 w-16 shrink-0 mt-0.5">maestro</span>
+<div class="text-neutral-300">
+<div class="mb-1">Leí el archivo <span class="text-blue-400">.claude/agents/code-reviewer.md</span>.</div>
+<div class="mb-1">Description actual: <span class="text-red-400">"Agente para revisión de código."</span></div>
+<div class="mb-1">Problema: demasiado genérica — no especifica el dominio ni la condición de activación.</div>
+<div class="text-emerald-400">Descripción corregida propuesta:</div>
+<div class="bg-dark-700 rounded p-2 mt-1 leading-relaxed">
+                Revisa diffs en busca de errores y fallas de seguridad.<br/>
+                Úsalo de forma proactiva después de cambios en la autenticación, los pagos o las sesiones.
+              </div>
+</div>
+</div>
+<div class="flex gap-2">
+<span class="text-neutral-500 w-16 shrink-0 mt-0.5">tú</span>
+<span class="text-neutral-200">Aplica esa description al archivo.</span>
+</div>
+<div class="flex gap-2">
+<span class="text-blue-400 w-16 shrink-0 mt-0.5">maestro</span>
+<span class="text-emerald-400">✓ .claude/agents/code-reviewer.md actualizado.</span>
+</div>
+<div class="text-neutral-500 pt-1 border-t border-dark-700">Ciclo completo en &lt; 1 minuto · la próxima solicitud se activará automáticamente</div>
+</div>
+</div>
+<p class="text-xs text-neutral-500">↑ Recreación ilustrativa de la terminal. El maestro tiene acceso al archivo del agente y puede proponer la corrección directamente.</p>
+</section>
+<!-- EXERCÍCIO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-blue-900/30 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 font-bold text-xl">🎯</span>
+<h2 class="text-2xl font-bold">Ejercicio: reescribir una description débil</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+          Dada la descripción de abajo, reescríbela para que el agente se active en el momento adecuado, sin activarse de más.
+          Usa las tres dimensiones que aprendiste: <strong class="text-blue-400">qué</strong>,
+          <strong class="text-blue-400">cuándo</strong> e <strong class="text-blue-400">dominio</strong>.
+        </p>
+<div class="bg-dark-800/60 rounded-lg p-5 mb-6">
+<h4 class="font-semibold text-red-400 mb-3">Description original (débil)</h4>
+<div class="bg-dark-700 rounded-lg p-4 font-mono text-sm text-neutral-300">
+<span class="text-blue-400">name:</span> deploy-guard<br/>
+<span class="text-blue-400">description:</span> Agente que ayuda con los deploys.<br/>
+<span class="text-blue-400">tools:</span> Bash, Read
+          </div>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">Cómo hacerlo</h4>
+<ol class="space-y-2 text-neutral-300 text-sm list-decimal list-inside">
+<li>Imagina qué haría de útil ese agente en un deploy (p. ej., revisar variables de entorno, validar Docker, verificar migrations pendientes).</li>
+<li>Define <em>cuándo</em> ¿quieres que aparezca automáticamente — antes, durante o después del deploy?</li>
+<li>Restringe el dominio — debe activarse para <em>cualquier</em> ¿mención al código o solo para solicitudes explícitas de deploy?</li>
+<li>Escribe la description en 2–3 líneas, incluyendo "Use proactively" con la condición específica.</li>
+</ol>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">✅ Criterio de verificación</h4>
+<p class="text-neutral-300 text-sm mb-3">Tu description es buena cuando:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>Un colega puede decir en 5 segundos <em>cuándo</em> ese agente se activa.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>Ella <strong>no</strong> coincide con solicitudes genéricas como «ayúdame con el código» o «mira este archivo».</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>Ella <strong>sí</strong> coincide con solicitudes como «haz el deploy de la feature X» o «voy a subirlo a producción».</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span>El YAML es válido: sin comillas sueltas y con una indentación de 2 espacios.</span></li>
+</ul>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5">
+<h4 class="font-semibold text-emerald-400 mb-3">Ejemplo de una posible respuesta</h4>
+<div class="bg-dark-700 rounded-lg p-4 font-mono text-sm text-neutral-300">
+<span class="text-blue-400">name:</span> deploy-guard<br/>
+<span class="text-blue-400">description:</span> Verifica los prerrequisitos de deploy:<br/>
+              variables de entorno, migraciones pendientes<br/>
+              y configuración de Docker. Úsalo de forma proactiva<br/>
+              cuando el usuario mencione deploy, subida<br/>
+              para producción o un push de una feature.<br/>
+<span class="text-blue-400">tools:</span> Bash, Read
+          </div>
+<p class="text-xs text-emerald-400 mt-2">Observa: qué ("verifica los requisitos previos"), cuándo ("mencionar deploy/subida/push"), dominio específico.</p>
+</div>
+</div>
+</section>
+<!-- RESUMO / NAVEGAÇÃO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Description es el enrutador</strong><span class="text-neutral-400"> — el director lee la description en cada turno para decidir si activa al agente.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Débil vs. fuerte</strong><span class="text-neutral-400"> — la descripción breve define la identidad; la completa describe <em>cuándo</em> usar.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">"Úsalo de forma proactiva"</strong><span class="text-neutral-400"> — autoriza la activación automática; omítelo cuando quieras invocarlo manualmente con @nombre.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Dos tipos de misfire</strong><span class="text-neutral-400"> — más (description amplia) y menos (description vaga). Cada una tiene su solución.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Colisión entre skill y agent</strong><span class="text-neutral-400"> — el caso plan-roaster muestra cómo "después de" generar un plan diferencia ambos.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Iterar con el maestro</strong><span class="text-neutral-400"> — pídele al maestro que explique la discrepancia; propondrá la description corregida.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-blue-400 mt-1">✓</span><div><strong class="text-white">Cerrar comillas en YAML</strong><span class="text-neutral-400"> — usa un block scalar sin comillas; las comillas abiertas truncan el disparador sin aviso.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-blue-400 mb-2">Próximo módulo:</h3>
+<p class="text-neutral-300">2.3 — El cuerpo es el cerebro. Qué va en el cuerpo del archivo .md y cómo define el comportamiento real del agente.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors justify-start" href="modulo-2-1.html">← Módulo anterior</a>
+<a class="flex-1 text-center px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-500 transition-colors" href="modulo-2-3.html">Próximo módulo →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagentes — 2026 · un curso en formato
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Ruta 2 · En la práctica · Módulo 2.2</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    // Toggle de tópicos
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>

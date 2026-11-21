@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>El ahorro real | Subagentes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FACC15',
+            dark: { 900: '#111827', 800: '#1f2937', 700: '#374151', 600: '#4b5563' }
+          }
+        }
+      }
+    }
+  </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .dark body { background-color: #111827; }
+    .topic-explanation { display: none; }
+    .topic-explanation.active { display: block; }
+
+    /* Light mode overrides - OBRIGATORIO (base) */
+    html:not(.dark) body { background-color: #f8fafc; }
+    html:not(.dark) .bg-dark-900 { background-color: #ffffff; }
+    html:not(.dark) .bg-dark-800 { background-color: #f9fafb; }
+    html:not(.dark) .bg-dark-700 { background-color: #f3f4f6; }
+    html:not(.dark) .bg-dark-600 { background-color: #e5e7eb; }
+    html:not(.dark) .text-neutral-100 { color: #111827; }
+    html:not(.dark) .text-neutral-300 { color: #4b5563; }
+    html:not(.dark) .text-neutral-400 { color: #6b7280; }
+    html:not(.dark) .text-neutral-500 { color: #9ca3af; }
+    html:not(.dark) .border-dark-600 { border-color: #d1d5db; }
+    html:not(.dark) .border-dark-700 { border-color: #e5e7eb; }
+
+    /* Light mode - cores de acento (trilha amber T3) */
+    html:not(.dark) .text-amber-400 { color: #b45309; }
+    html:not(.dark) .bg-amber-500\/20 { background-color: rgba(180, 83, 9, 0.12); }
+    html:not(.dark) .bg-amber-500\/10 { background-color: rgba(180, 83, 9, 0.08); }
+    html:not(.dark) .bg-amber-900\/20 { background-color: rgba(180, 83, 9, 0.08); }
+    html:not(.dark) .bg-amber-900\/30 { background-color: rgba(180, 83, 9, 0.10); }
+    html:not(.dark) .border-amber-500\/30 { border-color: rgba(180, 83, 9, 0.25); }
+    html:not(.dark) .hover\:bg-amber-500\/30:hover { background-color: rgba(180, 83, 9, 0.18); }
+    html:not(.dark) .hover\:text-amber-400:hover { color: #b45309; }
+    html:not(.dark) .hover\:bg-amber-500\/10:hover { background-color: rgba(180, 83, 9, 0.08); }
+
+    /* Light mode - cores de apoio usadas nos boxes (blue dados / red erros / emerald ok) */
+    html:not(.dark) .text-blue-400 { color: #2563eb; }
+    html:not(.dark) .bg-blue-900\/20 { background-color: rgba(37, 99, 235, 0.08); }
+    html:not(.dark) .border-blue-500\/30 { border-color: rgba(37, 99, 235, 0.25); }
+    html:not(.dark) .text-red-400 { color: #dc2626; }
+    html:not(.dark) .bg-red-900\/20 { background-color: rgba(220, 38, 38, 0.08); }
+    html:not(.dark) .border-red-500\/30 { border-color: rgba(220, 38, 38, 0.25); }
+    html:not(.dark) .text-emerald-400 { color: #059669; }
+    html:not(.dark) .bg-emerald-900\/20 { background-color: rgba(5, 150, 105, 0.08); }
+    html:not(.dark) .border-emerald-500\/30 { border-color: rgba(5, 150, 105, 0.25); }
+
+    /* Light mode - remove gradientes (fundo uniforme) */
+    html:not(.dark) [class*="bg-gradient-to"] { background-image: none !important; }
+
+    /* Light mode - cores especiais */
+    html:not(.dark) .text-primary { color: #a16207; }
+    html:not(.dark) .bg-primary\/10 { background-color: rgba(161, 98, 7, 0.08); }
+    html:not(.dark) .border-primary\/30 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .border-primary\/40 { border-color: rgba(161, 98, 7, 0.25); }
+    html:not(.dark) .text-sky-400 { color: #0369a1; }
+    html:not(.dark) .text-yellow-400 { color: #a16207; }
+    html:not(.dark) .hover\:text-sky-300:hover { color: #0284c7; }
+    html:not(.dark) .hover\:text-yellow-300:hover { color: #854d0e; }
+
+    /* Light mode - nav */
+    html:not(.dark) .bg-dark-900\/95 { background-color: rgba(255, 255, 255, 0.95); }
+
+    /* Light mode - diagramas SVG menos neon */
+    html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
+
+    /* Dark mode - bordas e linhas divisorias mais suaves (OBRIGATORIO) */
+    .dark .border-dark-600 { border-color: #374151; }
+    .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
+
+    /* Pulso dos agentes nos diagramas (apenas se o usuario permitir movimento) */
+    @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+    @keyframes wf-bar { from { transform: translateX(-6%); } to { transform: translateX(0); } }
+    @media (prefers-reduced-motion: no-preference) {
+      .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
+      .wf-a:nth-child(2){animation-delay:.2s} .wf-a:nth-child(3){animation-delay:.4s}
+      .wf-a:nth-child(4){animation-delay:.6s} .wf-a:nth-child(5){animation-delay:.8s}
+      .barfill { animation: wf-bar 3s ease-in-out infinite alternate; }
+      .barfill.b2{animation-delay:.5s} .barfill.b3{animation-delay:1s} .barfill.b4{animation-delay:1.4s} .barfill.b5{animation-delay:1.8s}
+    }
+  </style>
+<link href="https://inematds.github.io/subagentes/curso/trilha3/modulo-3-2.html" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/subagentes/en/curso/trilha3/modulo-3-2.html" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/subagentes/es/curso/trilha3/modulo-3-2.html" hreflang="es" rel="alternate"/></head>
+<body class="bg-dark-900 text-neutral-100 min-h-screen"><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../../../curso/trilha3/modulo-3-2.html" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="../../../en/curso/trilha3/modulo-3-2.html" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">EN</a><a href="modulo-3-2.html" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">ES</a></div>
+<!-- NAVIGATION -->
+<nav class="sticky top-0 z-50 bg-dark-900/95 backdrop-blur-sm border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-14">
+<!-- Logo + INEMA.CLUB -->
+<div class="flex items-center space-x-4">
+<a class="flex items-center space-x-2 text-yellow-400 hover:text-yellow-300" href="../../index.html">
+<span class="text-2xl">🤖</span>
+<span class="font-bold text-lg hidden sm:inline">Subagentes</span>
+</a>
+<span class="text-neutral-600">|</span>
+<a class="text-sky-400 hover:text-sky-300 text-sm font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</div>
+<!-- Trilhas + Theme Toggle -->
+<div class="flex items-center space-x-1 sm:space-x-2">
+<!-- Trilha 1 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" href="../trilha1/index.html">
+<span class="sm:hidden">T1</span>
+<span class="hidden sm:inline">Fundamentos</span>
+</a>
+<!-- Trilha 2 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-blue-400 hover:bg-blue-500/10 transition-colors" href="../trilha2/index.html">
+<span class="sm:hidden">T2</span>
+<span class="hidden sm:inline">En la práctica</span>
+</a>
+<!-- Trilha 3 (ativa) -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10" href="index.html">
+<span class="sm:hidden">T3</span>
+<span class="hidden sm:inline">Orquestación</span>
+</a>
+<!-- Trilha 4 -->
+<a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
+<span class="sm:hidden">T4</span>
+<span class="hidden sm:inline">Avanzado</span>
+</a>
+<!-- Theme Toggle -->
+<button class="p-2 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors ml-2" id="theme-toggle">
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-dark-icon" viewbox="0 0 20 20">
+<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+</svg>
+<svg class="hidden w-5 h-5 text-neutral-300" fill="currentColor" id="theme-toggle-light-icon" viewbox="0 0 20 20">
+<path clip-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd"></path>
+</svg>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- BREADCRUMB -->
+<nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+<div class="flex items-center space-x-2 text-sm text-neutral-400">
+<a class="hover:text-amber-400" href="../../index.html">Inicio</a>
+<span>/</span>
+<a class="hover:text-amber-400" href="index.html">Ruta 3</a>
+<span>/</span>
+<span class="text-amber-400">Módulo 3.2</span>
+</div>
+</nav>
+<!-- HEADER -->
+<header class="bg-gradient-to-br from-amber-900/30 via-dark-800 to-dark-800 py-12 border-b border-dark-600">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<span class="inline-block px-3 py-1 bg-amber-500/20 text-amber-400 text-xs font-semibold rounded-full mb-4">
+        MÓDULO 3.2 · Ruta 3 · Modelo, costo y orquestación
+      </span>
+<h1 class="text-2xl sm:text-3xl font-bold mb-4">💰 El ahorro real</h1>
+<p class="text-lg text-neutral-400 max-w-3xl">
+        El subagente cuesta. Pero el gasto no viene de «usar el modelo caro», sino de usar el modelo caro
+        <strong class="text-amber-400">en el lugar equivocado</strong>. El secreto es armar un equipo:
+        un <strong class="text-amber-400">jefe inteligente</strong> que piensa, y una
+        <strong class="text-amber-400">flota económica</strong> que hace el trabajo pesado.
+      </p>
+<!-- Stats Banner -->
+<div class="grid grid-cols-4 gap-4 mt-8 max-w-2xl">
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">6</div>
+<div class="text-xs text-neutral-400">Temas</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">~30</div>
+<div class="text-xs text-neutral-400">Minutos</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Medio</div>
+<div class="text-xs text-neutral-400">Nivel</div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-3 border border-dark-600">
+<div class="text-xl font-bold text-amber-400">Teoría+</div>
+<div class="text-xs text-neutral-400">Tipo</div>
+</div>
+</div>
+</div>
+</header>
+<!-- CONTEUDO -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- ABERTURA + SVG CHEFE + FROTA -->
+<section class="mb-12">
+<p class="text-neutral-300 mb-8 leading-relaxed max-w-3xl">
+        Piensa en una redacción de periódico. El <strong class="text-amber-400">editor jefe</strong> no sale corriendo detrás de cada fuente:
+        lee, decide la agenda, distribuye y cierra la edición. Quien sale a la calle, transcribe entrevistas y revisa la ortografía es la
+        <strong class="text-amber-400">equipo</strong> — gente competente, más barata y en mayor número. Si el jefe hiciera todo, la
+        nómina se dispararía y el periódico saldría tarde. Los subagentes funcionan igual: deja que uno
+        <strong class="text-amber-400">modelo caro para pensar</strong> y una <strong class="text-amber-400">hacer trabajar a la flota económica</strong>.
+        El ahorro no consiste en recortar la calidad, sino en <strong class="text-amber-400">colocar cada modelo donde rinde</strong>.
+      </p>
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 mb-2 overflow-hidden">
+<svg aria-label="Un jefe inteligente, modelo Opus, planifica y asigna trabajo a una flota de muchos trabajadores baratos, modelo Haiku, que ejecutan en paralelo y le devuelven al jefe una síntesis final" class="w-full h-auto" role="img" viewbox="0 0 1000 260">
+<defs>
+<lineargradient id="m32-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#fbbf24"></stop><stop offset="1" stop-color="#f59e0b"></stop>
+</lineargradient>
+<filter height="180%" id="m32-glow" width="180%" x="-40%" y="-40%">
+<fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+<pattern height="32" id="m32-grid" patternunits="userSpaceOnUse" width="32">
+<circle cx="1.3" cy="1.3" fill="#f59e0b" opacity="0.12" r="1.3"></circle>
+</pattern>
+<marker id="m32-ah" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#fbbf24"></path></marker>
+<marker id="m32-ahc" markerheight="9" markerwidth="9" orient="auto" refx="6.5" refy="4.5"><path d="M0,0 L8,4.5 L0,9 L2.4,4.5 Z" fill="#38bdf8"></path></marker>
+</defs>
+<rect fill="url(#m32-grid)" height="260" width="1000" x="0" y="0"></rect>
+<!-- setas chefe -> frota -->
+<g fill="none" opacity="0.5" stroke="#fbbf24" stroke-width="1.8">
+<path d="M206,130 C320,130 340,40 452,40" marker-end="url(#m32-ah)"></path>
+<path d="M206,130 C320,130 340,85 452,85" marker-end="url(#m32-ah)"></path>
+<path d="M206,130 L452,130" marker-end="url(#m32-ah)"></path>
+<path d="M206,130 C320,130 340,175 452,175" marker-end="url(#m32-ah)"></path>
+<path d="M206,130 C320,130 340,220 452,220" marker-end="url(#m32-ah)"></path>
+</g>
+<!-- setas frota -> sintese -->
+<g fill="none" opacity="0.5" stroke="#38bdf8" stroke-width="1.8">
+<path d="M588,40  C700,40 720,130 800,130" marker-end="url(#m32-ahc)"></path>
+<path d="M588,85  C700,85 720,130 800,130" marker-end="url(#m32-ahc)"></path>
+<path d="M588,130 L800,130" marker-end="url(#m32-ahc)"></path>
+<path d="M588,175 C700,175 720,130 800,130" marker-end="url(#m32-ahc)"></path>
+<path d="M588,220 C700,220 720,130 800,130" marker-end="url(#m32-ahc)"></path>
+</g>
+<!-- chefe (caixa-foco com glow) -->
+<g filter="url(#m32-glow)"><rect fill="#1f1604" height="68" rx="14" stroke="url(#m32-grad)" stroke-width="2" width="166" x="40" y="96"></rect></g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="19" font-weight="600" text-anchor="middle" x="123" y="124">Jefe</text>
+<text fill="#fcd9a0" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="123" y="144">Opus · piensa y decide</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="123" y="190">caro · solo 1</text>
+<!-- frota (barata, ciano, pulsando) -->
+<g font-family="Inter,sans-serif" font-size="13" font-weight="600">
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="24"></rect><text fill="#bfe6ff" text-anchor="middle" x="520" y="45">Haiku</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="69"></rect><text fill="#bfe6ff" text-anchor="middle" x="520" y="90">Haiku</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="114"></rect><text fill="#bfe6ff" text-anchor="middle" x="520" y="135">Haiku</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="159"></rect><text fill="#bfe6ff" text-anchor="middle" x="520" y="180">Haiku</text></g>
+<g class="wf-a"><rect fill="#0e1b26" height="32" rx="9" stroke="#38bdf8" stroke-width="2" width="136" x="452" y="204"></rect><text fill="#bfe6ff" text-anchor="middle" x="520" y="225">Haiku …</text></g>
+</g>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="520" y="252">flota económica · muchos · en paralelo</text>
+<!-- sintese (caixa-foco com glow) -->
+<g filter="url(#m32-glow)"><rect fill="#1f1604" height="68" rx="14" stroke="url(#m32-grad)" stroke-width="2" width="166" x="800" y="96"></rect></g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="16" font-weight="600" text-anchor="middle" x="883" y="125">Síntesis</text>
+<text fill="#fcd9a0" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="883" y="144">el jefe cierra</text>
+</svg>
+</div>
+<p class="text-xs text-neutral-500 mb-0">↑ El esquema del ahorro: un jefe costoso decide, una flota económica ejecuta en paralelo y el jefe cierra la edición.</p>
+</section>
+<!-- DIVISOR -->
+<h2 class="text-2xl font-bold mb-6">Contenido detallado</h2>
+<!-- TÓPICO 1 — Chefe + frota -->
+<section class="mb-16" id="topico-1">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">1</span>
+<h2 class="text-2xl font-bold">🏛️ El jefe inteligente y la flota económica</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El diseño que ahorra dinero tiene dos roles. En la cima, <strong class="text-amber-400">un modelo costoso</strong> — Opus o
+        Sonnet — que <strong class="text-amber-400">piensa</strong>: lee el problema, hace el plan, distribuye las tareas y lo integra todo al
+        final. Debajo, <strong class="text-amber-400">una flota de modelos económicos</strong> — Haiku — que
+        <strong class="text-amber-400">hace el trabajo pesado</strong>: escanea, busca, lee archivos y resume. Tú pagas el modelo caro
+        <em>una vez</em>, para la parte difícil, y el barato <em>muchas veces</em>, para la parte mecánica.
+      </p>
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-amber-400 mb-4 flex items-center">
+<span class="mr-2">📰</span> La analogía de la redacción
+        </h3>
+<p class="text-neutral-300 mb-4">
+          El editor jefe define la pauta y cierra la edición: es insustituible, pero es <strong>uno solo</strong>. El reportaje, la transcripción
+          y la corrección ortográfica van al equipo: barato, numeroso y rápido. Nadie pone al editor jefe a transcribir audio de
+          dos horas. Con los subagentes se aplica la misma división:
+        </p>
+<ul class="space-y-2 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>Jefe (Opus/Sonnet)</strong> = decide, planifica y sintetiza. Es caro: úsalo poco y bien.</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>Flota (Haiku)</strong> = escanea, busca, lee y resume. Es barato: úsalo sin límite, en paralelo.</span></li>
+<li class="flex items-start space-x-2"><span class="text-amber-400 mt-1">•</span><span><strong>El error</strong> = poner al jefe a hacer trabajo de flota, o a la flota a decidir.</span></li>
+</ul>
+</div>
+<!-- 3 SECOES OBRIGATORIAS -->
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3 mb-6">
+<div>
+<span class="text-amber-400 font-semibold">Qué es:</span>
+<p class="text-neutral-300 text-sm">Un patrón de orquestación jerárquica: un modelo potente coordina; muchos modelos baratos ejecutan la mayor parte del trabajo en paralelo.</p>
+</div>
+<div>
+<span class="text-amber-400 font-semibold">Por qué aprender:</span>
+<p class="text-neutral-300 text-sm">Es lo que marca la diferencia entre «el subagente es demasiado caro» y «el subagente sale barato». La cuenta cambia por completo cuando el trabajo pesado se ejecuta con el modelo barato.</p>
+</div>
+<div>
+<span class="text-amber-400 font-semibold">Conceptos clave:</span>
+<p class="text-neutral-300 text-sm">Fan-out jerárquico · jefe (razonamiento) × flota (ejecución) · paga lo caro 1 vez y lo barato N veces.</p>
+</div>
+</div>
+<!-- Conceitos-chave: 4 mini-cards -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🧠</div><div class="text-sm font-semibold text-amber-400">Jefe</div><div class="text-xs text-neutral-400">decide</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">🐝</div><div class="text-sm font-semibold text-amber-400">Flota</div><div class="text-xs text-neutral-400">ejecuta</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">⚡</div><div class="text-sm font-semibold text-amber-400">En paralelo</div><div class="text-xs text-neutral-400">a gran escala</div></div>
+<div class="bg-dark-800 rounded-lg p-4 border border-dark-600 text-center"><div class="text-2xl mb-1">💵</div><div class="text-sm font-semibold text-amber-400">Caro 1×</div><div class="text-xs text-neutral-400">barato N×</div></div>
+</div>
+</section>
+<!-- TÓPICO 2 — CLAUDE_CODE_SUBAGENT_MODEL -->
+<section class="mb-16" id="topico-2">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">2</span>
+<h2 class="text-2xl font-bold">🎚️ La clave maestra: CLAUDE_CODE_SUBAGENT_MODEL</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Puedes definir el modelo de cada subagente <strong class="text-amber-400">uno por uno</strong>, en el campo
+        <code class="text-amber-400">model</code> del archivo. Pero cuando quieres que <strong class="text-amber-400">toda la flota</strong>
+        ejecutar una vez de forma económica, hay un atajo: la variable de entorno
+        <code class="text-amber-400">CLAUDE_CODE_SUBAGENT_MODEL</code>. Define el modelo
+        <strong class="text-amber-400">estándar de todos los subagentes</strong> que no fijaron un modelo propio — sin que tengas que tocar
+        cada archivo.
+      </p>
+<!-- CODE BOX (env var) -->
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">en tu terminal</span>
+<span class="text-xs text-amber-400">variable de entorno</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500"># toda a frota de subagentes passa a rodar em Haiku</span>
+<span class="text-amber-400">export</span> CLAUDE_CODE_SUBAGENT_MODEL=claude-haiku-4-5
+
+<span class="text-neutral-500"># abra o Claude Code já com a frota barata ligada</span>
+claude
+
+<span class="text-neutral-500"># o chefe (a sessão principal) continua no modelo que</span>
+<span class="text-neutral-500"># você escolheu — só os subagentes herdam o Haiku.</span></code></pre>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-amber-400 mb-3">🎯 Quién manda sobre quién</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-amber-400">model</strong> en el archivo del agente — siempre prevalece (específico).</li>
+<li><strong class="text-amber-400">CLAUDE_CODE_SUBAGENT_MODEL</strong> — estándar para los que no fijaron un modelo.</li>
+<li><strong class="text-amber-400">inherit</strong> — sin ninguno de los dos, el agente hereda el modelo del jefe.</li>
+</ul>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6">
+<h3 class="text-base font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> La jugada de la casa</h3>
+<p class="text-neutral-300 text-sm">Mantén el <strong>jefe</strong> en Opus/Sonnet y pon <strong>toda la flota</strong> en Haiku con la env var. Una línea, y la parte costosa del sistema se convierte solo en el cerebro — no en los músculos.</p>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">la variable que define el modelo predeterminado de todos los subagentes a la vez.</span></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">es la forma más rápida de abaratar toda la flota sin editar archivo por archivo.</span></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">env var · precedencia (model &gt; env &gt; inherit) · jefe fuera del alcance de la variable.</span></div>
+</div>
+</section>
+<!-- TÓPICO 3 — maxTurns -->
+<section class="mb-16" id="topico-3">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">3</span>
+<h2 class="text-2xl font-bold">🛑 maxTurns: la cuerda de seguridad del gasto</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El costo que asusta no es el del subagente que hace el trabajo, sino el del subagente que
+        <strong class="text-amber-400">entra en un bucle</strong>: lo intenta, falla, lo vuelve a intentar y sigue ejecutándose a tu costo. El
+        <code class="text-amber-400">maxTurns</code> es el límite de cuántos pasos (turnos de herramienta) puede dar un subagente antes de
+        detenerse. Es un <strong class="text-amber-400">disyuntor</strong>: se agotó el límite, se apaga, en lugar de consumir tokens toda la noche.
+      </p>
+<!-- GRID ✓/✗ #1 — sem teto x com teto -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Sin límite de turnos</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Un agente bloqueado intenta lo mismo 40 veces</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>La cuenta sube sin que nadie se dé cuenta</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>El ciclo solo aparece cuando llega la factura</span></li>
+</ul>
+</div>
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Con maxTurns</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Llega al límite, se detiene y devuelve lo que tiene</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>El gasto máximo por subagente es predecible</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>El jefe se da cuenta de que se atascó y decide el siguiente paso</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center"><span class="mr-2">📊</span> Cómo dimensionar el límite</h3>
+<p class="text-neutral-300">Una tarea de lectura o resumen suele terminar en pocos turnos. Si esperas ~10 pasos, un límite de
+          <strong>15–20</strong> da margen sin dejar el ciclo libre. Una flota barata puede tener un límite bajo (tarea sencilla); el jefe, que hace
+          más idas y vueltas, merece un límite mayor. Sin límite = apuesta abierta.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">el número máximo de turnos que puede dar un subagente antes de que lo interrumpan.</span></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">es la defensa contra el gasto descontrolado de un agente en bucle, el peor tipo de costo.</span></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">límite de turnos · interruptor de costo · límite bajo para la flota, más amplio para el jefe.</span></div>
+</div>
+</section>
+<!-- TÓPICO 4 — Multiagente ~15x + quando vale -->
+<section class="mb-16" id="topico-4">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">4</span>
+<h2 class="text-2xl font-bold">📈 Los sistemas multiagente cuestan ~15×; cuándo vale la pena</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        No hay magia: ejecutar una flota de subagentes consume <strong class="text-amber-400">muchos más tokens</strong> que una sola
+        conversación — en el orden de <strong class="text-amber-400">~15×</strong>. Cada subagente empieza desde cero y
+        <strong class="text-amber-400">reúne su propio contexto</strong> antes de producir. Esto no es un desperdicio
+        <em>automático</em>: es el precio del paralelismo y del contexto limpio. La pregunta correcta no es «¿es caro?», sino
+        <strong class="text-amber-400">"¿qué obtengo a cambio que justifique ese 15×?"</strong>.
+      </p>
+<!-- Barras comparativas (mock HTML) -->
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<div class="px-4 py-2 bg-dark-700/60 border-b border-dark-600 text-xs text-neutral-400 font-mono">consumo relativo de tokens (ilustrativo)</div>
+<div class="p-5 space-y-4 font-mono text-xs">
+<div>
+<div class="flex justify-between mb-1"><span class="text-neutral-300">1 conversación única</span><span class="text-neutral-400">1×</span></div>
+<div class="h-3 rounded bg-dark-700 overflow-hidden"><div class="h-full bg-emerald-500/70" style="width:7%"></div></div>
+</div>
+<div>
+<div class="flex justify-between mb-1"><span class="text-neutral-300">flota multiagente</span><span class="text-amber-400">~15×</span></div>
+<div class="h-3 rounded bg-dark-700 overflow-hidden"><div class="barfill h-full bg-amber-500/70" style="width:100%"></div></div>
+</div>
+<div class="text-neutral-500 pt-1">↑ 15× más tokens: solo vale la pena cuando el trabajo es realmente grande, ruidoso o paralelizable.</div>
+</div>
+</div>
+<p class="text-xs text-neutral-500 mb-6">↑ Recreación ilustrativa, no es una medición real. La proporción sirve para fijar el orden de magnitud.</p>
+<!-- GRID ✓/✗ #2 — quando vale x quando é desperdicio -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+<div class="bg-emerald-900/20 rounded-xl border border-emerald-500/30 p-6">
+<h4 class="font-bold text-emerald-400 mb-4">✓ Cuándo compensa el 15×</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>El trabajo es <strong>grande</strong> (decenas de archivos, mucha lectura)</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>El material es <strong>ruidoso</strong> y solo quieres la conclusión clara</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Se puede <strong>paralelizar</strong> y ahorrar tiempo de ejecución</span></li>
+<li class="flex items-start space-x-2"><span class="text-emerald-400">✓</span><span>Proteger el <strong>tu contexto</strong> vale el gasto adicional de tokens</span></li>
+</ul>
+</div>
+<div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6">
+<h4 class="font-bold text-red-400 mb-4">✗ Cuándo es solo un desperdicio</h4>
+<ul class="space-y-3 text-neutral-300">
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Una <strong>edición de 30 segundos</strong> en un solo archivo</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Algo que <strong>depende de toda la conversación</strong> que ya tienes</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Tarea pequeña, sin lectura pesada ni paralelismo</span></li>
+<li class="flex items-start space-x-2"><span class="text-red-400">✗</span><span>Pagar 15× para montar un contexto que ya tenías a mano</span></li>
+</ul>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">el orden de magnitud del costo de una flota multiagente frente a una conversación única.</span></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">para decidir con los ojos abiertos: saber el precio y elegir pagarlo cuando, y solo cuando, convenga.</span></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">~15× tokens · cada agente reúne contexto · grande/ruidoso/paralelo × edición rápida.</span></div>
+</div>
+</section>
+<!-- TÓPICO 5 — Combinacao > gastar muito -->
+<section class="mb-16" id="topico-5">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">5</span>
+<h2 class="text-2xl font-bold">🧩 Combinar bien &gt; gastar mucho</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El instinto equivocado es "si es caro, es porque necesito un modelo más potente". Casi nunca. La mejora real viene de
+        <strong class="text-amber-400">coincidir</strong>: el modelo adecuado para cada rol, el límite adecuado, el paralelismo adecuado. Una flota
+        Haiku bien orquestada por un jefe Sonnet ofrece <strong class="text-amber-400">más por menos</strong> de todo en Opus.
+        La arquitectura supera a la fuerza bruta.
+      </p>
+<!-- SVG equacao: combinacao > gasto -->
+<div class="rounded-2xl border border-amber-500/30 bg-dark-900/40 p-3 sm:p-4 mb-6 overflow-hidden">
+<svg aria-label="Jefe inteligente más flota económica más límites por turno equivalen a una entrega buena y económica. El resultado combinado vale más que simplemente ponerlo todo en el modelo más caro" class="w-full h-auto" role="img" viewbox="0 0 1000 210">
+<defs>
+<lineargradient id="m32b-grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#fbbf24"></stop><stop offset="1" stop-color="#f59e0b"></stop>
+</lineargradient>
+<filter height="180%" id="m32b-glow" width="180%" x="-40%" y="-40%"><fegaussianblur result="b" stddeviation="1.8"></fegaussianblur><femerge><femergenode in="b"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter>
+</defs>
+<!-- termo 1 -->
+<rect fill="#0e1b26" height="62" rx="12" stroke="#38bdf8" stroke-width="2" width="172" x="30" y="74"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="116" y="100">jefe inteligente</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="116" y="120">Opus/Sonnet</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="30" font-weight="600" text-anchor="middle" x="226" y="113">+</text>
+<!-- termo 2 -->
+<rect fill="#0e1b26" height="62" rx="12" stroke="#38bdf8" stroke-width="2" width="172" x="252" y="74"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="338" y="100">flota económica</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="338" y="120">Haiku · paralela</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="30" font-weight="600" text-anchor="middle" x="448" y="113">+</text>
+<!-- termo 3 -->
+<rect fill="#0e1b26" height="62" rx="12" stroke="#38bdf8" stroke-width="2" width="172" x="474" y="74"></rect>
+<text fill="#bfe6ff" font-family="Inter,sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="560" y="100">límites de turnos</text>
+<text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" x="560" y="120">maxTurns</text>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="30" font-weight="600" text-anchor="middle" x="670" y="113">=</text>
+<!-- resultado (caixa-foco com glow) -->
+<g filter="url(#m32b-glow)"><rect fill="#1f1604" height="82" rx="14" stroke="url(#m32b-grad)" stroke-width="2" width="278" x="696" y="64"></rect></g>
+<text fill="#fbbf24" font-family="Inter,sans-serif" font-size="18" font-weight="600" text-anchor="middle" x="835" y="98">entrega económica y buena</text>
+<text fill="#fcd9a0" font-family="Inter,sans-serif" font-size="12.5" text-anchor="middle" x="835" y="122">arquitectura &gt; fuerza bruta</text>
+</svg>
+</div>
+<div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
+<h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Antes de subir el modelo, ajusta el diseño</h3>
+<p class="text-neutral-300">¿Se bloqueó o se volvió caro? Antes de cambiar Haiku por Opus en todo, pregúntate: ¿se puede
+          <strong>paralelizar</strong>? O <strong>briefing</strong> está claro (¿menos idas y vueltas)? El <strong>límite</strong> está
+          asfixiando una tarea que necesitaba más? La mayoría de las veces el problema es de arquitectura, no de modelo.</p>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">el principio de que combinar recursos con criterio rinde más que escalar el modelo a la fuerza.</span></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">evita la salida costosa y perezosa de «pon todo en Opus» cuando el cuello de botella es la orquestación.</span></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">combinación (modelo+límite+paralelismo) · arquitectura &gt; fuerza bruta · ajustar el diseño antes que el modelo.</span></div>
+</div>
+</section>
+<!-- TÓPICO 6 — Medir / observar -->
+<section class="mb-16" id="topico-6">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">6</span>
+<h2 class="text-2xl font-bold">🔭 Medir y observar: no puedes recortar lo que no ves</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        El ahorro real exige <strong class="text-amber-400">mirar el gasto</strong>. ¿Cuánto consumió cada subagente? ¿Cuál
+        de ellos llegó al límite? ¿En qué se fue el tiempo? Sin observar, optimizas a ciegas: eliminas lo que era económico y dejas funcionando lo
+        costoso. <strong class="text-amber-400">Mide primero, ajusta después</strong>: así es como la división entre jefe y flota deja de ser
+        una conjetura y se convierte en un número.
+      </p>
+<!-- Timeline do ciclo de medir-ajustar -->
+<div class="space-y-6 mb-6">
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">1</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Observa una ronda real</h4>
+<p class="text-sm text-neutral-400 mb-3">Ejecuta el trabajo tal como está hoy.</p>
+<p class="text-neutral-300 text-sm">Por subagente, mira el modelo usado, los tokens consumidos, los turnos empleados y quién llegó al límite.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">2</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Encuentra al infractor</h4>
+<p class="text-sm text-neutral-400 mb-3">El gasto rara vez se distribuye de manera uniforme.</p>
+<p class="text-neutral-300 text-sm">Casi siempre, un agente costoso que realiza el trabajo de toda la flota o un bucle sin límite representa la mayor parte del costo.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center"><span class="text-amber-400 font-bold">3</span></div>
+<div class="flex-1 bg-dark-800 rounded-xl p-6 border border-dark-600">
+<h4 class="font-semibold text-white mb-2">Ajusta un parámetro y vuelve a medir</h4>
+<p class="text-sm text-neutral-400 mb-3">Un cambio a la vez.</p>
+<p class="text-neutral-300 text-sm">Descarga el modelo de un agente, pon un límite, paraleliza — y compara la nueva ronda con la anterior. Repite.</p>
+</div>
+</div>
+</div>
+<div class="bg-dark-700/50 rounded-lg p-5 space-y-3">
+<div><span class="text-amber-400 font-semibold">Qué es:</span> <span class="text-neutral-300 text-sm">el hábito de medir el consumo de los subagentes y ajustar el diseño según lo observado.</span></div>
+<div><span class="text-amber-400 font-semibold">Por qué aprender:</span> <span class="text-neutral-300 text-sm">optimizar sin medir es adivinar; con mediciones, cada recorte apunta al gasto que realmente pesa.</span></div>
+<div><span class="text-amber-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">observabilidad · encontrar al responsable · medir → ajustar un parámetro → volver a medir.</span></div>
+</div>
+</section>
+<!-- BLOCO: EXEMPLO REAL (.md comentado) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">📄</span>
+<h2 class="text-2xl font-bold">Ejemplo real: un agente de flota con model + maxTurns</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Los dos controles de este módulo caben en el <strong class="text-amber-400">frontmatter</strong> de un único archivo
+        <code class="text-amber-400">.md</code>: <code class="text-amber-400">model</code> dice <em>quién</em> hace (modelo económico), y
+        <code class="text-amber-400">maxTurns</code> dice <em>hasta dónde</em> puede continuar antes de detenerse. Este
+        <code class="text-amber-400">log-scanner.md</code> es un trabajador típico de la flota: barato, de solo lectura y con límite.
+      </p>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/log-scanner.md</span>
+<span class="text-xs text-blue-400">Markdown + YAML</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">--- # frontmatter: a CONFIGURAÇÃO do subagente</span>
+<span class="text-blue-400">name</span>: log-scanner             <span class="text-neutral-500"># minúsculas e hífens</span>
+<span class="text-blue-400">description</span>: Vasculha logs e arquivos grandes em
+  busca de erros e devolve só um resumo. Use para
+  varreduras pesadas.          <span class="text-neutral-500"># o GATILHO</span>
+<span class="text-blue-400">tools</span>: Read, Grep, Glob       <span class="text-neutral-500"># só leitura: trabalho de frota</span>
+<span class="text-blue-400">model</span>: haiku                  <span class="text-neutral-500"># BARATO — é a frota, não o chefe</span>
+<span class="text-blue-400">maxTurns</span>: 12                  <span class="text-neutral-500"># TETO — disjuntor contra loop</span>
+<span class="text-neutral-500">---</span>
+
+<span class="text-neutral-500"># corpo: o CÉREBRO do subagente</span>
+You are a fast log scanner.
+
+<span class="text-amber-400">When invoked:</span>
+1. Grep the given files for errors and warnings.
+2. Group what you find by type and file.
+3. Stop as soon as you have the summary.
+
+<span class="text-amber-400">Return:</span> a short report — counts per error type
+and the 3 files with the most issues. Nothing else.
+Do <span class="text-amber-400">not</span> open files line by line; do not loop.</code></pre>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-amber-400 mb-3">💵 model: haiku</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-amber-400">Es la flota</strong> — tarea mecánica de revisión.</li>
+<li><strong class="text-amber-400">Barato por llamada</strong> — puede ejecutarse en paralelo y en masa.</li>
+<li><strong class="text-amber-400">Prevalece la variable de entorno</strong> — prevalece el modelo fijo del archivo.</li>
+<li><strong class="text-amber-400">Read-only</strong> — sin herramienta de escritura, sin daños.</li>
+</ul>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<h4 class="font-semibold text-amber-400 mb-3">🛑 maxTurns: 12</h4>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li><strong class="text-amber-400">Límite de pasos</strong> — detente incluso si no "terminó".</li>
+<li><strong class="text-amber-400">Breve a propósito</strong> — el barrido no necesita muchos turnos.</li>
+<li><strong class="text-amber-400">Costo previsible</strong> — gasto máximo conocido por llamada.</li>
+<li><strong class="text-amber-400">Detiene el bucle</strong> — el peor escenario de costos nunca ocurre.</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- BLOCO: PROMPTS PRONTOS -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">⌨️</span>
+<h2 class="text-2xl font-bold">Prompts listos (copia y pega)</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Tres prompts para aplicar el ahorro ahora: activar la flota económica, poner un límite contra los bucles y diseñar la división entre jefe y flota antes
+        de gastar. Fíjate en el patrón: <strong class="text-amber-400">el modelo adecuado para la función adecuada</strong>, con
+        <strong class="text-amber-400">límite</strong>.
+      </p>
+<div class="space-y-4">
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 1 — flota económica por defecto</span>
+<span class="text-xs text-neutral-500">CLAUDE_CODE_SUBAGENT_MODEL</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Quero que toda a frota de subagentes rode em Haiku,
+mas que você (o chefe) continue em Sonnet. Me mostre
+como ligar isso com CLAUDE_CODE_SUBAGENT_MODEL e
+confirme quem ficou em qual modelo.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 2 — límite para evitar bucles</span>
+<span class="text-xs text-neutral-500">maxTurns</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Crie um subagente de varredura de logs em Haiku,
+read-only, com maxTurns 12 para ele não entrar em
+loop. Quero o arquivo .md pronto, com model e maxTurns
+no frontmatter.</code></pre>
+</div>
+<div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm font-semibold text-amber-400">Prompt 3 — diseñar la división antes de gastar</span>
+<span class="text-xs text-neutral-500">jefe × flota</span>
+</div>
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Para este trabalho [descreva], me proponha a divisão
+chefe/frota: o que fica no modelo caro (decidir/juntar)
+e o que vai para a frota Haiku em paralelo. Diga qual
+modelo e qual maxTurns para cada papel — e por quê.</code></pre>
+</div>
+</div>
+</section>
+<!-- BLOCO: TELA SIMULADA (painel de custo por subagente) -->
+<section class="mb-16">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">🖥️</span>
+<h2 class="text-2xl font-bold">Pantalla simulada: el panel de costos de la flota</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+        Así es como aparece el ahorro cuando tú <strong class="text-amber-400">observa</strong>: o
+        <strong class="text-amber-400">jefe en Opus</strong> malgasta, porque solo piensa; la
+        <strong class="text-amber-400">flota Haiku</strong> hace el trabajo pesado por una fracción del costo; y hay una advertencia donde un agente
+        tocó el <code class="text-amber-400">maxTurns</code>. Este es el cuadro que dice <em>dónde</em> cortar — antes de adivinar.
+      </p>
+<div class="rounded-xl border border-dark-600 bg-dark-900 overflow-hidden mb-2">
+<!-- barra de título -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-700/60 border-b border-dark-600">
+<div class="flex items-center space-x-2"><span class="w-3 h-3 rounded-full bg-red-400/70"></span><span class="w-3 h-3 rounded-full bg-amber-400/70"></span><span class="w-3 h-3 rounded-full bg-emerald-400/70"></span></div>
+<span class="text-xs text-neutral-400 font-mono">claude code · /cost · flota en ejecución</span>
+<span class="text-xs text-amber-400 font-mono">⏱ 01:12</span>
+</div>
+<!-- linhas: chefe + frota -->
+<div class="p-4 space-y-3 font-mono text-xs">
+<div class="flex items-center gap-3"><span class="text-amber-400 w-44 shrink-0">★ jefe (sesión)</span><span class="text-neutral-500 w-14 shrink-0">Opus</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="h-full bg-amber-500/70" style="width:14%"></div></div><span class="text-neutral-400 w-24 text-right shrink-0">~38k tok</span></div>
+<div class="flex items-center gap-3"><span class="text-neutral-300 w-44 shrink-0">● scanner-logs #1</span><span class="text-neutral-500 w-14 shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill h-full bg-emerald-500/70" style="width:58%"></div></div><span class="text-neutral-400 w-24 text-right shrink-0">~9k tok</span></div>
+<div class="flex items-center gap-3"><span class="text-neutral-300 w-44 shrink-0">● scanner-logs #2</span><span class="text-neutral-500 w-14 shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b2 h-full bg-emerald-500/70" style="width:47%"></div></div><span class="text-neutral-400 w-24 text-right shrink-0">~7k tok</span></div>
+<div class="flex items-center gap-3"><span class="text-neutral-300 w-44 shrink-0">● grep-massa #3</span><span class="text-neutral-500 w-14 shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b3 h-full bg-emerald-500/70" style="width:64%"></div></div><span class="text-neutral-400 w-24 text-right shrink-0">~11k tok</span></div>
+<div class="flex items-center gap-3"><span class="text-red-400 w-44 shrink-0">● doc-reader #4</span><span class="text-neutral-500 w-14 shrink-0">Haiku</span><div class="flex-1 h-2 rounded bg-dark-700 overflow-hidden"><div class="barfill b4 h-full bg-red-500/60" style="width:100%"></div></div><span class="text-red-400 w-24 text-right shrink-0">maxTurns!</span></div>
+<div class="text-neutral-500 pt-1">4 subagentes Haiku · 1 llegó al límite (12 turnos) y se detuvo — sin entrar en un bucle.</div>
+</div>
+<!-- rodapé: total -->
+<div class="flex items-center justify-between px-4 py-2 bg-dark-800 border-t border-dark-600 font-mono text-xs">
+<span class="text-neutral-400">96% de los tokens en la flota barata · 14% en el jefe</span>
+<div class="flex items-center gap-2">
+<span class="text-neutral-500">distribución del gasto</span>
+<span class="text-emerald-400">saludable</span>
+</div>
+</div>
+</div>
+<p class="text-xs text-neutral-500">↑ Recreación ilustrativa del panel de costos (no es una captura de pantalla real). El jefe piensa poco; la flota carga con el trabajo, y el límite detuvo al agente atascado.</p>
+</section>
+<!-- BLOCO: EXERCÍCIO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-amber-900/30 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+<div class="flex items-center space-x-4 mb-6">
+<span class="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xl">🎯</span>
+<h2 class="text-2xl font-bold">Ejercicio</h2>
+</div>
+<p class="text-neutral-300 mb-6 leading-relaxed">
+          Elección <strong class="text-amber-400">un trabajo de verdad</strong> que abordarías con subagentes (p. ej., "auditar 50
+          archivos de registro del último deploy"). Diseña la <strong class="text-amber-400">división jefe/flota</strong>: qué se queda en el
+          modelo caro, qué va a la flota barata y qué <strong class="text-amber-400">límite</strong> cada uno lleva.
+        </p>
+<div class="bg-dark-800/60 rounded-lg p-5 mb-6">
+<h4 class="font-semibold text-amber-400 mb-3">Cómo hacerlo</h4>
+<ol class="space-y-2 text-neutral-300 text-sm list-decimal list-inside">
+<li>Escribe el trabajo en una línea y separa <strong>decidir/reunir</strong> (jefe) de <strong>leer/buscar/resumir</strong> (flota).</li>
+<li>Para cada parte, elige un <strong>modelo</strong> (Opus/Sonnet para el jefe; Haiku para la flota) y justifica.</li>
+<li>Define un <strong>maxTurns</strong> por rol (corto en la flota, más amplio en el principal) y di cómo conectarías la flota barata (variable de entorno o <code class="text-amber-400">model</code> en el archivo).</li>
+</ol>
+</div>
+<div class="bg-blue-900/20 rounded-xl border border-blue-500/30 p-6 mb-6">
+<h4 class="font-semibold text-blue-400 mb-3">✅ Criterio de verificación — cómo saber si acertaste</h4>
+<p class="text-neutral-300 text-sm mb-3">Tu diseño pasa si cumple los <strong>cuatro</strong> puntos:</p>
+<ul class="space-y-2 text-neutral-300 text-sm">
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>El caro solo piensa:</strong> el modelo potente aparece solo para decidir/planificar/sintetizar, nunca para el escaneo bruto.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>La flota es Haiku y paralela:</strong> el trabajo pesado está en el nivel barato y puede ejecutarse en masa.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>Todo agente tiene un límite:</strong> ningún rol queda sin <code>maxTurns</code> — corto en la flota, más grande en el jefe.</span></li>
+<li class="flex items-start space-x-2"><span class="text-blue-400 mt-0.5">→</span><span><strong>El 15× se justifica:</strong> puedes decir en una frase por qué vale la pena pagar por el multiagente en este caso (grande/ruidoso/paralelo).</span></li>
+</ul>
+<p class="text-neutral-300 text-sm mt-3">Si el trabajo es pequeño y el 15× <em>no</em> si se justifica, la respuesta correcta es <strong>no usar flota</strong> — y darte cuenta de eso también cuenta como un acierto.</p>
+</div>
+<div class="bg-dark-800/60 rounded-lg p-5">
+<h4 class="font-semibold text-amber-400 mb-3">Ejemplo resuelto</h4>
+<p class="text-neutral-300 text-sm"><strong>Trabajo:</strong> "auditar 50 registros del deploy y decirme los 3 errores más frecuentes". <strong class="text-amber-400">Jefe (Sonnet):</strong> divide los 50 en lotes, reúne los resúmenes y clasifica los errores — <code>maxTurns</code> 25. <strong class="text-amber-400">Flota (Haiku, ~5 en paralelo):</strong> cada uno revisa un lote read-only y devuelve el recuento — <code>maxTurns</code> 12. <strong class="text-amber-400">¿Se justifica 15×?</strong> Sí: 50 archivos, material ruidoso, paralelizable; solo quiero el ranking limpio.</p>
+</div>
+</div>
+</section>
+<!-- RESUMO / NAVEGAÇÃO -->
+<section class="mb-12">
+<div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-8">
+<h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Resumen del módulo</h2>
+<div class="space-y-4 mb-8">
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Jefe + flota</strong><span class="text-neutral-400"> — un modelo caro piensa (Opus/Sonnet); una flota barata (Haiku) hace el trabajo pesado en paralelo.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">CLAUDE_CODE_SUBAGENT_MODEL</strong><span class="text-neutral-400"> — una env var cambia toda la flota a Haiku de una vez; <code>model</code> en el archivo siempre prevalece.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">maxTurns</strong><span class="text-neutral-400"> — el disyuntor: un límite de pasos que detiene los bucles y hace predecible el gasto por agente.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">~15× y cuándo vale la pena</strong><span class="text-neutral-400"> — el enfoque multiagente cuesta mucho más; solo vale la pena en trabajos grandes, ruidosos o paralelos.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Combinar &gt; gastar</strong><span class="text-neutral-400"> — una buena combinación de modelo+teto+paralelismo rinde más que poner todo en Opus.</span></div></div>
+<div class="flex items-start space-x-3"><span class="text-amber-400 mt-1">✓</span><div><strong class="text-white">Medir y observar</strong><span class="text-neutral-400"> — revisa el costo por subagente, identifica al responsable, ajusta un parámetro y vuelve a medir.</span></div></div>
+</div>
+<div class="bg-dark-800/50 rounded-lg p-4 mb-8">
+<h3 class="font-semibold text-amber-400 mb-2">Próximo módulo:</h3>
+<p class="text-neutral-300">3.3 — Encadenar subagentes. El maestro coordina A→B→C; los agentes no llaman a otros agentes, y la secuencia queda en manos del jefe.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<a class="flex-1 text-center px-6 py-3 bg-dark-700 text-neutral-300 rounded-lg font-semibold hover:bg-dark-600 transition-colors" href="modulo-3-1.html">← Módulo anterior</a>
+<a class="flex-1 text-center px-6 py-3 bg-amber-600 text-white rounded-lg font-semibold hover:bg-amber-500 transition-colors" href="modulo-3-3.html">Próximo módulo →</a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER -->
+<footer class="border-t border-dark-600 py-8 mt-16">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-neutral-500 text-sm">
+<p class="mb-2">Subagentes — 2026 · un curso en formato
+        <a class="text-sky-400 hover:text-sky-300 font-medium" href="https://inema.club" target="_blank">INEMA.CLUB</a>
+</p>
+<p>Ruta 3 · Orquestación · Módulo 3.2</p>
+</div>
+</footer>
+<!-- SCRIPTS -->
+<script>
+    // Toggle de tópicos (compatível com o padrão; expansíveis ficam abertos por padrão nesta página de módulo)
+    function toggleTopic(button) {
+      const topicItem = button.closest('.topic-item');
+      if (!topicItem) return;
+      const explanation = topicItem.querySelector('.topic-explanation');
+      const moduleCard = button.closest('.bg-dark-800');
+      if (moduleCard) {
+        moduleCard.querySelectorAll('.topic-explanation.active').forEach(exp => {
+          if (exp !== explanation) exp.classList.remove('active');
+        });
+      }
+      if (explanation) explanation.classList.toggle('active');
+    }
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'light' || (!localStorage.getItem('theme') && !html.classList.contains('dark'))) {
+      themeToggleDarkIcon.classList.remove('hidden');
+      html.classList.remove('dark');
+    } else {
+      themeToggleLightIcon.classList.remove('hidden');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+      html.classList.toggle('dark');
+      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+    });
+  </script>
+</body>
+</html>
