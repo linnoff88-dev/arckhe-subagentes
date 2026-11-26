@@ -76,7 +76,7 @@
     /* Dark — bordas suavizadas (REGRA 2) */
     .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
 
-    /* SVG animação respeitosa */
+    /* SVG animaçêo respeitosa */
     @media (prefers-reduced-motion: no-preference) {
       .svg-pulse { animation: pulse-amber 3s ease-in-out infinite; }
       .svg-pulse-cyan { animation: pulse-cyan 3s ease-in-out infinite 1s; }
@@ -130,7 +130,7 @@
 <!-- Trilha 3 (ativa) -->
 <a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-400 bg-amber-500/10" href="index.html">
 <span class="sm:hidden">T3</span>
-<span class="hidden sm:inline">Orquestração</span>
+<span class="hidden sm:inline">Orquestraçêo</span>
 </a>
 <!-- Trilha 4 -->
 <a class="px-3 py-1.5 rounded-lg text-sm font-semibold text-neutral-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors" href="../trilha4/index.html">
@@ -154,12 +154,12 @@
 <div class="max-w-6xl mx-auto px-4 py-10">
 <div class="mb-3 flex flex-wrap gap-2">
 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30 tracking-wide uppercase">
-        MÓDULO 3.3 · Trilha 3 · Modelo, custo e orquestração
+        MÓDULO 3.3 · Trilha 3 · Modelo, custo e orquestraçêo
       </span>
 </div>
 <h1 class="text-2xl font-bold text-neutral-100 mb-3">Encadeando subagentes</h1>
 <p class="text-neutral-400 text-base max-w-2xl mb-4">
-      O maestro não apenas dispara subagentes — ele os <em>encadeia</em>: o resultado de A alimenta B, que alimenta C.
+      O maestro nêo apenas dispara subagentes — ele os <em>encadeia</em>: o resultado de A alimenta B, que alimenta C.
       Este módulo ensina como projetar, depurar e escalar pipelines sequenciais sem deixar agentes conversando entre si.
     </p>
 <div class="flex flex-wrap gap-3 text-sm text-neutral-500">
@@ -239,14 +239,14 @@
 <rect fill="#1f1604" height="64" rx="12" stroke="url(#cg-grad)" stroke-width="2" width="136" x="662" y="68"></rect>
 </g>
 <text fill="#fbbf24" font-family="Inter,sans-serif" font-size="14" font-weight="700" text-anchor="middle" x="730" y="95">Agente C</text>
-<text fill="#a3a3a3" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="730" y="113">revisão</text>
+<text fill="#a3a3a3" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" x="730" y="113">revisêo</text>
 <!-- Resultado Final -->
 <g class="svg-pulse-cyan" filter="url(#cg-glow)">
 <rect fill="#061620" height="52" rx="10" stroke="url(#cg-grad-c)" stroke-width="2" width="50" x="938" y="74"></rect>
 </g>
 <text fill="#38bdf8" font-family="Inter,sans-serif" font-size="18" text-anchor="middle" x="963" y="97">✓</text>
 <text fill="#7dd3fc" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="963" y="113">output</text>
-<!-- Controle do maestro sobre B e C (linhas de coordenação ciano finas) -->
+<!-- Controle do maestro sobre B e C (linhas de coordenaçêo ciano finas) -->
 <path d="M107,68 Q107,36 430,36 Q566,36 566,68" fill="none" opacity="0.35" stroke="#38bdf8" stroke-dasharray="5 4" stroke-width="1"></path>
 <path d="M107,68 Q107,22 430,22 Q730,22 730,68" fill="none" opacity="0.25" stroke="#38bdf8" stroke-dasharray="5 4" stroke-width="1"></path>
 <!-- ZONA PROIBIDA: Agente→Agente direto -->
@@ -255,14 +255,14 @@
 <line opacity="0.9" stroke="#f87171" stroke-width="3" x1="412" x2="584" y1="165" y2="199"></line>
 <line opacity="0.9" stroke="#f87171" stroke-width="3" x1="412" x2="584" y1="199" y2="165"></line>
 </g>
-<text fill="#f87171" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="498" y="220">⛔ Agente não chama Agente</text>
+<text fill="#f87171" font-family="Inter,sans-serif" font-size="11" font-weight="600" text-anchor="middle" x="498" y="220">⛔ Agente nêo chama Agente</text>
 <text fill="#9ca3af" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="498" y="236">sempre via maestro</text>
 <!-- Rótulo da cadeia -->
 <text fill="#6b7280" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="500" y="252">Maestro → A → B → C → Resultado</text>
 </svg>
 </div>
 <p class="text-xs text-neutral-500 mt-2 text-center">
-      O maestro coordena toda a cadeia. Agentes não se comunicam diretamente — cada um responde apenas ao maestro.
+      O maestro coordena toda a cadeia. Agentes nêo se comunicam diretamente — cada um responde apenas ao maestro.
     </p>
 </div>
 <!-- ═══════════════════════════════════ CONTEÚDO DETALHADO ═══════════════════════════════════ -->
@@ -290,7 +290,7 @@
 <h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">O que é</h3>
 <p class="text-neutral-300 text-sm leading-relaxed">
               Encadear subagentes significa que o <strong>output de A</strong> vira o <strong>input de B</strong>,
-              que por sua vez alimenta C — e o maestro orquestra cada passagem. Não existe conversa direta entre
+              que por sua vez alimenta C — e o maestro orquestra cada passagem. Nêo existe conversa direta entre
               os agentes: a cadeia vive inteiramente no contexto do maestro.
             </p>
 </div>
@@ -308,7 +308,7 @@
 </div>
 <div class="flex items-start gap-2">
 <span class="text-amber-400 mt-0.5 flex-shrink-0">✦</span>
-<span class="text-sm text-neutral-300">Facilita depuração: falhou em B, não em A nem C</span>
+<span class="text-sm text-neutral-300">Facilita depuraçêo: falhou em B, nêo em A nem C</span>
 </div>
 <div class="flex items-start gap-2">
 <span class="text-amber-400 mt-0.5 flex-shrink-0">✦</span>
@@ -331,7 +331,7 @@
 <span class="text-amber-400 font-bold text-sm mt-0.5 flex-shrink-0">→</span>
 <div>
 <span class="text-sm font-medium text-neutral-200">Cadeia determinística</span>
-<p class="text-xs text-neutral-400 mt-0.5">A→B→C sempre nessa ordem; o maestro não pula etapas sem checar o output anterior.</p>
+<p class="text-xs text-neutral-400 mt-0.5">A→B→C sempre nessa ordem; o maestro nêo pula etapas sem checar o output anterior.</p>
 </div>
 </div>
 <div class="flex items-start gap-3 p-3 bg-dark-700 rounded-lg">
@@ -352,7 +352,7 @@
 <span class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm flex-shrink-0">2</span>
 <div>
 <span class="text-base font-semibold text-neutral-100">Skills ↔ Agents: papéis distintos</span>
-<p class="text-sm text-neutral-400 mt-0.5">O que uma skill faz que um agent não faz — e vice-versa</p>
+<p class="text-sm text-neutral-400 mt-0.5">O que uma skill faz que um agent nêo faz — e vice-versa</p>
 </div>
 <svg class="w-5 h-5 text-neutral-500 ml-auto flex-shrink-0 transition-transform" fill="none" id="icon-t2" stroke="currentColor" viewbox="0 0 24 24">
 <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
@@ -363,8 +363,8 @@
 <div class="bg-gradient-to-r from-amber-900/30 to-dark-800 rounded-xl p-4 border border-amber-500/20">
 <h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">O que é</h3>
 <p class="text-neutral-300 text-sm leading-relaxed">
-<strong>Skills</strong> são instruções carregadas no contexto do maestro — elas <em>guiam</em> o comportamento.
-              <strong>Agents</strong> são sub-processos com janela própria — eles <em>executam</em> trabalho isolado.
+<strong>Skills</strong> sêo instruções carregadas no contexto do maestro — elas <em>guiam</em> o comportamento.
+              <strong>Agents</strong> sêo sub-processos com janela própria — eles <em>executam</em> trabalho isolado.
               Em uma cadeia, a skill define o roteiro; os agents fazem as etapas.
             </p>
 </div>
@@ -386,7 +386,7 @@
 <ul class="space-y-1.5 text-sm text-neutral-300">
 <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">◎</span> Leitura intensiva de arquivos</li>
 <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">◎</span> Pesquisa web em profundidade</li>
-<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">◎</span> Geração de artefato isolado</li>
+<li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">◎</span> Geraçêo de artefato isolado</li>
 <li class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">◎</span> Tarefa com ferramentas próprias</li>
 </ul>
 </div>
@@ -402,7 +402,7 @@
 <div>
 <h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Por que aprender</h3>
 <p class="text-sm text-neutral-400">
-              Confundir skill com agent é o erro mais comum ao projetar cadeias. Entender a distinção evita
+              Confundir skill com agent é o erro mais comum ao projetar cadeias. Entender a distinçêo evita
               inflar o contexto do maestro com trabalho que deveria viver em janela separada.
             </p>
 </div>
@@ -414,7 +414,7 @@
 <button class="w-full flex items-center justify-start gap-4 p-5 hover:bg-dark-700 transition-all text-left" onclick="toggleTopic('t3')">
 <span class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm flex-shrink-0">3</span>
 <div>
-<span class="text-base font-semibold text-neutral-100">Agents não chamam agents</span>
+<span class="text-base font-semibold text-neutral-100">Agents nêo chamam agents</span>
 <p class="text-sm text-neutral-400 mt-0.5">A regra de ouro da arquitetura com subagentes</p>
 </div>
 <svg class="w-5 h-5 text-neutral-500 ml-auto flex-shrink-0 transition-transform" fill="none" id="icon-t3" stroke="currentColor" viewbox="0 0 24 24">
@@ -426,14 +426,14 @@
 <div class="bg-gradient-to-r from-amber-900/30 to-dark-800 rounded-xl p-4 border border-amber-500/20">
 <h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">O que é</h3>
 <p class="text-neutral-300 text-sm leading-relaxed">
-              No Claude Code, um subagente não tem permissão de lançar outro subagente diretamente. Toda delegação
-              passa pelo maestro. Isso não é limitação — é design intencional para garantir rastreabilidade,
+              No Claude Code, um subagente nêo tem permissêo de lançar outro subagente diretamente. Toda delegaçêo
+              passa pelo maestro. Isso nêo é limitaçêo — é design intencional para garantir rastreabilidade,
               controle de custos e visibilidade do fluxo.
             </p>
 </div>
 <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-4">
-<p class="text-xs font-semibold text-red-400 uppercase mb-2">⛔ Padrão proibido</p>
-<pre class="text-xs text-red-300 font-mono leading-relaxed overflow-x-auto"><code># ❌ NÃO funciona assim
+<p class="text-xs font-semibold text-red-400 uppercase mb-2">⛔ Padrêo proibido</p>
+<pre class="text-xs text-red-300 font-mono leading-relaxed overflow-x-auto"><code># ❌ NêO funciona assim
 Agent A → lança Agent B internamente
 Agent B → lança Agent C internamente
 
@@ -448,7 +448,7 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <div class="bg-dark-700 rounded-xl p-4 border border-red-500/20">
 <p class="text-xs font-semibold text-red-400 uppercase mb-2">✗ Risco de ignorar</p>
 <ul class="space-y-1 text-sm text-neutral-400">
-<li>• Loops infinitos de delegação</li>
+<li>• Loops infinitos de delegaçêo</li>
 <li>• Custos de API sem teto</li>
 <li>• Rastreabilidade zero</li>
 <li>• Difícil de depurar</li>
@@ -468,7 +468,7 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <div>
 <h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-3">Conceitos-chave</h3>
 <p class="text-sm text-neutral-400">
-              A arquitetura é <strong>estrela</strong> (maestro no centro), não <strong>malha</strong> (todos conectados).
+              A arquitetura é <strong>estrela</strong> (maestro no centro), nêo <strong>malha</strong> (todos conectados).
               Cada subagente é uma folha da árvore — nunca um nó intermediário com filhos próprios.
             </p>
 </div>
@@ -480,8 +480,8 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <button class="w-full flex items-center justify-start gap-4 p-5 hover:bg-dark-700 transition-all text-left" onclick="toggleTopic('t4')">
 <span class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm flex-shrink-0">4</span>
 <div>
-<span class="text-base font-semibold text-neutral-100">Relação 1-para-1 com o maestro</span>
-<p class="text-sm text-neutral-400 mt-0.5">Subagentes não conversam — só reportam</p>
+<span class="text-base font-semibold text-neutral-100">Relaçêo 1-para-1 com o maestro</span>
+<p class="text-sm text-neutral-400 mt-0.5">Subagentes nêo conversam — só reportam</p>
 </div>
 <svg class="w-5 h-5 text-neutral-500 ml-auto flex-shrink-0 transition-transform" fill="none" id="icon-t4" stroke="currentColor" viewbox="0 0 24 24">
 <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
@@ -492,9 +492,9 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <div class="bg-gradient-to-r from-amber-900/30 to-dark-800 rounded-xl p-4 border border-amber-500/20">
 <h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">O que é</h3>
 <p class="text-neutral-300 text-sm leading-relaxed">
-              Cada subagente tem exatamente uma relação: com o maestro que o criou. Ele não conhece outros
-              subagentes, não tem acesso ao contexto deles e não pode influenciá-los. É um especialista
-              contratado para uma única missão — entrega o relatório e encerra.
+              Cada subagente tem exatamente uma relaçêo: com o maestro que o criou. Ele nêo conhece outros
+              subagentes, nêo tem acesso ao contexto deles e nêo pode influenciá-los. É um especialista
+              contratado para uma única missêo — entrega o relatório e encerra.
             </p>
 </div>
 <!-- Timeline do ciclo de vida -->
@@ -535,14 +535,14 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <div class="w-1.5 h-1.5 rounded-full bg-dark-900"></div>
 </div>
 <p class="text-sm font-medium text-amber-400">Janela encerra — contexto liberado</p>
-<p class="text-xs text-neutral-500 mt-0.5">Não existe "depois" para o subagente</p>
+<p class="text-xs text-neutral-500 mt-0.5">Nêo existe "depois" para o subagente</p>
 </div>
 </div>
 </div>
 <div>
 <h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-2">Por que aprender</h3>
 <p class="text-sm text-neutral-400">
-              Entender a relação 1-para-1 evita tentar "fazer agentes colaborarem diretamente" — o que
+              Entender a relaçêo 1-para-1 evita tentar "fazer agentes colaborarem diretamente" — o que
               quebra silenciosamente, sem erro explícito.
             </p>
 </div>
@@ -566,8 +566,8 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <div class="bg-gradient-to-r from-amber-900/30 to-dark-800 rounded-xl p-4 border border-amber-500/20">
 <h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">O que é</h3>
 <p class="text-neutral-300 text-sm leading-relaxed">
-              A decisão de sequenciar é do maestro, não dos agentes. O maestro avalia: "B depende do output
-              de A?" Se sim, é cadeia. Se não, pode ser paralelo. Essa decisão determina latência vs. custo.
+              A decisêo de sequenciar é do maestro, nêo dos agentes. O maestro avalia: "B depende do output
+              de A?" Se sim, é cadeia. Se nêo, pode ser paralelo. Essa decisêo determina latência vs. custo.
             </p>
 </div>
 <div>
@@ -578,15 +578,15 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <ul class="space-y-1.5 text-sm text-neutral-300">
 <li class="flex items-start gap-2"><span class="text-amber-400">→</span> B usa output de A</li>
 <li class="flex items-start gap-2"><span class="text-amber-400">→</span> Ordem importa para qualidade</li>
-<li class="flex items-start gap-2"><span class="text-amber-400">→</span> Precisão &gt; velocidade</li>
-<li class="flex items-start gap-2"><span class="text-amber-400">→</span> Revisão incremental do resultado</li>
+<li class="flex items-start gap-2"><span class="text-amber-400">→</span> Precisêo &gt; velocidade</li>
+<li class="flex items-start gap-2"><span class="text-amber-400">→</span> Revisêo incremental do resultado</li>
 </ul>
 </div>
 <div class="bg-dark-700 rounded-xl p-4 border border-blue-500/20">
 <p class="text-xs font-semibold text-blue-400 uppercase mb-2">⚡ Paralelizar quando:</p>
 <ul class="space-y-1.5 text-sm text-neutral-300">
-<li class="flex items-start gap-2"><span class="text-blue-400">→</span> Tarefas são independentes</li>
-<li class="flex items-start gap-2"><span class="text-blue-400">→</span> Velocidade &gt; precisão</li>
+<li class="flex items-start gap-2"><span class="text-blue-400">→</span> Tarefas sêo independentes</li>
+<li class="flex items-start gap-2"><span class="text-blue-400">→</span> Velocidade &gt; precisêo</li>
 <li class="flex items-start gap-2"><span class="text-blue-400">→</span> Fan-out de coleta de dados</li>
 <li class="flex items-start gap-2"><span class="text-blue-400">→</span> N versões para comparar depois</li>
 </ul>
@@ -604,7 +604,7 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-2">Por que aprender</h3>
 <p class="text-sm text-neutral-400">
               Encadear quando poderia paralelizar desperdiça latência. Paralelizar quando há dependência
-              produz resultados incorretos. Saber diferenciar é a habilidade central de orquestração.
+              produz resultados incorretos. Saber diferenciar é a habilidade central de orquestraçêo.
             </p>
 </div>
 </div>
@@ -616,7 +616,7 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <span class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm flex-shrink-0">6</span>
 <div>
 <span class="text-base font-semibold text-neutral-100">Skill que dispara subagentes</span>
-<p class="text-sm text-neutral-400 mt-0.5">O padrão "skill como maestro de cadeia"</p>
+<p class="text-sm text-neutral-400 mt-0.5">O padrêo "skill como maestro de cadeia"</p>
 </div>
 <svg class="w-5 h-5 text-neutral-500 ml-auto flex-shrink-0 transition-transform" fill="none" id="icon-t6" stroke="currentColor" viewbox="0 0 24 24">
 <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
@@ -628,7 +628,7 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <h3 class="text-sm font-semibold text-amber-400 uppercase tracking-wide mb-2">O que é</h3>
 <p class="text-neutral-300 text-sm leading-relaxed">
               Uma skill pode conter instruções que orientam o maestro a lançar subagentes em sequência.
-              A skill não executa nada — ela é carregada no contexto do maestro e guia cada chamada ao
+              A skill nêo executa nada — ela é carregada no contexto do maestro e guia cada chamada ao
               <code class="text-amber-300 text-xs bg-dark-700 px-1 rounded">Agent</code> tool.
             </p>
 </div>
@@ -662,7 +662,7 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-2">Por que aprender</h3>
 <p class="text-sm text-neutral-400">
               Colocar a lógica da cadeia numa skill torna o projeto auditável, versionável e portável.
-              Sem esse padrão, a orquestração fica espalhada em prompts ad-hoc impossíveis de manter.
+              Sem esse padrêo, a orquestraçêo fica espalhada em prompts ad-hoc impossíveis de manter.
             </p>
 </div>
 </div>
@@ -704,12 +704,12 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 </ul>
 </div>
 <div class="bg-dark-700 rounded-xl p-4 border border-amber-500/20">
-<p class="text-xs font-semibold text-amber-400 uppercase mb-2">✓ Solução: workflow</p>
+<p class="text-xs font-semibold text-amber-400 uppercase mb-2">✓ Soluçêo: workflow</p>
 <ul class="space-y-1.5 text-sm text-neutral-300">
 <li class="flex items-start gap-2"><span class="text-amber-400">→</span> n8n coordena por JSON/HTTP</li>
 <li class="flex items-start gap-2"><span class="text-amber-400">→</span> Estado persiste entre etapas</li>
 <li class="flex items-start gap-2"><span class="text-amber-400">→</span> Retry sem re-executar tudo</li>
-<li class="flex items-start gap-2"><span class="text-amber-400">→</span> Logs por node, não por token</li>
+<li class="flex items-start gap-2"><span class="text-amber-400">→</span> Logs por node, nêo por token</li>
 </ul>
 </div>
 </div>
@@ -718,7 +718,7 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <h3 class="text-sm font-semibold text-neutral-300 uppercase tracking-wide mb-2">Por que aprender</h3>
 <p class="text-sm text-neutral-400">
               Saber <em>quando parar</em> de usar o maestro conversacional e migrar para workflow é a
-              diferença entre um pipeline que funciona em produção e um que colapsa na terceira semana.
+              diferença entre um pipeline que funciona em produçêo e um que colapsa na terceira semana.
             </p>
 </div>
 </div>
@@ -729,7 +729,7 @@ Maestro → Agent C (com output de B) → retorna resultado</code></pre>
 <div class="max-w-6xl mx-auto px-4 py-8">
 <div class="bg-dark-800 rounded-2xl border border-dark-600 p-6">
 <h2 class="text-xl font-bold text-neutral-100 mb-1">Exemplo real</h2>
-<p class="text-sm text-neutral-500 mb-5">Skill que orquestra subagentes em cadeia pesquisa → rascunho → revisão</p>
+<p class="text-sm text-neutral-500 mb-5">Skill que orquestra subagentes em cadeia pesquisa → rascunho → revisêo</p>
 <div class="bg-dark-900 rounded-xl p-4 border border-dark-600 font-mono text-xs overflow-x-auto">
 <div class="flex items-center gap-2 mb-3 pb-2 border-b border-dark-700">
 <span class="w-3 h-3 rounded-full bg-red-500/60"></span>
@@ -761,11 +761,11 @@ Formato: markdown estruturado, máx. 400 palavras.
 Capture o output como `PESQUISA`.
 
 ### ETAPA 2 — Rascunho (general-purpose)
-Com `PESQUISA` em mãos, lançar `general-purpose`:
+Com `PESQUISA` em mêos, lançar `general-purpose`:
 
 ```
 Com base nas pesquisas abaixo, escreva um artigo de 600 palavras sobre {TEMA}.
-Tom: educativo, direto, sem jargão.
+Tom: educativo, direto, sem jargêo.
 Use os fatos como base; cite as perspectivas contraditórias.
 
 --- PESQUISA ---
@@ -774,12 +774,12 @@ Use os fatos como base; cite as perspectivas contraditórias.
 
 Capture como `RASCUNHO`.
 
-### ETAPA 3 — Revisão (general-purpose)
+### ETAPA 3 — Revisêo (general-purpose)
 Lançar `general-purpose` com o rascunho:
 
 ```
 Revise o artigo abaixo para:
-1. Precisão factual (corrija erros vs. pesquisa fornecida)
+1. Precisêo factual (corrija erros vs. pesquisa fornecida)
 2. Clareza e fluidez
 3. Tamanho: mantenha 500-650 palavras
 Retorne APENAS o artigo final, sem comentários.
@@ -795,9 +795,9 @@ Retorne ao usuário o artigo revisado com o cabeçalho:
 `## Artigo: {TEMA} (pesquisado + revisado)`
 
 ## Regras
-- Maestro NÃO encurta as etapas
+- Maestro NêO encurta as etapas
 - Se ETAPA 1 falhar, abortar com mensagem clara
-- Agentes não se comunicam diretamente
+- Agentes nêo se comunicam diretamente
 </code></pre>
 </div>
 <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -824,12 +824,12 @@ Retorne ao usuário o artigo revisado com o cabeçalho:
 <div class="space-y-4">
 <div class="bg-dark-900 rounded-xl border border-dark-600 overflow-hidden">
 <div class="flex items-center justify-between px-4 py-2 bg-dark-700 border-b border-dark-600">
-<span class="text-xs font-semibold text-amber-400">Cadeia pesquisa → rascunho → revisão</span>
+<span class="text-xs font-semibold text-amber-400">Cadeia pesquisa → rascunho → revisêo</span>
 </div>
 <pre class="p-4 text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Use a skill pipeline-pesquisa. Tema: "impacto dos LLMs no mercado de trabalho".
 Encadeie: [1] web-research-assistant para coletar 5 fatos recentes com fonte,
 [2] general-purpose para rascunhar artigo de 600 palavras,
-[3] general-purpose para revisar precisão e fluência.
+[3] general-purpose para revisar precisêo e fluência.
 Retorne apenas o artigo final.</code></pre>
 </div>
 <div class="bg-dark-900 rounded-xl border border-dark-600 overflow-hidden">
@@ -840,11 +840,11 @@ Retorne apenas o artigo final.</code></pre>
 1. Explore para mapear todos os arquivos em src/ e listar funções com mais de 50 linhas
 2. general-purpose para refatorar as 3 maiores funções encontradas (recebe output do 1)
 3. general-purpose para escrever testes unitários das funções refatoradas (recebe output do 2)
-Cada agente recebe apenas o output do anterior — não o contexto todo.</code></pre>
+Cada agente recebe apenas o output do anterior — nêo o contexto todo.</code></pre>
 </div>
 <div class="bg-dark-900 rounded-xl border border-dark-600 overflow-hidden">
 <div class="flex items-center justify-between px-4 py-2 bg-dark-700 border-b border-dark-600">
-<span class="text-xs font-semibold text-amber-400">Cadeia coleta → síntese → publicação</span>
+<span class="text-xs font-semibold text-amber-400">Cadeia coleta → síntese → publicaçêo</span>
 </div>
 <pre class="p-4 text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Monte uma cadeia de 3 subagentes para processar o relatório em /docs/relatorio.pdf:
 [A] web-research-assistant: pesquise o contexto de mercado do tema do relatório
@@ -899,15 +899,15 @@ Passe o output de cada etapa como contexto para a próxima.</code></pre>
 <text fill="#f59e0b" font-family="monospace" font-size="10" x="24" y="250">  └─ rascunho capturado → injetado em Etapa 3</text>
 <!-- Etapa 3 -->
 <rect fill="#292524" height="72" rx="6" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="1" width="828" x="16" y="256"></rect>
-<text fill="#38bdf8" font-family="monospace" font-size="10" x="24" y="275">▶ Etapa 3 — general-purpose (revisão)</text>
-<text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="292">  prompt: "Revise para precisão factual e clareza..."</text>
+<text fill="#38bdf8" font-family="monospace" font-size="10" x="24" y="275">▶ Etapa 3 — general-purpose (revisêo)</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="292">  prompt: "Revise para precisêo factual e clareza..."</text>
 <text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="308">  contexto: rascunho + pesquisa original | janela própria</text>
 <text fill="#22c55e" font-family="monospace" font-size="10" x="680" y="292">✓ concluído</text>
 <text fill="#6b7280" font-family="monospace" font-size="10" x="680" y="308">→ 601 palavras</text>
 <!-- Output final -->
 <text fill="#22c55e" font-family="monospace" font-size="10" x="24" y="348">✓ Pipeline concluído: 3 etapas | ~2.8k tokens total</text>
 <text fill="#e5e7eb" font-family="monospace" font-size="10" x="24" y="365">## Artigo: impacto dos LLMs no mercado de trabalho (pesquisado + revisado)</text>
-<text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="382">  Os grandes modelos de linguagem estão redefinindo...</text>
+<text fill="#6b7280" font-family="monospace" font-size="10" x="24" y="382">  Os grandes modelos de linguagem estêo redefinindo...</text>
 <!-- cursor -->
 <rect fill="#f59e0b" height="12" opacity="0.8" width="8" x="460" y="374">
 <animate attributename="opacity" dur="1.2s" repeatcount="indefinite" values="0.8;0;0.8"></animate>
@@ -939,12 +939,12 @@ Passe o output de cada etapa como contexto para a próxima.</code></pre>
               Escreva o "ponto de controle" do maestro entre cada etapa: o que ele valida antes de avançar?
             </li>
 <li class="flex items-start gap-2"><span class="text-amber-400 font-bold flex-shrink-0">4.</span>
-              Justifique: por que cada etapa precisa ser sequencial e não paralela?
+              Justifique: por que cada etapa precisa ser sequencial e nêo paralela?
             </li>
 </ol>
 </div>
 <div class="bg-dark-700 rounded-xl p-4">
-<h3 class="text-sm font-semibold text-neutral-300 mb-3">Critério de verificação</h3>
+<h3 class="text-sm font-semibold text-neutral-300 mb-3">Critério de verificaçêo</h3>
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 <div>
 <p class="text-xs font-semibold text-emerald-400 uppercase mb-2">✓ Cadeia bem modelada</p>
@@ -959,18 +959,18 @@ Passe o output de cada etapa como contexto para a próxima.</code></pre>
 <p class="text-xs font-semibold text-red-400 uppercase mb-2">✗ Sinais de problema</p>
 <ul class="space-y-1 text-xs text-neutral-400">
 <li class="flex items-start gap-1.5"><span class="text-red-400">✗</span> "Agente A pergunta ao Agente B"</li>
-<li class="flex items-start gap-1.5"><span class="text-red-400">✗</span> Input de B não usa output de A</li>
-<li class="flex items-start gap-1.5"><span class="text-red-400">✗</span> Maestro não valida entre etapas</li>
+<li class="flex items-start gap-1.5"><span class="text-red-400">✗</span> Input de B nêo usa output de A</li>
+<li class="flex items-start gap-1.5"><span class="text-red-400">✗</span> Maestro nêo valida entre etapas</li>
 <li class="flex items-start gap-1.5"><span class="text-red-400">✗</span> Etapas poderiam ser paralelas</li>
 </ul>
 </div>
 </div>
 </div>
 <div class="bg-amber-900/20 border border-amber-500/30 rounded-xl p-4">
-<p class="text-xs font-semibold text-amber-400 mb-1">💡 Dica de auto-avaliação</p>
+<p class="text-xs font-semibold text-amber-400 mb-1">💡 Dica de auto-avaliaçêo</p>
 <p class="text-sm text-neutral-300">
             Passe seu modelo pelo teste do "e se A falhar?": se o maestro consegue detectar e abortar antes
-            de lançar B, a cadeia está bem desenhada. Se não, falta um ponto de controle.
+            de lançar B, a cadeia está bem desenhada. Se nêo, falta um ponto de controle.
           </p>
 </div>
 </div>

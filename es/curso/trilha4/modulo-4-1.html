@@ -247,7 +247,7 @@
 <g class="wf-a"><rect fill="#1a1230" height="30" rx="8" stroke="#c084fc" stroke-width="2" width="120" x="392" y="176"></rect><text fill="#e9d5ff" text-anchor="middle" x="452" y="196">escéptico</text></g>
 </g>
 <text fill="#38bdf8" font-family="Inter,sans-serif" font-size="10.5" text-anchor="middle" x="452" y="230">la mayoría refuta → descarta</text>
-<!-- portão de maioria -->
+<!-- portêo de maioria -->
 <g filter="url(#m41-glow)"><rect fill="#0e1b26" height="64" rx="12" stroke="#38bdf8" stroke-width="2" width="96" x="556" y="118"></rect></g>
 <text fill="#38bdf8" font-family="Inter,sans-serif" font-size="13" font-weight="600" text-anchor="middle" x="604" y="146">voto</text>
 <text fill="#9ad6ff" font-family="Inter,sans-serif" font-size="11" text-anchor="middle" x="604" y="166">mayoría</text>
@@ -370,7 +370,7 @@
 <div><span class="text-purple-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">ronda · ganancia inédita · contador de vacías · umbral K · límite de seguridad.</span></div>
 </div>
 </section>
-<!-- TÓPICO 3 — Verificação adversarial -->
+<!-- TÓPICO 3 — Verificaçêo adversarial -->
 <section class="mb-16" id="topico-3">
 <div class="flex items-center space-x-4 mb-6">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/20 text-purple-400 font-bold text-xl">3</span>
@@ -520,11 +520,11 @@
 </div>
 <pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500"># Pergunta única do crítico: "o que ainda falta?"</span>
 
-<span class="text-purple-400">COBERTO   </span> ✓ definição do conceito
+<span class="text-purple-400">COBERTO   </span> ✓ definiçêo do conceito
 <span class="text-purple-400">COBERTO   </span> ✓ 3 casos de uso confirmados
 <span class="text-purple-400">COBERTO   </span> ✓ limites conhecidos
 
-<span class="text-red-400">LACUNA    </span> ✗ nenhuma fonte sobre <span class="text-cyan-400">custo em produção</span>
+<span class="text-red-400">LACUNA    </span> ✗ nenhuma fonte sobre <span class="text-cyan-400">custo em produçêo</span>
 <span class="text-red-400">LACUNA    </span> ✗ nada sobre <span class="text-cyan-400">o que muda fora do Claude Code</span>
 <span class="text-red-400">LACUNA    </span> ✗ zero <span class="text-cyan-400">contra-exemplos</span> (só casos de sucesso)
 
@@ -607,15 +607,15 @@
 <pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-purple-400"># Síntese: &lt;pergunta original&gt;</span>
 
 <span class="text-cyan-400">## Conclusões (sobreviveram ao tribunal)</span>
-- &lt;afirmação A&gt;  <span class="text-neutral-500">[fonte: f1, f7 · 4/4 céticos mantiveram]</span>
-- &lt;afirmação B&gt;  <span class="text-neutral-500">[fonte: f3 · 3/4 mantiveram]</span>
+- &lt;afirmaçêo A&gt;  <span class="text-neutral-500">[fonte: f1, f7 · 4/4 céticos mantiveram]</span>
+- &lt;afirmaçêo B&gt;  <span class="text-neutral-500">[fonte: f3 · 3/4 mantiveram]</span>
 
 <span class="text-cyan-400">## Conflitos resolvidos</span>
 - A vs. C → C caiu (refutado por evidência em f9)
 
 <span class="text-red-400">## O que ficou de fora (sem cap silencioso)</span>
 - 500 achados → 38 processados (top por relevância)
-- lacuna ainda aberta: custo em produção (0 fontes)
+- lacuna ainda aberta: custo em produçêo (0 fontes)
 
 <span class="text-cyan-400">## Confiança</span>
 - alta nos itens 4/4; média nos 3/4; baixa onde há 1 fonte</code></pre>
@@ -647,7 +647,7 @@
 <span class="text-xs uppercase tracking-wide text-neutral-500">harness.pseudo — orquestación de la flota</span>
 <span class="text-xs text-blue-400">pseudocódigo (ilustrativo)</span>
 </div>
-<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-purple-400">função</span> pesquisar_em_escala(pergunta, K=2, max_rodadas=8, N_ceticos=4):
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-purple-400">funçêo</span> pesquisar_em_escala(pergunta, K=2, max_rodadas=8, N_ceticos=4):
     achados        = conjunto()      <span class="text-neutral-500"># dedup automático</span>
     rodadas_vazias = 0
     log_cortes     = []
@@ -658,7 +658,7 @@
         novos  = frota_paralela(BUSCADOR, fatias)      <span class="text-neutral-500"># cada um, uma lente (tópico 4)</span>
         ineditos = novos - achados
         <span class="text-purple-400">se</span> ineditos vazio: rodadas_vazias += 1
-        <span class="text-purple-400">senão</span>:           rodadas_vazias = 0; achados |= ineditos
+        <span class="text-purple-400">senêo</span>:           rodadas_vazias = 0; achados |= ineditos
 
     <span class="text-cyan-400"># ── 3 · VERIFY adversarial (mata por maioria) ─────────</span>
     <span class="text-purple-400">para cada</span> a <span class="text-purple-400">em</span> achados:
@@ -717,7 +717,7 @@
 </div>
 <pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Dispare uma frota de subagentes para levantar TUDO sobre
 &lt;tema&gt;. Rode em rodadas e só pare quando 2 rodadas
-seguidas não trouxerem nada novo. No fim, diga quantas
+seguidas nêo trouxerem nada novo. No fim, diga quantas
 rodadas rodou e por que considerou a busca esgotada.</code></pre>
 </div>
 <div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
@@ -725,8 +725,8 @@ rodadas rodou e por que considerou a busca esgotada.</code></pre>
 <span class="text-sm font-semibold text-purple-400">Prompt 2 — verificar de forma adversarial</span>
 <span class="text-xs text-neutral-500">N escépticos, mayoría</span>
 </div>
-<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Para cada achado, abra 4 subagentes céticos cuja missão
-é TENTAR REFUTÁ-LO com evidência (não confirmar). Se a
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Para cada achado, abra 4 subagentes céticos cuja missêo
+é TENTAR REFUTÁ-LO com evidência (nêo confirmar). Se a
 maioria refutar, descarte o achado. Me entregue só os
 que sobreviveram, com a contagem de votos de cada um.</code></pre>
 </div>
@@ -825,7 +825,7 @@ limite, registre o que cortou, quanto e por qual critério.</code></pre>
 </div>
 </div>
 </section>
-<!-- RESUMO / NAVEGAÇÃO -->
+<!-- RESUMO / NAVEGAÇêO -->
 <section class="mb-12">
 <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-800 rounded-xl border border-purple-500/30 p-8">
 <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Resumen del módulo</h2>
@@ -860,7 +860,7 @@ limite, registre o que cortou, quanto e por qual critério.</code></pre>
 </footer>
 <!-- SCRIPTS -->
 <script>
-    // Toggle de tópicos (compatível com o padrão; expansíveis ficam abertos por padrão nesta página de módulo)
+    // Toggle de tópicos (compatível com o padrêo; expansíveis ficam abertos por padrêo nesta página de módulo)
     function toggleTopic(button) {
       const topicItem = button.closest('.topic-item');
       if (!topicItem) return;

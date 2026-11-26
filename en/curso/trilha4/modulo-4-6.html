@@ -85,7 +85,7 @@
     /* SVG light mode */
     html:not(.dark) svg[role="img"] { filter: saturate(0.82) brightness(0.96); }
 
-    /* Animação SVG */
+    /* Animaçêo SVG */
     @keyframes wf-pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
     @media (prefers-reduced-motion: no-preference) {
       .wf-a { animation: wf-pulse 2.6s ease-in-out infinite; }
@@ -435,7 +435,7 @@
 </div>
 </div>
 </section>
-<!-- TÓPICO 4: Checklist de produção -->
+<!-- TÓPICO 4: Checklist de produçêo -->
 <section class="mb-16" id="topico-4">
 <div class="flex items-start space-x-4 mb-6">
 <span class="w-12 h-12 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-lg flex-shrink-0">4</span>
@@ -707,7 +707,7 @@
 <pre># ~/.claude/agents/security-auditor.md
 ---
 name: security-auditor
-description: Audita código em busca de vulnerabilidades de segurança. Use para revisar PRs críticos, módulos de autenticação, inputs de usuário. NÃO use para refatoração.
+description: Audita código em busca de vulnerabilidades de segurança. Use para revisar PRs críticos, módulos de autenticaçêo, inputs de usuário. NêO use para refatoraçêo.
 tools:
   - Read
   - Bash  # somente leitura — sem escrita de arquivo
@@ -718,23 +718,23 @@ disallowedTools:
 
 # Security Auditor
 
-Você é um especialista em segurança de aplicações. Sua única função é revisar código e apontar vulnerabilidades.
+Você é um especialista em segurança de aplicações. Sua única funçêo é revisar código e apontar vulnerabilidades.
 
 ## O que você faz
 - Identifica SQL injection, XSS, CSRF, secrets expostos, dependências com CVE
 - Classifica cada achado: CRÍTICO / ALTO / MÉDIO / BAIXO
-- Sugere correção específica para cada achado
+- Sugere correçêo específica para cada achado
 
-## O que você NÃO faz
-- Não modifica arquivos
-- Não sugere refatoração fora do escopo de segurança
-- Não executa código de produção
+## O que você NêO faz
+- Nêo modifica arquivos
+- Nêo sugere refatoraçêo fora do escopo de segurança
+- Nêo executa código de produçêo
 
 ## Formato de saída
 ```markdown
 ## Relatório de Segurança — [arquivo/PR]
 ### Achados
-| Severidade | Linha | Descrição | Correção sugerida |
+| Severidade | Linha | Descriçêo | Correçêo sugerida |
 ```</pre>
 </div>
 <div class="code-box mb-3">
@@ -752,38 +752,38 @@ disallowedTools:
 
 # Test Runner
 
-Roda testes, lê a saída e explica cada falha em linguagem humana. Sugere correção mas não aplica.
+Roda testes, lê a saída e explica cada falha em linguagem humana. Sugere correçêo mas nêo aplica.
 
 ## Regras
 - Rode sempre com `--no-coverage` para velocidade na primeira passagem
-- Agrupe falhas por módulo (não por arquivo)
+- Agrupe falhas por módulo (nêo por arquivo)
 - Priorize: build breaks &gt; falhas de lógica &gt; warnings</pre>
 </div>
 <div class="code-box mb-3">
 <pre># ~/.claude/agents/doc-writer.md
 ---
 name: doc-writer
-description: Gera documentação técnica (JSDoc, docstrings, README, CHANGELOG). Use após implementação. NÃO faz refatoração.
+description: Gera documentaçêo técnica (JSDoc, docstrings, README, CHANGELOG). Use após implementaçêo. NêO faz refatoraçêo.
 tools:
   - Read
-  - Write   # só para arquivos de documentação (.md, comentários)
+  - Write   # só para arquivos de documentaçêo (.md, comentários)
 ---
 
 # Doc Writer
 
-Especialista em documentação técnica. Lê código e gera docs claros, concisos e atualizados.
+Especialista em documentaçêo técnica. Lê código e gera docs claros, concisos e atualizados.
 
 ## Convenções
 - JSDoc para funções públicas
-- Docstrings para funções com lógica não-óbvia
-- README: instalação, uso, exemplos mínimos
+- Docstrings para funções com lógica nêo-óbvia
+- README: instalaçêo, uso, exemplos mínimos
 - CHANGELOG: formato Keep a Changelog</pre>
 </div>
 <div class="code-box mb-3">
 <pre># .claude/agents/db-expert.md   (local — adapte ao projeto)
 ---
 name: db-expert
-description: Especialista em banco de dados do projeto. Revisa queries, migrations e índices. NÃO executa DDL/DML.
+description: Especialista em banco de dados do projeto. Revisa queries, migrations e índices. NêO executa DDL/DML.
 tools:
   - Read
   - Bash    # apenas queries SELECT em banco de dev
@@ -798,7 +798,7 @@ Stack: PostgreSQL 15, Prisma ORM, ambiente dev em localhost:5432.
 ## O que faço
 - Analiso N+1, missing indexes, cartesian products
 - Reviso migrations antes do deploy
-- Explico planos de execução (EXPLAIN ANALYZE)
+- Explico planos de execuçêo (EXPLAIN ANALYZE)
 
 ## Formato de resposta
 Para cada problema: impacto estimado + query corrigida + índice sugerido.</pre>
@@ -843,13 +843,13 @@ Direct and useful. Not pessimistic by nature — just realistic.</pre>
 <div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30">
 <div class="text-purple-400 font-semibold text-sm mb-2">Prompt 2 — review an existing agent with a production checklist</div>
 <div class="code-box">
-<pre>Leia o arquivo .claude/agents/[nome].md e aplique o checklist de produção: ferramentas são mínimas? restrições explícitas? escopo claro em 30s? formato de saída definido? Aponte problemas e sugira versão corrigida.</pre>
+<pre>Leia o arquivo .claude/agents/[nome].md e aplique o checklist de produçêo: ferramentas sêo mínimas? restrições explícitas? escopo claro em 30s? formato de saída definido? Aponte problemas e sugira versêo corrigida.</pre>
 </div>
 </div>
 <div class="bg-dark-800 rounded-xl p-5 border border-purple-500/30">
 <div class="text-purple-400 font-semibold text-sm mb-2">Prompt 3 — orchestrator dispatcher for the full suite</div>
 <div class="code-box">
-<pre>Usando os subagentes disponíveis (security-auditor, test-runner, doc-writer, db-expert, plan-roaster), monte um workflow para revisão completa antes de PR: rode os agentes relevantes em paralelo, colete resultados e gere um relatório unificado com ações prioritárias. Comece pelo plano antes de executar.</pre>
+<pre>Usando os subagentes disponíveis (security-auditor, test-runner, doc-writer, db-expert, plan-roaster), monte um workflow para revisêo completa antes de PR: rode os agentes relevantes em paralelo, colete resultados e gere um relatório unificado com ações prioritárias. Comece pelo plano antes de executar.</pre>
 </div>
 </div>
 </div>
@@ -898,10 +898,10 @@ Direct and useful. Not pessimistic by nature — just realistic.</pre>
 </div>
 </div>
 </section>
-<!-- BLOCO: PARABÉNS / CONCLUSÃO DO CURSO -->
+<!-- BLOCO: PARABÉNS / CONCLUSêO DO CURSO -->
 <section class="mb-16">
 <div class="bg-gradient-to-br from-purple-900/40 via-dark-800 to-dark-900 rounded-2xl p-8 sm:p-12 border border-purple-500/40 text-center relative overflow-hidden">
-<!-- Decoração de fundo -->
+<!-- Decoraçêo de fundo -->
 <div class="absolute inset-0 opacity-5">
 <div class="absolute top-4 left-8 text-6xl">🤖</div>
 <div class="absolute top-8 right-12 text-5xl">⚡</div>
@@ -967,7 +967,7 @@ Direct and useful. Not pessimistic by nature — just realistic.</pre>
 </div>
 </section>
 </main>
-<!-- NAVEGAÇÃO INFERIOR -->
+<!-- NAVEGAÇêO INFERIOR -->
 <footer class="border-t border-dark-600 bg-dark-900/80">
 <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">

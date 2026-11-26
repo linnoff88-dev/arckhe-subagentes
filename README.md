@@ -1,4 +1,4 @@
-﻿# Subagentes â€” Curso INEMA.CLUB
+ï»¿# Subagentes ê¢â¬â Curso INEMA.CLUB
 
 <div align="center">
   <img src="capa/logo.svg" alt="Arckhé AI" height="48" />
@@ -6,21 +6,21 @@
 </div>
 
 
-Curso completo sobre **subagentes** do Claude Code (e ambientes como Codex): fundamentos, criaÃ§Ã£o na prÃ¡tica, modelo/custo/orquestraÃ§Ã£o e tÃ³picos avanÃ§ados. Com exemplos `.md` reais, prompts prontos, exercÃ­cios e desenhos.
+Curso completo sobre **subagentes** do Claude Code (e ambientes como Codex): fundamentos, criaêÂ§êÂ£o na prêÂ¡tica, modelo/custo/orquestraêÂ§êÂ£o e têÂ³picos avanêÂ§ados. Com exemplos `.md` reais, prompts prontos, exercêÂ­cios e desenhos.
 
-ðŸ”— **Curso ao vivo:** https://inematds.github.io/subagentes/
+ê°Å¸ââ **Curso ao vivo:** https://inematds.github.io/subagentes/
 
 ## Trilhas
-1. **Fundamentos** â€” entender antes de criar
-2. **Criando na prÃ¡tica** â€” do `.md` ao especialista que dispara sozinho
-3. **Modelo, custo e orquestraÃ§Ã£o** â€” chefe inteligente, trabalhadores baratos
-4. **AvanÃ§ado & cross-ambiente** â€” alÃ©m do Claude Code (Codex, outros modelos)
+1. **Fundamentos** ê¢â¬â entender antes de criar
+2. **Criando na prêÂ¡tica** ê¢â¬â do `.md` ao especialista que dispara sozinho
+3. **Modelo, custo e orquestraêÂ§êÂ£o** ê¢â¬â chefe inteligente, trabalhadores baratos
+4. **AvanêÂ§ado & cross-ambiente** ê¢â¬â alêÂ©m do Claude Code (Codex, outros modelos)
 
 Parte do ecossistema [INEMA.CLUB](https://inema.club).
 
 ---
 
-> âœ… **Curso completo.** As 4 trilhas e os 24 mÃ³dulos (M1.1â€“M4.6) estÃ£o publicados, cada um com conteÃºdo detalhado, exemplo real, prompts prontos, tela simulada, exercÃ­cio e critÃ©rio de verificaÃ§Ã£o.
+> ê¢Åâ¦ **Curso completo.** As 4 trilhas e os 24 mêÂ³dulos (M1.1ê¢â¬âM4.6) estêÂ£o publicados, cada um com conteêÂºdo detalhado, exemplo real, prompts prontos, tela simulada, exercêÂ­cio e critêÂ©rio de verificaêÂ§êÂ£o.
 
 ---
 

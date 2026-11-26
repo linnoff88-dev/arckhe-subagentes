@@ -334,7 +334,7 @@
 <span class="text-neutral-500"># abra o Claude Code já com a frota barata ligada</span>
 claude
 
-<span class="text-neutral-500"># o chefe (a sessão principal) continua no modelo que</span>
+<span class="text-neutral-500"># o chefe (a sessêo principal) continua no modelo que</span>
 <span class="text-neutral-500"># você escolheu — só os subagentes herdam o Haiku.</span></code></pre>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -571,13 +571,13 @@ a guess and becomes a number.
 <span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/log-scanner.md</span>
 <span class="text-xs text-blue-400">Markdown + YAML</span>
 </div>
-<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">--- # frontmatter: a CONFIGURAÇÃO do subagente</span>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">--- # frontmatter: a CONFIGURAÇêO do subagente</span>
 <span class="text-blue-400">name</span>: log-scanner             <span class="text-neutral-500"># minúsculas e hífens</span>
 <span class="text-blue-400">description</span>: Vasculha logs e arquivos grandes em
   busca de erros e devolve só um resumo. Use para
   varreduras pesadas.          <span class="text-neutral-500"># o GATILHO</span>
 <span class="text-blue-400">tools</span>: Read, Grep, Glob       <span class="text-neutral-500"># só leitura: trabalho de frota</span>
-<span class="text-blue-400">model</span>: haiku                  <span class="text-neutral-500"># BARATO — é a frota, não o chefe</span>
+<span class="text-blue-400">model</span>: haiku                  <span class="text-neutral-500"># BARATO — é a frota, nêo o chefe</span>
 <span class="text-blue-400">maxTurns</span>: 12                  <span class="text-neutral-500"># TETO — disjuntor contra loop</span>
 <span class="text-neutral-500">---</span>
 
@@ -642,7 +642,7 @@ confirme quem ficou em qual modelo.</code></pre>
 <span class="text-xs text-neutral-500">maxTurns</span>
 </div>
 <pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Crie um subagente de varredura de logs em Haiku,
-read-only, com maxTurns 12 para ele não entrar em
+read-only, com maxTurns 12 para ele nêo entrar em
 loop. Quero o arquivo .md pronto, com model e maxTurns
 no frontmatter.</code></pre>
 </div>
@@ -651,7 +651,7 @@ no frontmatter.</code></pre>
 <span class="text-sm font-semibold text-amber-400">Prompt 3 — design the split before spending</span>
 <span class="text-xs text-neutral-500">boss × fleet</span>
 </div>
-<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Para este trabalho [descreva], me proponha a divisão
+<pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Para este trabalho [descreva], me proponha a divisêo
 chefe/frota: o que fica no modelo caro (decidir/juntar)
 e o que vai para a frota Haiku em paralelo. Diga qual
 modelo e qual maxTurns para cada papel — e por quê.</code></pre>
@@ -734,7 +734,7 @@ modelo e qual maxTurns para cada papel — e por quê.</code></pre>
 </div>
 </div>
 </section>
-<!-- RESUMO / NAVEGAÇÃO -->
+<!-- RESUMO / NAVEGAÇêO -->
 <section class="mb-12">
 <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-8">
 <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Module summary</h2>
@@ -768,7 +768,7 @@ modelo e qual maxTurns para cada papel — e por quê.</code></pre>
 </footer>
 <!-- SCRIPTS -->
 <script>
-    // Toggle de tópicos (compatível com o padrão; expansíveis ficam abertos por padrão nesta página de módulo)
+    // Toggle de tópicos (compatível com o padrêo; expansíveis ficam abertos por padrêo nesta página de módulo)
     function toggleTopic(button) {
       const topicItem = button.closest('.topic-item');
       if (!topicItem) return;

@@ -461,7 +461,7 @@
 <span class="text-xs text-amber-400">blank window</span>
 </div>
 <pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500"># o maestro já conversou com você por 1h.</span>
-<span class="text-neutral-500"># o subagente NÃO sabe nada disso. ele nasce assim:</span>
+<span class="text-neutral-500"># o subagente NêO sabe nada disso. ele nasce assim:</span>
 
 <span class="text-amber-400">contexto:</span> (vazio)
 <span class="text-amber-400">tarefa:</span>   "ache onde o login quebra nos 40 arquivos de /auth"
@@ -472,8 +472,8 @@
 <span class="text-neutral-500">#   - mapeia o fluxo de login</span>
 <span class="text-neutral-500"># SÓ DEPOIS ele começa a raciocinar sobre o bug.</span>
 
-<span class="text-neutral-500"># lição: essa fase de "reunir contexto" é leitura bruta</span>
-<span class="text-neutral-500"># → é trabalho de Haiku, não de Opus.</span></code></pre>
+<span class="text-neutral-500"># liçêo: essa fase de "reunir contexto" é leitura bruta</span>
+<span class="text-neutral-500"># → é trabalho de Haiku, nêo de Opus.</span></code></pre>
 </div>
 <div class="bg-red-900/20 rounded-xl border border-red-500/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-red-400 mb-3 flex items-center"><span class="mr-2">⚠️</span> Why this is a cost trap</h3>
@@ -624,7 +624,7 @@
 <span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/ (three files)</span>
 <span class="text-xs text-blue-400">Markdown + YAML</span>
 </div>
-<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500"># ── 1) file-scout.md ── varre o repo atrás de um padrão</span>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500"># ── 1) file-scout.md ── varre o repo atrás de um padrêo</span>
 <span class="text-neutral-500">---</span>
 <span class="text-blue-400">name</span>: file-scout
 <span class="text-blue-400">description</span>: Varre o repositório atrás de onde um símbolo
@@ -633,31 +633,31 @@
 <span class="text-blue-400">model</span>: haiku                  <span class="text-amber-400"># ← é "ache e relate": tier barato basta</span>
 <span class="text-neutral-500">---</span>
 You are a fast code scout. Liste apenas os arquivos e linhas
-onde o alvo aparece. Não explique, não opine. Só o mapa.
+onde o alvo aparece. Nêo explique, nêo opine. Só o mapa.
 
 
 <span class="text-neutral-500"># ── 2) feature-builder.md ── implementa um passo do plano</span>
 <span class="text-neutral-500">---</span>
 <span class="text-blue-400">name</span>: feature-builder
 <span class="text-blue-400">description</span>: Implementa um passo bem-definido de um plano
-  (uma função, uma validação, um endpoint) e roda os testes.
+  (uma funçêo, uma validaçêo, um endpoint) e roda os testes.
 <span class="text-blue-400">tools</span>: Read, Edit, Write, Bash
 <span class="text-blue-400">model</span>: sonnet                 <span class="text-amber-400"># ← constrói código: o operário competente</span>
 <span class="text-neutral-500">---</span>
 You are a focused implementer. Implemente exatamente o passo
-pedido, siga o padrão do projeto e rode os testes ao final.
+pedido, siga o padrêo do projeto e rode os testes ao final.
 
 
 <span class="text-neutral-500"># ── 3) security-reviewer.md ── caça falha de segurança</span>
 <span class="text-neutral-500">---</span>
 <span class="text-blue-400">name</span>: security-reviewer
 <span class="text-blue-400">description</span>: Revisa o diff em busca de falhas de segurança
-  (injeção, vazamento, authz). Use após mexer em auth/pagamentos.
-<span class="text-blue-400">tools</span>: Read, Grep, Glob       <span class="text-neutral-500"># read-only: revisor não edita</span>
+  (injeçêo, vazamento, authz). Use após mexer em auth/pagamentos.
+<span class="text-blue-400">tools</span>: Read, Grep, Glob       <span class="text-neutral-500"># read-only: revisor nêo edita</span>
 <span class="text-blue-400">model</span>: opus                   <span class="text-amber-400"># ← raciocínio de segurança: o erro é caro</span>
 <span class="text-neutral-500">---</span>
 You are a senior security reviewer. Pense como atacante.
-Aponte cada risco com arquivo:linha e a gravidade. Não conserte.</code></pre>
+Aponte cada risco com arquivo:linha e a gravidade. Nêo conserte.</code></pre>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 <div class="bg-dark-800 rounded-xl border border-dark-600 p-5">
@@ -696,7 +696,7 @@ Aponte cada risco com arquivo:linha e a gravidade. Não conserte.</code></pre>
 <pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Use um subagente em Haiku pra escanear /auth e me
 trazer só os trechos que tocam o login. Depois,
 com esse resumo, use Opus só pra decidir onde está
-o bug. Não rode o Opus na varredura.</code></pre>
+o bug. Nêo rode o Opus na varredura.</code></pre>
 </div>
 <div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
 <div class="flex items-center justify-between mb-3">
@@ -705,7 +705,7 @@ o bug. Não rode o Opus na varredura.</code></pre>
 </div>
 <pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Crie um subagente "doc-summarizer" read-only com
 model: haiku — a tarefa é só ler docs e resumir,
-então quero o tier mais barato e rápido.</code></pre>
+entêo quero o tier mais barato e rápido.</code></pre>
 </div>
 <div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
 <div class="flex items-center justify-between mb-3">
@@ -713,7 +713,7 @@ então quero o tier mais barato e rápido.</code></pre>
 <span class="text-xs text-neutral-500">justifies Opus</span>
 </div>
 <pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Esse é um revisor de segurança: coloque model: opus.
-O erro aqui é caro, então quero o raciocínio máximo,
+O erro aqui é caro, entêo quero o raciocínio máximo,
 mesmo custando mais. Mantenha o agente read-only.</code></pre>
 </div>
 </div>
@@ -799,7 +799,7 @@ mesmo custando mais. Mantenha o agente read-only.</code></pre>
 </div>
 </div>
 </section>
-<!-- RESUMO / NAVEGAÇÃO -->
+<!-- RESUMO / NAVEGAÇêO -->
 <section class="mb-12">
 <div class="bg-gradient-to-br from-amber-900/40 via-dark-800 to-dark-800 rounded-xl border border-amber-500/30 p-8">
 <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Module summary</h2>
@@ -833,7 +833,7 @@ mesmo custando mais. Mantenha o agente read-only.</code></pre>
 </footer>
 <!-- SCRIPTS -->
 <script>
-    // Toggle de tópicos (compatível com o padrão; expansíveis ficam abertos por padrão nesta página de módulo)
+    // Toggle de tópicos (compatível com o padrêo; expansíveis ficam abertos por padrêo nesta página de módulo)
     function toggleTopic(button) {
       const topicItem = button.closest('.topic-item');
       if (!topicItem) return;

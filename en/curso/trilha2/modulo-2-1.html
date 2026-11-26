@@ -457,16 +457,16 @@ is the <strong class="text-blue-400">Track 3</strong> entire — here we learn t
 <span class="text-xs uppercase tracking-wide text-neutral-500">accepted values for model</span>
 <span class="text-xs text-blue-400">June 2026</span>
 </div>
-<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-blue-400">model</span>: haiku          <span class="text-neutral-500"># rápido, barato — triagem, classificação</span>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-blue-400">model</span>: haiku          <span class="text-neutral-500"># rápido, barato — triagem, classificaçêo</span>
 <span class="text-blue-400">model</span>: sonnet          <span class="text-neutral-500"># equilibrado — maioria dos casos</span>
 <span class="text-blue-400">model</span>: opus            <span class="text-neutral-500"># profundo e caro — análises complexas</span>
 
-<span class="text-neutral-500"># IDs completos (mais estáveis em produção)</span>
+<span class="text-neutral-500"># IDs completos (mais estáveis em produçêo)</span>
 <span class="text-blue-400">model</span>: claude-haiku-4-5
 <span class="text-blue-400">model</span>: claude-sonnet-4-5
 <span class="text-blue-400">model</span>: claude-opus-4-5
 
-<span class="text-neutral-500"># omitido: herda o modelo do maestro (padrão seguro)</span></code></pre>
+<span class="text-neutral-500"># omitido: herda o modelo do maestro (padrêo seguro)</span></code></pre>
 </div>
 <div class="bg-primary/10 rounded-xl border border-primary/30 p-6 mb-6">
 <h3 class="text-lg font-semibold text-primary mb-3 flex items-center"><span class="mr-2">💡</span> Practical rule for getting started</h3>
@@ -544,9 +544,9 @@ is the <strong class="text-blue-400">Track 3</strong> entire — here we learn t
 <span class="text-blue-400">description</span>: Analisa a base de código. Nunca modifica arquivos.
 <span class="text-blue-400">model</span>: sonnet
 <span class="text-blue-400">disallowed-tools</span>:
-  - Write    <span class="text-neutral-500"># não pode criar / sobrescrever</span>
-  - Edit     <span class="text-neutral-500"># não pode editar trechos</span>
-  - Bash     <span class="text-neutral-500"># não pode rodar comandos</span>
+  - Write    <span class="text-neutral-500"># nêo pode criar / sobrescrever</span>
+  - Edit     <span class="text-neutral-500"># nêo pode editar trechos</span>
+  - Bash     <span class="text-neutral-500"># nêo pode rodar comandos</span>
 <span class="text-neutral-500">---</span></code></pre>
 </div>
 <!-- Tip: tools vs disallowed-tools -->
@@ -657,9 +657,9 @@ is the <strong class="text-blue-400">Track 3</strong> entire — here we learn t
 <span class="text-blue-400">description</span>: |               <span class="text-neutral-500"># bloco multiline para descrições longas</span>
   Audita o código em busca de vulnerabilidades de segurança:
   SQL injection, XSS, dependências desatualizadas, segredos
-  expostos e falhas de autenticação.
-  Use quando o usuário pedir revisão de segurança, antes
-  de qualquer PR para produção, ou após mudanças em auth.
+  expostos e falhas de autenticaçêo.
+  Use quando o usuário pedir revisêo de segurança, antes
+  de qualquer PR para produçêo, ou após mudanças em auth.
                                <span class="text-neutral-500"># ↑ "quando usar" explícito = gatilho preciso</span>
 
 <span class="text-blue-400">tools</span>: Read, Grep, Glob      <span class="text-neutral-500"># só leitura — auditor nunca modifica</span>
@@ -672,9 +672,9 @@ is the <strong class="text-blue-400">Track 3</strong> entire — here we learn t
                                <span class="text-neutral-500"># → conhece as convenções de segurança do repo</span>
 
 <span class="text-blue-400">disallowed-tools</span>:           <span class="text-neutral-500"># bloqueio explícito de ferramentas destrutivas</span>
-  - Write                      <span class="text-neutral-500"># não pode alterar arquivos</span>
-  - Edit                       <span class="text-neutral-500"># não pode editar trechos</span>
-  - Bash                       <span class="text-neutral-500"># não pode executar scripts</span>
+  - Write                      <span class="text-neutral-500"># nêo pode alterar arquivos</span>
+  - Edit                       <span class="text-neutral-500"># nêo pode editar trechos</span>
+  - Bash                       <span class="text-neutral-500"># nêo pode executar scripts</span>
 <span class="text-neutral-500">---</span>
 
 <span class="text-neutral-500"># Corpo do agente (cérebro) — carregado só quando invocado</span>
@@ -724,7 +724,7 @@ Your role is to audit code for vulnerabilities — never to fix them.
 <span class="text-xs text-neutral-500">creates the entire .md</span>
 </div>
 <pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Crie um subagente chamado "doc-writer" que escreve
-documentação técnica em Markdown. Ele deve usar apenas
+documentaçêo técnica em Markdown. Ele deve usar apenas
 Read e Write, rodar em sonnet, e ter memória do projeto.
 Escreva o frontmatter completo e um corpo de 5 linhas.</code></pre>
 </div>
@@ -734,7 +734,7 @@ Escreva o frontmatter completo e um corpo de 5 linhas.</code></pre>
 <span class="text-xs text-neutral-500">understand what is configured</span>
 </div>
 <pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Leia o frontmatter de todos os arquivos .md em
-.claude/agents/ e me diga: quais modelos estão sendo
+.claude/agents/ e me diga: quais modelos estêo sendo
 usados, quais ferramentas cada agente tem, e se algum
 agente tem description vaga que pode atrapalhar o match.</code></pre>
 </div>
@@ -868,7 +868,7 @@ Depois explique cada campo escolhido e por quê.</code></pre>
 <span class="text-blue-400">description</span>: |
   Lê código-fonte e escreve testes unitários em vitest/jest.
   Use quando pedir "escreva testes para este arquivo" ou
-  após implementar uma nova função ou classe.
+  após implementar uma nova funçêo ou classe.
 <span class="text-blue-400">tools</span>: Read, Write, Glob   <span class="text-neutral-500"># lê fonte, escreve teste, lista arquivos</span>
 <span class="text-blue-400">model</span>: sonnet              <span class="text-neutral-500"># escrever testes exige raciocínio médio</span>
 <span class="text-blue-400">color</span>: <span class="text-emerald-400">"#4ade80"</span>          <span class="text-neutral-500"># verde = "passou nos testes"</span>
@@ -877,7 +877,7 @@ Depois explique cada campo escolhido e por quê.</code></pre>
 </div>
 </div>
 </section>
-<!-- RESUMO / NAVEGAÇÃO INFERIOR -->
+<!-- RESUMO / NAVEGAÇêO INFERIOR -->
 <section class="mb-12">
 <div class="bg-gradient-to-br from-blue-900/40 via-dark-800 to-dark-800 rounded-xl border border-blue-500/30 p-8">
 <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Module summary</h2>

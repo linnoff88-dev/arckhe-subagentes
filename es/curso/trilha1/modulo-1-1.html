@@ -407,7 +407,7 @@
 <div><span class="text-emerald-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">paralelismo · perspectivas diversas · instrucciones para cada subagente · sesiones inspeccionables.</span></div>
 </div>
 </section>
-<!-- TÓPICO 4 — O que o subagente NÃO é (grid ✓/✗) -->
+<!-- TÓPICO 4 — O que o subagente NêO é (grid ✓/✗) -->
 <section class="mb-16" id="topico-4">
 <div class="flex items-center space-x-4 mb-6">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">4</span>
@@ -450,7 +450,7 @@
 <div><span class="text-emerald-400 font-semibold">Conceptos clave:</span> <span class="text-neutral-300 text-sm">no es el chat · sin diálogo directo · sin memoria de tu sesión · responde al maestro.</span></div>
 </div>
 </section>
-<!-- TÓPICO 5 — Relação 1-para-1 (grid ✓/✗ #2) -->
+<!-- TÓPICO 5 — Relaçêo 1-para-1 (grid ✓/✗ #2) -->
 <section class="mb-16" id="topico-5">
 <div class="flex items-center space-x-4 mb-6">
 <span class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xl">5</span>
@@ -535,7 +535,7 @@
         <strong class="text-emerald-400">lenguaje natural</strong>: describes el servicio y el maestro decide delegar. Sin comandos
         especiales ni sintaxis difícil.
       </p>
-<!-- CODE BOX #1 (invocação por linguagem natural) -->
+<!-- CODE BOX #1 (invocaçêo por linguagem natural) -->
 <div class="bg-dark-800 rounded-xl border border-dark-600 p-6 mb-6">
 <div class="flex items-center justify-between mb-3">
 <span class="text-xs uppercase tracking-wide text-neutral-500">en tu chat</span>
@@ -576,12 +576,12 @@
 <span class="text-xs uppercase tracking-wide text-neutral-500">.claude/agents/code-reviewer.md</span>
 <span class="text-xs text-blue-400">Markdown + YAML</span>
 </div>
-<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">--- # frontmatter: a CONFIGURAÇÃO do subagente</span>
+<pre class="font-mono text-sm text-neutral-300 overflow-x-auto leading-relaxed"><code><span class="text-neutral-500">--- # frontmatter: a CONFIGURAÇêO do subagente</span>
 <span class="text-blue-400">name</span>: code-reviewer            <span class="text-neutral-500"># minúsculas e hífens</span>
 <span class="text-blue-400">description</span>: Revisa o diff atual em busca de bugs,
   falhas de segurança e testes faltando. Use após
   qualquer mudança de código.   <span class="text-neutral-500"># isto é o GATILHO</span>
-<span class="text-blue-400">tools</span>: Read, Grep, Glob       <span class="text-neutral-500"># só leitura: não edita nada</span>
+<span class="text-blue-400">tools</span>: Read, Grep, Glob       <span class="text-neutral-500"># só leitura: nêo edita nada</span>
 <span class="text-blue-400">model</span>: sonnet                 <span class="text-neutral-500"># bom o bastante para revisar</span>
 <span class="text-neutral-500">---</span>
 
@@ -634,8 +634,8 @@ Be concise. Do <span class="text-emerald-400">not</span> rewrite the code — on
 <span class="text-xs text-neutral-500">delega la investigación exhaustiva</span>
 </div>
 <pre class="font-mono text-sm text-neutral-300 bg-dark-700/50 rounded-lg p-4 overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Abra um subagente pra pesquisar a ferramenta X e me
-traga só um resumo de 5 bullets. Não cole o conteúdo
-bruto aqui — só a conclusão.</code></pre>
+traga só um resumo de 5 bullets. Nêo cole o conteúdo
+bruto aqui — só a conclusêo.</code></pre>
 </div>
 <div class="bg-dark-800 rounded-xl border border-dark-600 p-6">
 <div class="flex items-center justify-between mb-3">
@@ -722,7 +722,7 @@ Devolva no máximo 1 parágrafo + os caminhos relevantes.</code></pre>
 </div>
 </div>
 </section>
-<!-- RESUMO / NAVEGAÇÃO -->
+<!-- RESUMO / NAVEGAÇêO -->
 <section class="mb-12">
 <div class="bg-gradient-to-br from-emerald-900/40 via-dark-800 to-dark-800 rounded-xl border border-emerald-500/30 p-8">
 <h2 class="text-2xl font-bold mb-6 flex items-center"><span class="mr-3">✅</span> Resumen del módulo</h2>
@@ -756,7 +756,7 @@ Devolva no máximo 1 parágrafo + os caminhos relevantes.</code></pre>
 </footer>
 <!-- SCRIPTS -->
 <script>
-    // Toggle de tópicos (compatível com o padrão; expansíveis ficam abertos por padrão nesta página de módulo)
+    // Toggle de tópicos (compatível com o padrêo; expansíveis ficam abertos por padrêo nesta página de módulo)
     function toggleTopic(button) {
       const topicItem = button.closest('.topic-item');
       if (!topicItem) return;

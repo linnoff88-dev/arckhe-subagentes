@@ -76,7 +76,7 @@
     /* Dark — bordas suavizadas (REGRA 2) */
     .dark .divide-dark-600 > :not([hidden]) ~ :not([hidden]) { border-color: #374151; }
 
-    /* SVG animação respeitosa */
+    /* SVG animaçêo respeitosa */
     @media (prefers-reduced-motion: no-preference) {
       .svg-pulse { animation: pulse-amber 3s ease-in-out infinite; }
       .svg-pulse-cyan { animation: pulse-cyan 3s ease-in-out infinite 1s; }
@@ -246,7 +246,7 @@
 </g>
 <text fill="#38bdf8" font-family="Inter,sans-serif" font-size="18" text-anchor="middle" x="963" y="97">✓</text>
 <text fill="#7dd3fc" font-family="Inter,sans-serif" font-size="9" text-anchor="middle" x="963" y="113">output</text>
-<!-- Controle do maestro sobre B e C (linhas de coordenação ciano finas) -->
+<!-- Controle do maestro sobre B e C (linhas de coordenaçêo ciano finas) -->
 <path d="M107,68 Q107,36 430,36 Q566,36 566,68" fill="none" opacity="0.35" stroke="#38bdf8" stroke-dasharray="5 4" stroke-width="1"></path>
 <path d="M107,68 Q107,22 430,22 Q730,22 730,68" fill="none" opacity="0.25" stroke="#38bdf8" stroke-dasharray="5 4" stroke-width="1"></path>
 <!-- ZONA PROIBIDA: Agente→Agente direto -->
@@ -433,7 +433,7 @@
 </div>
 <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-4">
 <p class="text-xs font-semibold text-red-400 uppercase mb-2">⛔ Patrón prohibido</p>
-<pre class="text-xs text-red-300 font-mono leading-relaxed overflow-x-auto"><code># ❌ NÃO funciona assim
+<pre class="text-xs text-red-300 font-mono leading-relaxed overflow-x-auto"><code># ❌ NêO funciona assim
 Agent A → lança Agent B internamente
 Agent B → lança Agent C internamente
 
@@ -761,11 +761,11 @@ Formato: markdown estruturado, máx. 400 palavras.
 Capture o output como `PESQUISA`.
 
 ### ETAPA 2 — Rascunho (general-purpose)
-Com `PESQUISA` em mãos, lançar `general-purpose`:
+Com `PESQUISA` em mêos, lançar `general-purpose`:
 
 ```
 Com base nas pesquisas abaixo, escreva um artigo de 600 palavras sobre {TEMA}.
-Tom: educativo, direto, sem jargão.
+Tom: educativo, direto, sem jargêo.
 Use os fatos como base; cite as perspectivas contraditórias.
 
 --- PESQUISA ---
@@ -774,12 +774,12 @@ Use os fatos como base; cite as perspectivas contraditórias.
 
 Capture como `RASCUNHO`.
 
-### ETAPA 3 — Revisão (general-purpose)
+### ETAPA 3 — Revisêo (general-purpose)
 Lançar `general-purpose` com o rascunho:
 
 ```
 Revise o artigo abaixo para:
-1. Precisão factual (corrija erros vs. pesquisa fornecida)
+1. Precisêo factual (corrija erros vs. pesquisa fornecida)
 2. Clareza e fluidez
 3. Tamanho: mantenha 500-650 palavras
 Retorne APENAS o artigo final, sem comentários.
@@ -795,9 +795,9 @@ Retorne ao usuário o artigo revisado com o cabeçalho:
 `## Artigo: {TEMA} (pesquisado + revisado)`
 
 ## Regras
-- Maestro NÃO encurta as etapas
+- Maestro NêO encurta as etapas
 - Se ETAPA 1 falhar, abortar com mensagem clara
-- Agentes não se comunicam diretamente
+- Agentes nêo se comunicam diretamente
 </code></pre>
 </div>
 <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -829,7 +829,7 @@ Retorne ao usuário o artigo revisado com o cabeçalho:
 <pre class="p-4 text-sm text-neutral-300 font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed"><code>Use a skill pipeline-pesquisa. Tema: "impacto dos LLMs no mercado de trabalho".
 Encadeie: [1] web-research-assistant para coletar 5 fatos recentes com fonte,
 [2] general-purpose para rascunhar artigo de 600 palavras,
-[3] general-purpose para revisar precisão e fluência.
+[3] general-purpose para revisar precisêo e fluência.
 Retorne apenas o artigo final.</code></pre>
 </div>
 <div class="bg-dark-900 rounded-xl border border-dark-600 overflow-hidden">
@@ -840,7 +840,7 @@ Retorne apenas o artigo final.</code></pre>
 1. Explore para mapear todos os arquivos em src/ e listar funções com mais de 50 linhas
 2. general-purpose para refatorar as 3 maiores funções encontradas (recebe output do 1)
 3. general-purpose para escrever testes unitários das funções refatoradas (recebe output do 2)
-Cada agente recebe apenas o output do anterior — não o contexto todo.</code></pre>
+Cada agente recebe apenas o output do anterior — nêo o contexto todo.</code></pre>
 </div>
 <div class="bg-dark-900 rounded-xl border border-dark-600 overflow-hidden">
 <div class="flex items-center justify-between px-4 py-2 bg-dark-700 border-b border-dark-600">
