@@ -2,8 +2,8 @@
 
 - **Data:** 2026-06-13
 - **Status:** Aprovado para planejamento (aguardando review final do usuário)
-- **Formato:** INEMA.CLUB (skill `formato-curso`)
-- **Hospedagem:** repo `subagentes` → `inematds.github.io/subagentes/` → registrar no portal `inema.club`
+- **Formato:** ARCKHÉ AI (skill `formato-curso`)
+- **Hospedagem:** repo `subagentes` → `linnoff88-dev.github.io/arckhe-/` → registrar no portal `ARCKHÉ AI`
 - **Idioma:** PT-BR
 - **Fonte de conteúdo:** transcriçêo do vídeo + apresentaçêo "Claude Code Subagentes" (18 slides), expandidas com profundidade própria.
 
@@ -16,7 +16,7 @@ Curso completo, profundo e **único** sobre **subagentes** no Claude Code (e amb
 **Objetivo central:** levar a pessoa de "nunca criei um subagente" até "monto e orquestro meu próprio sistema de especialistas, escolhendo modelo por tarefa e economizando dinheiro", passando por um módulo de referência avançada.
 
 **Promessa de qualidade (o que torna o curso "único"):** cada módulo entrega, além da teoria:
-- **≥1 desenho** (SVG futurista conceitual no estilo INEMA);
+- **≥1 desenho** (SVG futurista conceitual no estilo ARCKHÉ);
 - **Exemplo real** — um arquivo `.md` de subagente completo e comentado;
 - **Prompts prontos** — copy-paste pra criar/invocar/iterar;
 - **Tela simulada** — SVG monitor-mock (ou render Remotion) do fluxo no terminal/UI;
@@ -43,7 +43,7 @@ Curso completo, profundo e **único** sobre **subagentes** no Claude Code (e amb
 
 ## 3. Arquitetura do curso (4 trilhas × 6 módulos = 24 páginas + landing)
 
-| Trilha | Cor INEMA | Tema | Frase-âncora |
+| Trilha | Cor ARCKHÉ | Tema | Frase-âncora |
 |---|---|---|---|
 | **T1 Fundamentos** | Emerald | Modelo mental + comparaçêo central | "Entender antes de criar" |
 | **T2 Criando na prática** | Blue | Construir o `.md` que dispara sozinho | "Do `.md` ao especialista" |
@@ -92,7 +92,7 @@ Curso completo, profundo e **único** sobre **subagentes** no Claude Code (e amb
 
 Toda página de módulo segue esta ordem (respeitando os erros críticos do `formato-curso`):
 
-1. **Nav completo** — Logo + INEMA.CLUB (`text-sky-400`) + 4 botões de trilha + theme toggle; trilha ativa destacada.
+1. **Nav completo** — Logo + ARCKHÉ AI (`text-sky-400`) + 4 botões de trilha + theme toggle; trilha ativa destacada.
 2. **Header** — título `text-2xl font-bold`, subtítulo, duraçêo estimada, badge da trilha.
 3. **Abertura + SVG conceitual** — 1 parágrafo de gancho + **1 diagrama SVG futurista** (cor da trilha + ciano `#38bdf8`, glow, `role="img"`+`aria-label`, animaçêo sob `prefers-reduced-motion`).
 4. **`<h2>Conteúdo detalhado</h2>** (simples, sem divisor ornado).
@@ -101,7 +101,7 @@ Toda página de módulo segue esta ordem (respeitando os erros críticos do `for
 7. **Bloco Prompts prontos** — 2–3 prompts copy-paste (criar via `/agents`, invocar, iterar descriçêo).
 8. **Bloco Tela simulada** — SVG monitor-mock (ou PNG Remotion) do fluxo correspondente.
 9. **Bloco Exercício** — tarefa prática + critério de verificaçêo ("como saber que acertou").
-10. **Navegaçêo anterior/próximo** + reforço do link INEMA.CLUB.
+10. **Navegaçêo anterior/próximo** + reforço do link ARCKHÉ AI.
 
 Profundidade-alvo: **500–800 linhas**, 6–8 seções, sem template repetido.
 
@@ -147,7 +147,7 @@ Projeto React em `_build/remotion/` (fora do site publicado). Renderiza frames �
 
 MP4 curto só pra 1–2 heros por trilha, **se** o usuário pedir; default = PNG.
 
-> Geraçêo de imagens temáticas (hero/banner) é **opcional** via `inemaimg`/`flux2-klein`, nunca substitui o SVG inline obrigatório (erro crítico #17).
+> Geraçêo de imagens temáticas (hero/banner) é **opcional** via `ARCKHÉimg`/`flux2-klein`, nunca substitui o SVG inline obrigatório (erro crítico #17).
 
 ---
 
@@ -170,10 +170,10 @@ Mapear o conceito de subagente/skill pro Codex e o princípio cross-runtime (uma
 
 ---
 
-## 7. Formato técnico (INEMA `formato-curso`)
+## 7. Formato técnico (ARCKHÉ `formato-curso`)
 
-- **Cores:** T1 Emerald, T2 Blue, T3 Amber, T4 Purple. Especiais: primary `#FACC15`, sky (INEMA.CLUB), red (erros), ciano `#38bdf8` (secundária dos SVGs).
-- **Obrigatórios por página:** nav completo, INEMA.CLUB, light/dark com CSS completo, theme toggle, bordas suavizadas no dark (2 regras), botões `justify-start`.
+- **Cores:** T1 Emerald, T2 Blue, T3 Amber, T4 Purple. Especiais: primary `#FACC15`, sky (ARCKHÉ AI), red (erros), ciano `#38bdf8` (secundária dos SVGs).
+- **Obrigatórios por página:** nav completo, ARCKHÉ AI, light/dark com CSS completo, theme toggle, bordas suavizadas no dark (2 regras), botões `justify-start`.
 - **Estrutura de arquivos:**
 
 ```
@@ -185,7 +185,7 @@ subagentes/
     ├── trilha1/
     │   ├── index.html               # Index T1 (hero SVG + Mapa da trilha + cards)
     │   ├── modulo-1-1.html … modulo-1-6.html
-    │   └── assets/img/              # PNGs (Remotion / inemaimg)
+    │   └── assets/img/              # PNGs (Remotion / ARCKHÉimg)
     ├── trilha2/  (modulo-2-1 … 2-6)
     ├── trilha3/  (modulo-3-1 … 3-6)
     └── trilha4/  (modulo-4-1 … 4-6)
@@ -198,7 +198,7 @@ subagentes/
 ## 8. Publicaçêo
 
 1. Construir e validar localmente (abrir os HTML).
-2. Repo git `subagentes` → push pro GitHub `inematds/subagentes` → habilitar **GitHub Pages** → `inematds.github.io/subagentes/`.
+2. Repo git `subagentes` → push pro GitHub `linnoff88-dev/subagentes` → habilitar **GitHub Pages** → `linnoff88-dev.github.io/arckhe-/`.
 3. Registrar no **portal** (`/home/nmaldaner/projetos/portal`): `src/data/courses.ts` (`platformsData` em ordem alfabética, `updatesData` no topo) + lista de trilhas hardcoded em `Portal.tsx` **e** `PortalV2.tsx` se entrar numa trilha do portal (ex.: "Claude Code"). Commit + push (deploy automático Vercel).
 
 ---
@@ -222,7 +222,7 @@ Cada fase = checkpoint de review.
 - Comparações canônicas (§6.1, §6.2) presentes e consistentes entre módulos.
 - T4 cobre Codex/cross-runtime e comparaçêo de modelos por papel.
 - Tema claro/escuro e nav completos em todas as páginas.
-- Publicado em `inematds.github.io/subagentes/` e registrado no portal.
+- Publicado em `linnoff88-dev.github.io/arckhe-/` e registrado no portal.
 
 ---
 

@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Build skill: `formato-curso` (ler `references/MASTER_COMPLETO.md`, `references/SVG-FUTURISTA.md`, `references/DESIGN-SYSTEM.md`, `references/CHECKLIST_REVISAO.md`). Audit: `revisar-curso`.
 
-**Goal:** Publicar um curso INEMA.CLUB profundo sobre subagentes (Claude Code + Codex/outros), 4 trilhas × 6 módulos + 4 índices + landing, em `inematds.github.io/subagentes/`.
+**Goal:** Publicar um curso ARCKHÉ AI profundo sobre subagentes (Claude Code + Codex/outros), 4 trilhas × 6 módulos + 4 índices + landing, em `linnoff88-dev.github.io/arckhe-/`.
 
-**Architecture:** Páginas HTML estáticas self-contained no design system INEMA (Tailwind CDN + CSS/JS inline, light/dark). Cada módulo segue um molde fixo de 10 blocos. Desenhos = SVG futurista inline; telas = SVG monitor-mock + render Remotion (PNG). Construçêo faseada com gate de validaçêo no módulo-piloto M1.1.
+**Architecture:** Páginas HTML estáticas self-contained no design system ARCKHÉ (Tailwind CDN + CSS/JS inline, light/dark). Cada módulo segue um molde fixo de 10 blocos. Desenhos = SVG futurista inline; telas = SVG monitor-mock + render Remotion (PNG). Construçêo faseada com gate de validaçêo no módulo-piloto M1.1.
 
 **Tech Stack:** HTML5 + Tailwind (CDN) + SVG inline; Remotion (React, em `_build/remotion/`, nêo publicado) para PNGs marquee; git + GitHub Pages; portal Next.js para registro.
 
@@ -52,7 +52,7 @@ Toda task de módulo executa exatamente isto:
 1. Ler `formato-curso`: `SKILL.md`, `references/MASTER_COMPLETO.md` (secs 8/9/10 base, 6.2/7.5/7.6/7.7/7.14 módulo, 1.10 SVG), `references/SVG-FUTURISTA.md`, `references/CHECKLIST_REVISAO.md`. Ler a página-piloto `curso/trilha1/modulo-1-1.html` como referência de molde aprovado.
 2. Ler a seçêo deste plano do módulo-alvo (brief: cor da trilha, objetivo, tópicos, desenho-chave, exemplo `.md`, prompts, exercício).
 3. Construir a página seguindo o **molde de 10 blocos**:
-   1. Nav completo (Logo + INEMA.CLUB `text-sky-400` + 4 botões de trilha + theme toggle; trilha ativa destacada).
+   1. Nav completo (Logo + ARCKHÉ AI `text-sky-400` + 4 botões de trilha + theme toggle; trilha ativa destacada).
    2. Header: título `text-2xl font-bold` + subtítulo + duraçêo + badge da trilha.
    3. Abertura (1 parágrafo) + **≥1 SVG futurista** (cor da trilha + ciano `#38bdf8`, glow, `role="img"`+`aria-label`, animaçêo sob `prefers-reduced-motion`).
    4. `<h2>Conteúdo detalhado</h2>` simples.
@@ -61,7 +61,7 @@ Toda task de módulo executa exatamente isto:
    7. Bloco **Prompts prontos**: 2–3 prompts copy-paste.
    8. Bloco **Tela simulada**: SVG monitor-mock (ou `<img>` de `assets/img/…png` quando Remotion já existir).
    9. Bloco **Exercício** + critério de verificaçêo.
-   10. Navegaçêo anterior/próximo + INEMA.CLUB.
+   10. Navegaçêo anterior/próximo + ARCKHÉ AI.
 4. Auto-checar contra `CHECKLIST_REVISAO.md` (todos os itens obrigatórios) e a "Verificaçêo Final Rápida" da SKILL.
 5. Reportar: arquivo criado, nº de linhas, nº de tópicos, desenhos usados, e qualquer desvio do molde.
 
@@ -73,7 +73,7 @@ Alvo: **500–800 linhas**, sem template repetido 6×.
 3. Auto-checar contra checklist (itens 9–16 da Verificaçêo Final).
 
 ### Cores
-T1 **Emerald** · T2 **Blue** · T3 **Amber** · T4 **Purple**. Secundária de diagrama: ciano `#38bdf8`. Primary `#FACC15`, sky (INEMA.CLUB), red (erros).
+T1 **Emerald** · T2 **Blue** · T3 **Amber** · T4 **Purple**. Secundária de diagrama: ciano `#38bdf8`. Primary `#FACC15`, sky (ARCKHÉ AI), red (erros).
 
 ### Verificaçêo (substitui "testes")
 "Teste" deste projeto = rodar o `CHECKLIST_REVISAO.md`/`revisar-curso` na página + abrir no navegador. Cada task de página só está "verde" quando passa o checklist correspondente.
@@ -89,8 +89,8 @@ T1 **Emerald** · T2 **Blue** · T3 **Amber** · T4 **Purple**. Secundária de d
 
 ### Task 0.1: Landing `index.html` (🧠 Opus)
 **Files:** Create `index.html`
-- [ ] **Step 1:** Executar P-IDX adaptado para landing: nav completo + hero do curso (título "Subagentes", subtítulo, 1 hero SVG fan-out maestro→subagentes) + seçêo "O que você vai aprender" + **4 cards de trilha** (cor de cada uma, link `curso/trilhaX/index.html`, 1 frase + lista de módulos) + seçêo "Resumo em uma tela" (recria o slide 18: quando usar subagente, projeto×global, economia, revisor, workflow, a pergunta) + footer com INEMA.CLUB.
-- [ ] **Step 2:** Auto-checar checklist (nav, INEMA.CLUB, light/dark, theme toggle, hero SVG).
+- [ ] **Step 1:** Executar P-IDX adaptado para landing: nav completo + hero do curso (título "Subagentes", subtítulo, 1 hero SVG fan-out maestro→subagentes) + seçêo "O que você vai aprender" + **4 cards de trilha** (cor de cada uma, link `curso/trilhaX/index.html`, 1 frase + lista de módulos) + seçêo "Resumo em uma tela" (recria o slide 18: quando usar subagente, projeto×global, economia, revisor, workflow, a pergunta) + footer com ARCKHÉ AI.
+- [ ] **Step 2:** Auto-checar checklist (nav, ARCKHÉ AI, light/dark, theme toggle, hero SVG).
 - [ ] **Step 3:** Commit: `git add index.html && git commit -m "feat(landing): porta de entrada do curso"`
 
 ### Task 0.2: Índice T1 `curso/trilha1/index.html` (🧠 Opus)
@@ -229,8 +229,8 @@ Cenas: (a) 5 subagentes em paralelo (T1) → `trilha1/assets/img/parallel.png`; 
 - [ ] Commit das correções.
 
 ### Task 5.3 Publicaçêo
-- [ ] `git remote add origin …inematds/subagentes`; push.
-- [ ] Habilitar GitHub Pages → confirmar `inematds.github.io/subagentes/`.
+- [ ] `git remote add origin …linnoff88-dev/subagentes`; push.
+- [ ] Habilitar GitHub Pages → confirmar `linnoff88-dev.github.io/arckhe-/`.
 - [ ] Registrar no portal (`/home/nmaldaner/projetos/portal`): `src/data/courses.ts` (`platformsData` alfabético + `updatesData` topo) + trilhas em `Portal.tsx` e `PortalV2.tsx` se aplicável. Commit + push (deploy Vercel).
 - [ ] **Confirmar com o usuário** slug do repo e trilha-alvo no portal antes do push (itens abertos do spec §12).
 

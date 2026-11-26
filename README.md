@@ -1,4 +1,4 @@
-ï»¿# Subagentes ê¢â¬â Curso INEMA.CLUB
+ï»¿# Subagentes ê¢â¬â Curso ARCKHÉ AI
 
 <div align="center">
   <img src="capa/logo.svg" alt="Arckhé AI" height="48" />
@@ -8,7 +8,7 @@
 
 Curso completo sobre **subagentes** do Claude Code (e ambientes como Codex): fundamentos, criaêÂ§êÂ£o na prêÂ¡tica, modelo/custo/orquestraêÂ§êÂ£o e têÂ³picos avanêÂ§ados. Com exemplos `.md` reais, prompts prontos, exercêÂ­cios e desenhos.
 
-ê°Å¸ââ **Curso ao vivo:** https://inematds.github.io/subagentes/
+ê°Å¸ââ **Curso ao vivo:** https://linnoff88-dev.github.io/arckhe-/
 
 ## Trilhas
 1. **Fundamentos** ê¢â¬â entender antes de criar
@@ -16,7 +16,7 @@ Curso completo sobre **subagentes** do Claude Code (e ambientes como Codex): fun
 3. **Modelo, custo e orquestraêÂ§êÂ£o** ê¢â¬â chefe inteligente, trabalhadores baratos
 4. **AvanêÂ§ado & cross-ambiente** ê¢â¬â alêÂ©m do Claude Code (Codex, outros modelos)
 
-Parte do ecossistema [INEMA.CLUB](https://inema.club).
+Parte do ecossistema [ARCKHÉ AI](https://ARCKHÉ AI).
 
 ---
 
